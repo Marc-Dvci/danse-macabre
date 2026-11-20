@@ -8,7 +8,9 @@
 ![Engine coverage: 99.44% of lines](https://img.shields.io/badge/engine%20coverage-99.44%25%20of%20lines-brightgreen)
 ![axe: 0 violations](https://img.shields.io/badge/axe-0%20violations-brightgreen)
 
-[![The Watch screen: a skeleton dances the Macarena from its Labanotation score, the recording dances behind it as a pale ghost, the staff scrolls under a candle on the right, and the line being danced reads "Count 3: left arm moves backward, low, over half a count."](docs/figures/watch.png)](https://marc-dvci.github.io/danse-macabre/?dance=macarena#watch)
+[![Danse Macabre, the film (2:31): six skeletons waltz in canon around a soloist whose danced limbs glow like embers, on an engraved floor ring between Holbein woodcuts, with a play button](docs/figures/film-thumbnail.png)](https://youtu.be/lQuROxbM7MY)
+
+**Watch the film (2:31): https://youtu.be/lQuROxbM7MY**
 
 **Danse Macabre writes dance down. It turns a dance into a Labanotation score, the dance notation Rudolf Laban
 published in 1928, plays any score back on a skeleton, and reads it aloud on the count so a blind or low-vision dancer
@@ -19,6 +21,7 @@ blind dancer gets every movement said on its count, in plain words, from the sam
 
 | | |
 |---|---|
+| Film | [Danse Macabre in 2:31](https://youtu.be/lQuROxbM7MY) |
 | Live app, no login | [marc-dvci.github.io/danse-macabre](https://marc-dvci.github.io/danse-macabre/) · [the Macarena](https://marc-dvci.github.io/danse-macabre/?dance=macarena#watch) · [the finale](https://marc-dvci.github.io/danse-macabre/?dance=finale#watch) · [from video](https://marc-dvci.github.io/danse-macabre/#video) |
 | Category | Kiroween 2026, Costume Contest |
 | Built with | Kiro CLI (specs, property-based tests, hooks, steering, custom agents, an MCP server and a power), TypeScript, React, Three.js, MediaPipe Pose Landmarker, fast-check, Playwright, axe-core |
@@ -44,9 +47,11 @@ Code links point at lines in the release tag `v1.0.0`.
 | Technological Implementation | [How Kiro is used](#how-kiro-is-used), [`.kiro/`](.kiro) and every run in [`docs/KIRO_BUILD.md`](docs/KIRO_BUILD.md). The engine: [`notate`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/notate.ts#L165-L192), [`perform`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/perform.ts#L150-L226), and the round trip between them: [`roundtrip.prop.test.ts`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/test/roundtrip.prop.test.ts#L13). The MCP server: [`defineTool`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/mcp/src/tool.ts#L23-L51), [`resolveInWorkspace`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/mcp/src/paths.ts#L28-L46) |
 | Design | [See it work](#see-it-work) and [The costume does a job](#the-costume-does-a-job). The bones and the ghost, drawn each frame: [`Watch.tsx`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/Watch.tsx#L151-L177), with the danced limb lit like an ember. The ring of skeletons in canon: [`showEnsemble`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/stage/stage.ts#L226-L249). Candlelight and skeletons rising from the floor: [`animate`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/stage/stage.ts#L146-L158); a wisp on every press: [`wisp`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/effects.ts#L11-L33) |
 | Innovation / Idea | [How it works](#how-it-works). Video to score in the browser: [`readVideo`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/capture/poseReader.ts#L128-L155), checked against motion capture of the same take: [`armAgreement`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/compare.ts#L98-L116). Phrase search with mirror images: [`findPhrase`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/search.ts#L87-L102). Agents read and write dance through nine MCP tools |
-| Presentation | The GIFs in [See it work](#see-it-work), the [architecture](#how-it-works), the [claims table](#claims-and-the-tests-that-pin-them) and [`docs/RESULTS.md`](docs/RESULTS.md) |
+| Presentation | [The film](https://youtu.be/lQuROxbM7MY) (2:31). The GIFs in [See it work](#see-it-work), the [architecture](#how-it-works), the [claims table](#claims-and-the-tests-that-pin-them) and [`docs/RESULTS.md`](docs/RESULTS.md) |
 
 ## See it work
+
+![The Watch screen: a skeleton dances the Macarena from its Labanotation score, the recording dances behind it as a pale ghost, the staff scrolls under a candle on the right, and the line being danced reads "Count 3: left arm moves backward, low, over half a count."](docs/figures/watch.png)
 
 **Watch.** The engine writes the Macarena down from motion capture, symbol by symbol. The skeleton dances only what
 the score says, and the recording dances behind it as a pale ghost, so any difference shows. The staff scrolls under

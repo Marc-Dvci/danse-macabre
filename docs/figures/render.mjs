@@ -1,6 +1,6 @@
 // Build the README figures: the architecture diagram from architecture.html, and screenshots of the live app at 2x.
 //   node docs/figures/render.mjs [base-url] [--only-architecture]   (base URL defaults to the live site)
-// The GIFs beside them are cut from Playwright screen recordings of the same site.
+// The GIFs beside them are cut from Playwright screen recordings of the same site; film-thumbnail.png is a frame of the film.
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
