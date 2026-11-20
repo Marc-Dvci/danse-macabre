@@ -87,6 +87,9 @@ code and the tests, task by task. The web app is built around the engine's publi
 | Steering | [`product.md`](.kiro/steering/product.md), [`tech.md`](.kiro/steering/tech.md), [`rules.md`](.kiro/steering/rules.md), and [`notation.md`](.kiro/steering/notation.md), loaded only for engine and spec files, which carries the Labanotation subset |
 | Custom agents | [`notator`](.kiro/agents/notator.json) builds from the specs and cannot edit its own rules; [`repetiteur`](.kiro/agents/repetiteur.json) reviews and can write nothing |
 
+Every run is in [`docs/KIRO_BUILD.md`](docs/KIRO_BUILD.md): 13 runs, 56.83 credits, 104 files in this repository
+written or edited by Kiro, each counted from Kiro's own event stream.
+
 Kiro asked before it bent a rule. When the first round-trip property failed, it traced the failure to two
 requirements that contradicted each other and asked which one to change, instead of weakening the test. When real
 motion capture of the Macarena produced only four arm symbols, it measured why (dancers sway while they hold a
