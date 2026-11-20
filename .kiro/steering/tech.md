@@ -15,8 +15,9 @@ inclusion: always
   - `pnpm -r test` (all tests), `pnpm --filter @danse/core test` (core only)
   - `pnpm --filter @danse/core test:props` (property tests only)
   - `pnpm -r typecheck`
-- Units: positions in metres, y up, x to the dancer's right when facing +z, time in seconds for frames and in beats
-  for scores. Angles in degrees in the public API.
+- Units: positions in metres, right-handed axes with y up (the same as three.js and the CMU motion capture). A dancer
+  facing +z has their right side toward −x. Time in seconds for frames and in beats for scores. Angles in degrees in
+  the public API.
 - When a test fails, decide whether the code, the test or the requirement is wrong, and say which with the
   counterexample. Never weaken a test to make it pass.
 - Keep files small and named by what they do. Export a typed public API from `packages/core/src/index.ts`.

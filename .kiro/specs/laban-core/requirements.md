@@ -39,7 +39,9 @@ notated the same way.
 
 1. WHEN `bodyFrame(frame)` is called THE SYSTEM SHALL return orthonormal axes `{ up, right, forward }` where `up` is
    world +y, `right` is the horizontal component of the mean of (right-hip − left-hip) and
-   (right-shoulder − left-shoulder), normalised, and `forward = normalize(cross(right, up))`.
+   (right-shoulder − left-shoulder), normalised, and `forward = normalize(cross(up, right))` (right-handed axes:
+   a dancer facing +z has `right` = −x). Checked on real data: in frame 0 of `data/clips/macarena.json` the feet point
+   along this `forward`, which is close to (−0.48, 0, −0.88).
 2. IF the horizontal component of that mean is shorter than 1 cm THEN THE SYSTEM SHALL reuse the previous frame's
    axes, or world axes (+x right, +z forward) for the first frame.
 
@@ -69,15 +71,21 @@ edit it.
    time zero at the first frame.
 2. THE SYSTEM SHALL set `startPosition` from the cells of the first frame.
 3. THE SYSTEM SHALL ignore a cell change that lasts less than `options.minHold` seconds (default 0.12 s).
-4. WHEN a limb moves from one cell into another and settles THE SYSTEM SHALL write one symbol for the new cell that
-   starts when the limb started moving and ends when it settled, with "moving" meaning angular speed above
-   `options.stillSpeed` degrees per second (default 60).
+4. WHEN the quantised cell of a limb changes and the new cell holds for at least `minHold` THE SYSTEM SHALL write one
+   symbol for the new cell. The cell change is the trigger, so a slow move is notated as surely as a fast one. The
+   symbol's start is the frame of minimum smoothed angular speed between the end of the previous symbol in that
+   column (or the first frame) and the change; its end is the frame of minimum smoothed angular speed between the
+   change and the next cell change (or the last frame). Smoothed speed is a centred moving average over
+   `options.smoothing` seconds (default 0.2). When several frames share the minimum (a limb at rest), the start takes
+   the latest of them and the end the earliest: a frame counts as at the minimum when its speed is within
+   max(2 deg/s, 10%) of it.
 5. THE SYSTEM SHALL round each symbol's start and end to the nearest multiple of `grid` (in beats, at `tempo`), make
    its duration at least one `grid`, and start it no earlier than the end of the previous symbol in its column.
 6. WHILE a limb stays in one cell THE SYSTEM SHALL write no symbol for it.
 7. WHERE leg-gesture symbols are written THE SYSTEM SHALL write them only while that foot is off the floor; until the
    supports spec exists, a foot is off the floor when its ankle is more than `options.liftHeight` metres (default
-   0.10) above the lowest ankle height in the clip.
+   0.10) above the other ankle in the same frame. So at most one leg is a gesture at any time, as when a dancer
+   stands on one foot.
 
 ## Requirement 5: gesture playback
 
@@ -89,7 +97,8 @@ edit it.
 2. THE SYSTEM SHALL hold each limb at the start position before its first symbol, move it from its previous cell
    centre to the new symbol's cell centre over exactly the symbol's duration (spherical interpolation with ease in
    and out), and hold it there after.
-3. THE SYSTEM SHALL keep the pelvis fixed at (0, 0.95, 0) and the body facing +z in this spec.
+3. THE SYSTEM SHALL keep the pelvis fixed at (0, 0.95, 0) and the body facing +z (its right side toward −x) in this
+   spec.
 
 ## Requirement 6: mirror and tempo
 
@@ -111,8 +120,21 @@ at their speed.
 3. Mirror is an involution: `mirrorScore(mirrorScore(s))` equals `s` for any valid generated score.
 4. Mirror commutes with notation: `canonicalScore(notateGestures(mirrorFrames(f)))` equals
    `canonicalScore(mirrorScore(notateGestures(f)))` for frames produced by `performGestures` of a generated score.
-5. Round trip: for any valid generated gesture score whose symbols are at least two grid units long and separated by
-   at least one grid unit of stillness in each column, `canonicalScore(notateGestures(performGestures(s)))` has the
-   same symbols (column, start, duration, direction, level) as `canonicalScore(s)`.
+5. Round trip: for any valid generated gesture score at a tempo from 60 to 180 bpm, whose symbols are 2 to 8 grid
+   units long, separated by at least one grid unit of stillness in each column, each moving into a cell different
+   from the limb's previous cell, and with leg symbols in at most one leg column while the other leg stays at
+   `place low`, `canonicalScore(notateGestures(performGestures(s)))` has the same symbols (column, start, duration,
+   direction, level) as `canonicalScore(s)`.
 6. Tempo: `performGestures(retime(s, 2))` has the same poses as `performGestures(s)` at half the times.
 7. Validation: every score produced by `notateGestures` passes `validateScore`.
+
+## Requirement 8: real motion capture
+
+**User story:** As a judge, I want the engine checked on a real dance, not only on its own playback.
+
+1. An example test SHALL load `data/clips/macarena.json` (CMU subject 143, trial 35; format: `{ fps, joints,
+   frames: number[frame][joint][xyz] }`) and check the body frame of frame 0 against Requirement 2.1.
+2. A test SHALL notate the Macarena at 100 bpm and report, in the test output, the first eight arm symbols (column,
+   start, direction, level). The Macarena opens with the right arm and then the left arm stretched forward at
+   shoulder height, so the first two arm symbols are expected to be `right-arm forward middle` then
+   `left-arm forward middle`. If they are not, report what was found and why; do not tune constants to force it.
