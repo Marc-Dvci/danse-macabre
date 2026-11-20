@@ -10,6 +10,7 @@ import { bell, hush, say, speechAvailable } from "./audio";
 import {
   countLabel,
   describeScore,
+  fidelityOf,
   mirror,
   mirrorClip,
   notateClip,
@@ -101,6 +102,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
   const selectedSymbol = found && isDirectionSymbol(found) ? found : null;
 
   const performed = useMemo(() => (score ? performScore(score) : []), [score]);
+  const fidelity = useMemo(() => (score && !scoreOnly && !mirrored ? fidelityOf(recording, score) : null), [recording, score, scoreOnly, mirrored]);
   const lesson: LessonLine[] = useMemo(() => (score ? describeScore(score) : []), [score]);
   const layout = useMemo(() => (score ? layoutStaff(score) : null), [score]);
   // A score-only dance with music plays its phrase over and over for as long as the music lasts.
@@ -310,6 +312,12 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             </div>
             <p style={{ margin: "8px 0 0" }}>
               Bones: the score, danced. Pale ghost: the recording.
+              {fidelity !== null && (
+                <>
+                  <br />
+                  Limbs {fidelity.toFixed(0)}° apart on average
+                </>
+              )}
             </p>
           </div>
         </div>

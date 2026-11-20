@@ -5,7 +5,7 @@
 // docs/measure/tests.json (written by scripts/count-tests.mjs).
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, findPhrase, mirrorScore, notate, parseLesson, perform, validateScore, type Frame, type JointName, type Score } from "../packages/core/src/index";
+import { describe, findPhrase, mirrorScore, notate, parseLesson, replayFidelity, validateScore, type Frame, type JointName, type Score } from "../packages/core/src/index";
 
 const root = join(import.meta.dirname, "..");
 const read = <T>(p: string): T => JSON.parse(readFileSync(join(root, p), "utf8")) as T;
@@ -59,13 +59,16 @@ for (const { id } of index.clips) {
   );
 }
 
-// Every dance played back from its own score and written down again.
-let roundTrips = 0;
-for (const [id, score] of Object.entries(scores)) {
-  const again = notate(perform(score, { fps: 30 }), { tempo: score.tempo, beatsPerBar: score.beatsPerBar, grid: score.grid, title: id });
-  const key = (s: Score) => JSON.stringify(s.symbols.map((x) => ({ ...x, id: undefined })).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))));
-  if (key(again) === key(score)) roundTrips++;
+// Replay fidelity: the skeleton dancing each score against the recording, limb directions in degrees.
+const fidelityRows: string[] = [];
+let fidelitySum = 0;
+for (const { id } of index.clips) {
+  const clip = read<ClipFile>(`data/clips/${id}.json`);
+  const f = replayFidelity(framesOf(clip), scores[id]!, {});
+  fidelitySum += f.meanDegrees;
+  fidelityRows.push(`| ${clip.title} | ${f.meanDegrees.toFixed(1)} | ${f.medianDegrees.toFixed(1)} | ${f.p90Degrees.toFixed(1)} | ${f.frames} |`);
 }
+const fidelityAverage = fidelitySum / index.clips.length;
 
 // Mirror search: each dance's mirror image is found at beat 0 in the mirrored dance.
 let mirrorFound = 0;
@@ -105,7 +108,15 @@ const md = [
   "",
   `Total: ${totalSymbols} symbols from ${totalSeconds.toFixed(1)} seconds of dance.`,
   "",
-  `Played back from its own score and written down again, ${roundTrips} of ${Object.keys(scores).length} dances give the same score.`,
+  "## The skeleton against the recording",
+  "",
+  "Each score is danced by the skeleton and compared with the recording it was written from, frame by frame: the angle between each limb's direction in the two, in each body's own frame (legs only while the recorded foot is off the floor). Labanotation directions are 45 degrees apart, so a limb half-way between two directions is already 22.5 degrees from either.",
+  "",
+  "| Dance | Mean (degrees) | Median | 90th percentile | Frames |",
+  "|---|---|---|---|---|",
+  ...fidelityRows,
+  "",
+  `Average of the nine means: ${fidelityAverage.toFixed(1)} degrees. Method and settings: \`docs/measure/fidelity.md\`.`,
   "",
   `Mirror search: in ${mirrorFound} of ${Object.keys(scores).length} dances, the first two bars are found, mirrored, at their own beat in the mirrored dance.`,
   "",

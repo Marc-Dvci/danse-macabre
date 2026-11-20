@@ -8,6 +8,7 @@ import {
   mirrorScore,
   notate,
   perform,
+  replayFidelity,
   type DirectionSymbol,
   type Frame,
   type Score,
@@ -39,6 +40,16 @@ export function mirror(score: Score): Score {
 
 export function mirrorClip(frames: Frame[]): Frame[] {
   return mirrorFrames(frames);
+}
+
+/** Mean angle in degrees between the recording's limbs and the skeleton dancing its score. */
+export function fidelityOf(recording: Frame[], score: Score): number | null {
+  if (recording.length < 2) return null;
+  try {
+    return replayFidelity(recording, score, {}).meanDegrees;
+  } catch {
+    return null;
+  }
 }
 
 /** Beats to seconds at the score's tempo. */

@@ -19,6 +19,15 @@ rmSync(json, { force: true });
 const files = core.testResults ?? [];
 const props = files.filter((f) => /\.prop\.test\.ts$/.test(f.name)).reduce((n, f) => n + (f.assertionResults?.length ?? 0), 0);
 
+const mcpJson = join(tmpdir(), `danse-mcp-${Date.now()}.json`);
+try {
+  run(`pnpm --filter @danse/mcp exec vitest run --reporter=json --outputFile="${mcpJson}"`);
+} catch {
+  /* failures are counted below */
+}
+const mcp = JSON.parse(readFileSync(mcpJson, "utf8"));
+rmSync(mcpJson, { force: true });
+
 const e2eJson = join(tmpdir(), `danse-e2e-${Date.now()}.json`);
 let e2e = { passed: 0, failed: 0 };
 try {
@@ -39,6 +48,8 @@ const out = {
   "Core tests failed": core.numFailedTests,
   "Core test files": files.length,
   "Core property tests (fast-check)": props,
+  "MCP server tests passed": mcp.numPassedTests,
+  "MCP server tests failed": mcp.numFailedTests,
   "Browser tests passed (Playwright, with axe)": e2e.passed,
   "Browser tests failed": e2e.failed,
 };

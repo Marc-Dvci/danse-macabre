@@ -56,6 +56,22 @@ language model decides anything in the app.
 
 ## The costume does a job
 
+Danse Macabre is entered in the Costume Contest. Every spooky element in the interface carries part of the work.
+
+| Element | The job it does |
+|---|---|
+| The skeleton | Bones show each limb's direction with nothing in the way, so a reader can check a symbol against the body. It dances only what the score says |
+| The pale ghost behind it | The recording, centred on the same spot. Where ghost and bones part, the score has left something out |
+| The engraved floor ring | Laban's eight directions, turning with the dancer, because in Labanotation "forward" is wherever the dancer faces |
+| The candle on the staff | The playhead: the score scrolls under it, and the symbol being danced turns red |
+| The bell | Strikes every count, with a deeper tone on the first count of a bar, so the count can be followed without looking |
+| The view from behind | Puts the learner's left where the dancer's left is |
+| Holbein's woodcuts | The *Dance of Death* (1520s), inverted to bone on ink, line the walls of the stage and open the app |
+| The finale | Six skeletons in canon around a soloist, waltzing to Saint-Saëns's *Danse macabre* (1874) from a score Kiro choreographed through the MCP server |
+
+The look holds to one rule: plain words first. Every control says what it does ("Read aloud", "Mirror", "Wait for
+each line"), and the interface passes axe-core with no violations on every page.
+
 ## How Kiro is used
 
 Kiro built the notation engine (`packages/core`) and its tests from specs, through the Kiro CLI driven headless. I
