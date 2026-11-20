@@ -68,9 +68,10 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
       const times = frames.map((f) => f.t);
       const held = heldCells(hysteresisCells(vectors, axes, 4), times, 0.12, times[times.length - 1]! + 1 / 30);
       const raw = angularSpeeds(vectors, times);
-      const rests = [
-        ...new Set([...restFrames(smooth(raw, times, 0.2), 3), ...holdFrames(vectors, times, 0.35, 8)]),
-      ].sort((a, b) => a - b);
+      const speedRests = restFrames(smooth(raw, times, 0.2), 3);
+      const rests = [...new Set([...speedRests, ...holdFrames(vectors, times, raw, speedRests, 0.35, 8)])].sort(
+        (a, b) => a - b,
+      );
       console.log(`macarena ${col}-arm rests incl. holds (s): ${rests.slice(0, 14).map((r) => (r / 30).toFixed(2)).join(' ')}`);
       for (let i = 0; i + 1 < rests.length && i < 6; i++) {
         const e = moveEdges(raw, rests[i]!, rests[i + 1]!);

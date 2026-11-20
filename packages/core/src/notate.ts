@@ -77,11 +77,9 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
     // Requirement 4.4: rests from the smoothed speed and from holds, moves between consecutive rests, edges from the
     // raw speed.
     const raw = angularSpeeds(vectors, times);
+    const speedRests = restFrames(smooth(raw, times, smoothing), restSpeed);
     const rests = [
-      ...new Set([
-        ...restFrames(smooth(raw, times, smoothing), restSpeed),
-        ...holdFrames(vectors, times, dwellTime, dwellAngle),
-      ]),
+      ...new Set([...speedRests, ...holdFrames(vectors, times, raw, speedRests, dwellTime, dwellAngle)]),
     ].sort((a, b) => a - b);
     const moves: Move[] = [];
     for (let i = 0; i + 1 < rests.length; i++) {

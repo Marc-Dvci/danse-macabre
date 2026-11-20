@@ -91,26 +91,45 @@ export function restFrames(smoothed: number[], restSpeed: number): number[] {
 /**
  * Returns the frames that belong to holds of one limb (Requirement 4.4, rule b). A hold is a run of frames that starts at
  * frame `i`, lasts at least `dwellTime` seconds, and keeps the limb vector within `dwellAngle` degrees of its vector at
- * frame `i`. Holds are found greedily from the first frame: each hold runs to its last frame that still satisfies the
- * angle rule, and the search resumes after it. Every frame of a hold is returned, because a hold is a rest from its
- * first frame to its last frame.
+ * frame `i`. The first frame `i` must also have a raw speed below MOVE_EDGE_FRACTION of the peak raw speed of the move
+ * before it, where that move runs from the last rest before `i` (a speed rest, or the end of an earlier hold) to `i`.
+ * This keeps the slow tail of an arrival in the move. Frame 0 is exempt, because no move precedes it.
+ * Holds are found greedily from the first frame: each hold runs to its last frame that still satisfies the angle rule,
+ * and the search resumes after it. Every frame of a hold is returned, because a hold is a rest from its first frame to
+ * its last frame.
  * @param vectors Limb vectors, one per frame. A zero vector has angle 0 to any vector (see `angleDeg`).
  * @param times Frame times in seconds, increasing.
+ * @param raw Raw angular speed per frame, deg/s (see `angularSpeeds`).
+ * @param speedRests Sorted rest frames from the smoothed speed (see `restFrames`). Frames 0 and n−1 are included.
  * @param dwellTime Shortest hold in seconds.
  * @param dwellAngle Largest allowed angle in degrees from the vector at the hold's first frame.
  * @returns Sorted frame indices.
  */
-export function holdFrames(vectors: Vec3[], times: number[], dwellTime: number, dwellAngle: number): number[] {
+export function holdFrames(
+  vectors: Vec3[],
+  times: number[],
+  raw: number[],
+  speedRests: number[],
+  dwellTime: number,
+  dwellAngle: number,
+): number[] {
   const n = vectors.length;
+  const isSpeedRest = new Uint8Array(n);
+  for (const r of speedRests) isSpeedRest[r] = 1;
   const out: number[] = [];
+  // Peak raw speed over the frames between the last rest and the frame before `i`.
+  let peak = 0;
   let i = 0;
   while (i < n) {
+    const startsHold = i === 0 || raw[i]! < MOVE_EDGE_FRACTION * peak;
     let j = i;
-    while (j + 1 < n && angleDeg(vectors[i]!, vectors[j + 1]!) <= dwellAngle) j++;
-    if (j > i && times[j]! - times[i]! >= dwellTime) {
+    if (startsHold) while (j + 1 < n && angleDeg(vectors[i]!, vectors[j + 1]!) <= dwellAngle) j++;
+    if (startsHold && j > i && times[j]! - times[i]! >= dwellTime) {
       for (let k = i; k <= j; k++) out.push(k);
+      peak = 0;
       i = j + 1;
     } else {
+      peak = isSpeedRest[i] ? 0 : Math.max(peak, raw[i]!);
       i++;
     }
   }

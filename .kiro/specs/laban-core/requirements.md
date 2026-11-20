@@ -78,9 +78,10 @@ edit it.
    `options.restSpeed` (default 3 deg/s); or
    (b) a hold: an interval of at least `options.dwellTime` seconds (default 0.35) during which the limb's direction
    stays within `options.dwellAngle` degrees (default 8) of its direction at the start of the interval, and whose
-   first frame has a raw angular speed below 5% of the peak speed of the move before it (so the slow tail of an
-   arrival belongs to the move, not to the hold). A hold is a rest from its first frame (the arrival) to its last
-   frame (the departure). Real dancers sway while they hold a
+   first frame has a raw angular speed below 5% of the peak speed of the move before it, and whose last frame has a
+   raw angular speed below 5% of the peak speed of the move after it (so the slow tail of an arrival and the slow
+   start of a departure belong to the moves, not to the hold). A hold is a rest from its first frame (the arrival)
+   to its last frame (the departure). Real dancers sway while they hold a
    position, so their speed rarely reaches a deep minimum; holds catch those positions.
    The first and last frames are rests. WHEN the cell the limb holds at the end of a move differs from the cell it
    held at the start of that move, and the new cell then holds for at least `minHold`, THE SYSTEM SHALL write one
