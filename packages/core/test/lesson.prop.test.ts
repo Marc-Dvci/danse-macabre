@@ -1,4 +1,4 @@
-// Property tests for the spoken lesson: Requirement 4.1 (round trip) and 4.2 (no invented words).
+// Property tests for the spoken lesson: Requirement 4.1 (round trip) and 4.2 (every word comes from a symbol).
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { describe as describeLesson, parseLesson, type ColumnId, type LessonLine, type Score } from '../src/index';
@@ -76,7 +76,7 @@ function allowedFor(score: Score, id: string): { tokens: Set<string>; numbers: S
   return { tokens, numbers };
 }
 
-describe('Requirement 4.2: no invented words', () => {
+describe('Requirement 4.2: every word comes from a symbol', () => {
   it('every direction, side, body part, level and count in a line belongs to the symbols in its symbolIds', () => {
     fc.assert(
       fc.property(genScore, (score) => {
@@ -106,9 +106,9 @@ function checkLine(score: Score, line: LessonLine): void {
   // Start and metre lines: the start text names only the start cells, and the metre line names only score fields.
   for (const m of line.text.matchAll(TOKEN_RE)) {
     const word = m[1]!.replace(/^arms$/, 'arm').replace(/^legs$/, 'leg');
-    if (!tokens.has(word)) throw new Error(`invented word "${word}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
+    if (!tokens.has(word)) throw new Error(`word without a symbol "${word}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
   for (const m of line.text.matchAll(NUMBER_RE)) {
-    if (!numbers.has(m[0])) throw new Error(`invented number "${m[0]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
+    if (!numbers.has(m[0])) throw new Error(`number without a symbol "${m[0]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
 }

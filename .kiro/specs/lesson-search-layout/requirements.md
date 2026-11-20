@@ -64,7 +64,7 @@ dance without seeing it.
 ## Requirement 4: correctness properties (fast-check, at least 200 runs each)
 
 1. Lesson round trip: `parseLesson(describe(s))` equals the symbols of `s` for any valid generated score.
-2. No invented words: every direction, side, body part and count named in `describe(s)` belongs to a symbol listed in
+2. Every word comes from a symbol: every direction, side, body part and count named in `describe(s)` belongs to a symbol listed in
    that line's `symbolIds`.
 3. Search finds what it is given: a phrase cut from any generated score is found at its own start beat.
 4. Mirror search: the mirror of a phrase cut from a score is found with `mirror: true` and flagged `mirrored`.
