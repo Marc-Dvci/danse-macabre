@@ -12,7 +12,9 @@ Extends `@danse/core` with the support columns: steps (weight transfers), suppor
 - **Support symbol**: a direction symbol in `left-support` or `right-support`.
 - **Turn symbol**: `{ id, kind: "turn", column, start, duration, rotation: "cw" | "ccw", amount: 0.25 | 0.5 | 0.75 | 1 }`
   in a support column. Clockwise is seen from above.
-- **Standing height**: the median pelvis height over the frames where both feet are in contact.
+- **Standing height**: the pelvis height of this body standing straight, from its own proportions: the lowest ankle
+  of the clip, plus the thigh and shin lengths (5th percentile over the clip), plus the median height of the pelvis
+  above the hip joints. It does not move when a dance spends its time on the toes or in plié (decision D31).
 
 ## Requirement 1: steps
 
@@ -25,12 +27,17 @@ weight goes.
    starting when the foot left contact and ending when it regained contact (rounded to the grid as in laban-core
    Requirement 4.5).
 3. THE SYSTEM SHALL set the step direction from the horizontal displacement of the pelvis between the start and the
-   end of the symbol, in the body frame at the start of the symbol, quantised to the 8 horizontal sectors of
+   end of the symbol, in the body frame at the symbol's notated start (interpolated between frames, decision D32),
+   quantised to the 8 horizontal sectors of
    laban-core Requirement 3.3; `place` when the displacement is shorter than `stepPlace` (default 0.12 m).
 4. THE SYSTEM SHALL set the support level from the pelvis height at the end of the symbol: `low` below 0.93 × standing
    height, `high` above 1.03 × standing height, `middle` otherwise.
-5. `notate(frames, options)` SHALL return one valid score combining gestures and supports, and SHALL write leg
-   gestures only for a leg whose foot is not in contact.
+5. `notate(frames, options)` SHALL return one valid score combining gestures and supports, and SHALL keep a leg
+   gesture only when its foot is not in contact at the last frame of the symbol, where the leg arrives (a kick starts
+   from the floor). A leg's start cell is written only when that foot is off the floor at the first frame.
+
+6. WHILE no later symbol of the same leg or step of the same foot has started, playback SHALL hold a leg gesture
+   (a blank means no change); a leg start cell other than `place low` is held from the start in the same way.
 
 ## Requirement 2: turns
 

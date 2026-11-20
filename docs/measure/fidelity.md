@@ -85,3 +85,28 @@ Label: after
 - The cause of the zero leg symbol count was not measured. The attempt to measure ankle heights was stopped by a
   command block (see the session report).
 - No constant was changed for either table (fidelity Requirement 3.2).
+
+## After the owner's revision of the rest and leg rules
+
+Changes (laban-core Requirement 4.4 and supports-and-turns Requirement 1.5 and 1.6): rests at any dip at least 10%
+below both neighbouring speed peaks (`restDepth` 0.9) over 0.1 s smoothing; leg gestures judged where the leg arrives;
+a leg gesture held until that leg's next symbol or that foot's next step. The settings were compared on these nine
+dances: mean of the per-dance mean error, 40.1 degrees with the earlier defaults (0.2 s, depth 0.25), 32.0 at depth
+0.5, 27.7 at 0.75, 24.1 at 0.9 and 23.9 at 1.0, all with 0.1 s smoothing except the first.
+
+```
+pnpm --filter @danse/core exec tsx scripts/fidelity-report.ts --label "after holds, rest depth 0.9, smoothing 0.1 s"
+```
+
+Label: after holds, rest depth 0.9, smoothing 0.1 s
+| Clip | symbols left-support | symbols right-support | symbols left-leg | symbols right-leg | symbols left-arm | symbols right-arm | mean deg | median deg | p90 deg | left-arm deg | right-arm deg | left-leg deg | right-leg deg | frames compared |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| chicken-dance-duet-a | 0 | 0 | 0 | 0 | 15 | 10 | 25.00 | 17.95 | 56.32 | 29.13 | 20.87 | n/a | n/a | 322 |
+| chicken-dance | 2 | 0 | 0 | 0 | 6 | 8 | 19.03 | 15.90 | 33.96 | 21.02 | 17.04 | n/a | n/a | 196 |
+| macarena | 3 | 4 | 0 | 0 | 10 | 12 | 20.92 | 17.32 | 43.56 | 20.10 | 21.74 | n/a | n/a | 320 |
+| modern-arms-high | 1 | 0 | 1 | 3 | 3 | 2 | 20.79 | 18.47 | 30.31 | 18.46 | 18.20 | 29.40 | 18.49 | 339 |
+| modern-pirouette | 11 | 4 | 1 | 0 | 5 | 5 | 28.62 | 23.86 | 48.95 | 26.76 | 27.74 | 32.38 | 21.94 | 281 |
+| russian-dance | 0 | 0 | 2 | 1 | 10 | 9 | 21.30 | 15.63 | 41.46 | 20.80 | 19.18 | 36.25 | 27.04 | 352 |
+| salsa | 34 | 31 | 1 | 3 | 30 | 37 | 21.56 | 16.93 | 37.85 | 20.57 | 20.49 | 29.85 | 30.31 | 1121 |
+| side-arabesque | 0 | 0 | 0 | 0 | 2 | 2 | 16.98 | 10.53 | 39.01 | 21.79 | 12.16 | n/a | n/a | 172 |
+| twist | 17 | 12 | 0 | 0 | 3 | 7 | 37.44 | 32.35 | 72.25 | 34.15 | 41.60 | n/a | 19.69 | 142 |

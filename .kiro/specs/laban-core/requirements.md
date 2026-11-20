@@ -73,9 +73,11 @@ edit it.
 2. THE SYSTEM SHALL set `startPosition` from the cells of the first frame.
 3. THE SYSTEM SHALL ignore a cell change that lasts less than `options.minHold` seconds (default 0.12 s).
 4. THE SYSTEM SHALL split each limb's motion into moves at its rests. A rest is either
-   (a) a deep minimum: a local minimum of the smoothed angular speed (centred moving average over
-   `options.smoothing` seconds, default 0.2) below a quarter of the lower of its two neighbouring peaks or below
-   `options.restSpeed` (default 3 deg/s); or
+   (a) a dip: a local minimum of the smoothed angular speed (centred moving average over `options.smoothing` seconds,
+   default 0.1) below `options.restDepth` (default 0.9) times the lower of its two neighbouring peaks, or below
+   `options.restSpeed` (default 3 deg/s). The defaults were chosen by the replay fidelity of the nine CMU dances
+   (`docs/measure/fidelity.md`): with 0.2 s and a quarter, continuous dancing such as the Russian dance kicks had
+   almost no rests and was barely written; or
    (b) a hold: an interval of at least `options.dwellTime` seconds (default 0.35) during which the limb's direction
    stays within `options.dwellAngle` degrees (default 8) of its direction at the start of the interval, and whose
    first frame has a raw angular speed below 5% of the peak speed of the move before it, and whose last frame has a
