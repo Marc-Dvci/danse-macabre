@@ -1,0 +1,12 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "verify-on-stop",
+      "description": "When the agent stops, typecheck every package and run every test, so each session ends with a measured result.",
+      "trigger": "Stop",
+      "action": { "type": "command", "command": "node scripts/hooks/verify.mjs" },
+      "timeout": 300
+    }
+  ]
+}

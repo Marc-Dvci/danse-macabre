@@ -1,0 +1,21 @@
+{
+  "name": "@danse/core",
+  "version": "0.1.0",
+  "description": "Labanotation engine: frames to score, score to frames, mirror, tempo.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:props": "vitest run .prop. --reporter=dot",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "fast-check": "^4.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10"
+  }
+}

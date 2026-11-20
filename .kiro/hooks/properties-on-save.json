@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "properties-on-save",
+      "description": "Whenever the agent saves notation engine code, run the property-based tests of the 1928 rules. Failures go back to the agent with the shrunk counterexample.",
+      "trigger": "PostFileSave",
+      "matcher": "packages[/\\\\]core[/\\\\]src[/\\\\].*\\.ts$",
+      "action": { "type": "command", "command": "pnpm --silent --filter @danse/core test:props" },
+      "timeout": 180
+    }
+  ]
+}

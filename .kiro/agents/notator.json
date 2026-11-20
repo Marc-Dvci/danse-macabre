@@ -1,0 +1,42 @@
+{
+  "name": "notator",
+  "description": "Builds the Labanotation engine, the MCP server and the power from the specs, test first. Cannot edit its own rules, delete files, commit or push.",
+  "prompt": "file://prompts/notator.md",
+  "tools": ["read", "write", "shell"],
+  "includeMcpJson": false,
+  "permissions": {
+    "rules": [
+      { "capability": "fs_read", "match": ["**"], "exclude": ["**/.env", "**/.aws/**", "**/.ssh/**"], "effect": "allow" },
+      {
+        "capability": "fs_write",
+        "match": [
+          "packages/**",
+          "power/**",
+          "examples/**",
+          "docs/**",
+          "data/**",
+          "scripts/**",
+          ".kiro/specs/**",
+          "package.json",
+          "pnpm-workspace.yaml",
+          "pnpm-lock.yaml",
+          "tsconfig.base.json"
+        ],
+        "exclude": ["scripts/hooks/**", "**/node_modules/**"],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [".kiro/hooks/**", ".kiro/agents/**", ".kiro/steering/**", ".kiro/settings/**", "scripts/hooks/**", ".git/**", "web/**"],
+        "effect": "deny"
+      },
+      { "capability": "shell", "match": ["*"], "effect": "allow" },
+      {
+        "capability": "shell",
+        "match": ["git push*", "git commit*", "git reset*", "git checkout*", "rm -rf*", "del *"],
+        "effect": "deny"
+      }
+    ]
+  },
+  "excludedTools": ["delete_file", "createHook"]
+}

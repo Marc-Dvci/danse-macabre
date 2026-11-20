@@ -1,0 +1,19 @@
+{
+  "name": "repetiteur",
+  "description": "Independent reviewer. Reads the specs and the code, runs the tests and tries to break the engine. Writes nothing.",
+  "prompt": "file://prompts/repetiteur.md",
+  "tools": ["read", "shell"],
+  "includeMcpJson": false,
+  "permissions": {
+    "rules": [
+      { "capability": "fs_read", "match": ["**"], "exclude": ["**/.env", "**/.aws/**", "**/.ssh/**"], "effect": "allow" },
+      { "capability": "fs_write", "match": ["**"], "effect": "deny" },
+      {
+        "capability": "shell",
+        "match": ["pnpm *", "node *", "npx vitest*", "git status*", "git diff*", "git log*", "git show*"],
+        "effect": "allow"
+      }
+    ]
+  },
+  "excludedTools": ["delete_file", "createHook", "write"]
+}
