@@ -10,6 +10,7 @@ test("prologue: shown on a first visit, gone after Enter, and free of axe violat
   await page.goto("/");
   const dialog = page.getByRole("dialog", { name: "Danse Macabre" });
   await expect(dialog).toBeVisible();
+  await page.waitForTimeout(1600); // let the fade-in finish, so contrast is measured at full opacity
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.map((v) => v.id)).toEqual([]);
   await page.getByRole("button", { name: "Enter the dance" }).click();
@@ -45,8 +46,8 @@ test("watch: every dance in the list writes a score", async ({ page }) => {
 
 test("watch: editing a symbol changes the lesson line", async ({ page }) => {
   await page.goto("/#watch");
-  const glyph = page.locator("g[data-symbol-id]:not([data-symbol-id^='start:'])").first();
-  await glyph.click({ force: true });
+  const glyph = page.locator("g[data-symbol-id^='right-arm']").first();
+  await glyph.dispatchEvent("click");
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("group", { name: "Level" }).getByRole("button", { name: "low" }).click();
   await page.getByRole("tab", { name: "Lesson" }).click();
