@@ -19,6 +19,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Wording check
+        run: node scripts/check-words.mjs
       - name: Typecheck
         run: pnpm -r typecheck
       - name: Unit and property tests
