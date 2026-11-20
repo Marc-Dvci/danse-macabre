@@ -1,5 +1,5 @@
 import type { LessonLine } from './lesson';
-import { DIRECTION_WORDS, LEVEL_WORDS, SUPPORT_LEVEL_WORDS, TURN_AMOUNT_WORDS, TURN_ROTATION_WORDS } from './lesson-words';
+import { DIRECTION_WORDS, LEVEL_WORDS, parseDurationWords, SUPPORT_LEVEL_WORDS, TURN_AMOUNT_WORDS, TURN_ROTATION_WORDS } from './lesson-words';
 import type { ColumnId, Direction, Level, TurnSymbol } from './types';
 
 /**
@@ -17,7 +17,7 @@ export type LessonSymbol = {
 
 const METRE_RE = /^(\d+) counts per bar, \S+ counts per minute\.$/;
 const BEAT_RE = /^(?:Bar (\d+), )?[Cc]ount (\d+)( and)?: (.+)\.$/;
-const DURATION_RE = /, over (\d+(?:\.\d+)?) counts?$/;
+const DURATION_RE = /, over (half a count|a count and a half|\d+ and a half counts|\d+(?:\.\d+)? counts?)$/;
 const SUPPORT_RE = /^step (.+) on the (left|right) foot(?:, (knees bent|on the balls of your feet))?$/;
 const GESTURE_RE = /^(left|right) (arm|leg) (?:moves|lifts) (.+)$/;
 const TURN_RE = /^turn (a quarter|a half|three quarters|a full turn) (clockwise|counter-clockwise) on the (left|right) foot$/;
@@ -121,7 +121,9 @@ export function parseLesson(lines: readonly LessonLine[]): LessonSymbol[] {
       const dur = DURATION_RE.exec(segment);
       if (!dur) fail(`no duration in "${segment}"`);
       const phrase = segment.slice(0, dur.index);
-      out.push({ ...parsePhrase(phrase), start, duration: Number(dur[1]) });
+      const duration = parseDurationWords(dur[1]!);
+      if (duration === null) fail(`unreadable duration in "${segment}"`);
+      out.push({ ...parsePhrase(phrase), start, duration });
     }
   }
   return out;

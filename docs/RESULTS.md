@@ -12,7 +12,7 @@ Settings: 100 counts per minute, 4 counts per bar, half-count grid. Source: CMU 
 | Chicken Dance | 143/34 | 6.5 | 14 | 0 | 2 | 0 | 13 | yes | yes | 1 |
 | The Twist | 141/12 | 4.7 | 10 | 0 | 29 | 0 | 19 | yes | yes | 1 |
 | Russian dance | 90/30 | 12.0 | 19 | 3 | 0 | 0 | 21 | yes | yes | 2 |
-| Salsa | 60/01 | 37.4 | 67 | 4 | 65 | 0 | 89 | yes | yes | 6 |
+| Salsa | 60/01 | 37.4 | 67 | 4 | 65 | 0 | 89 | yes | yes | 7 |
 | Modern dance: arms held high | 05/12 | 11.3 | 5 | 4 | 1 | 0 | 10 | yes | yes | 1 |
 | Modern dance: expressive arms, pirouette | 05/02 | 9.4 | 10 | 1 | 15 | 0 | 16 | yes | yes | 2 |
 | Modern dance: side arabesque | 49/09 | 16.0 | 4 | 0 | 0 | 0 | 6 | yes | yes | 2 |

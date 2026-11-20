@@ -27,7 +27,7 @@ describeLesson('describe: beat lines', () => {
       'Bar 1, count 1: step forward on the left foot, knees bent, over 2 counts.',
       'Count 3: right arm moves forward, high, over 2 counts.',
       'Bar 2, count 1: right leg moves straight down, over 1 count.',
-      'Count 1 and: left arm moves straight up, over 0.5 counts.',
+      'Count 1 and: left arm moves straight up, over half a count.',
     ]);
   });
 

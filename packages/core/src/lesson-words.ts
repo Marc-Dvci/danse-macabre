@@ -91,9 +91,27 @@ export function turnPhrase(symbol: TurnSymbol): string {
   return `turn ${TURN_AMOUNT_WORDS[symbol.amount]} ${TURN_ROTATION_WORDS[symbol.rotation]} on the ${side} foot`;
 }
 
-/** Duration in words: `over 1 count`, `over 2 counts`, `over 0.5 counts`. */
+/**
+ * Duration in words, as a dancer says it: `over half a count`, `over 1 count`, `over a count and a half`,
+ * `over 2 counts`, `over 2 and a half counts`. Durations are whole or half counts.
+ */
 export function durationPhrase(beats: number): string {
-  return `over ${beats} ${beats === 1 ? 'count' : 'counts'}`;
+  if (beats === 0.5) return 'over half a count';
+  if (beats === 1) return 'over 1 count';
+  if (beats === 1.5) return 'over a count and a half';
+  const whole = Math.floor(beats);
+  if (beats - whole === 0.5) return `over ${whole} and a half counts`;
+  return `over ${beats} counts`;
+}
+
+/** Inverse of `durationPhrase` for its text after "over ". Returns null when the words are not a duration. */
+export function parseDurationWords(words: string): number | null {
+  if (words === 'half a count') return 0.5;
+  if (words === 'a count and a half') return 1.5;
+  let m = /^(\d+) and a half counts$/.exec(words);
+  if (m) return Number(m[1]) + 0.5;
+  m = /^(\d+(?:\.\d+)?) counts?$/.exec(words);
+  return m ? Number(m[1]) : null;
 }
 
 /**

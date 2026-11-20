@@ -1,0 +1,6 @@
+Start position not written.
+4 counts per bar, 96 counts per minute.
+Bar 1, count 1: left arm moves forward, high, over 2 counts; right arm moves forward, high, over 2 counts.
+Count 3: left arm moves to your left, high, over 2 counts; right arm moves to your right, high, over 2 counts.
+Bar 2, count 1: step forward on the right foot, over 1 count.
+Count 2: step forward on the left foot, over 1 count.

@@ -1,17 +1,17 @@
 CMU Graphics Lab Motion Capture Database, subject 05, trial 02
 Start with arms down by your sides, step in place on the left foot, step in place on the right foot, left leg lifts backward and to your right, low.
 4 counts per bar, 100 counts per minute.
-Bar 1, count 1 and: step in place on the left foot, over 0.5 counts.
-Count 2: step in place on the left foot, over 0.5 counts.
-Count 3: step in place on the left foot, over 0.5 counts.
-Bar 2, count 1 and: right arm moves forward, high, over 1.5 counts.
+Bar 1, count 1 and: step in place on the left foot, over half a count.
+Count 2: step in place on the left foot, over half a count.
+Count 3: step in place on the left foot, over half a count.
+Bar 2, count 1 and: right arm moves forward, high, over a count and a half.
 Count 3: left arm moves forward and to your right, low, over 2 counts; right arm moves backward and to your right, low, over 1 count.
-Count 4: step in place on the left foot, over 0.5 counts; right arm moves forward and to your left, low, over 1 count.
-Bar 3, count 1: step in place on the left foot, knees bent, over 0.5 counts; left arm moves to your left, middle, over 1 count; right arm moves to your right, low, over 1 count.
-Count 1 and: step in place on the left foot, on the balls of your feet, over 0.5 counts; step in place on the right foot, on the balls of your feet, over 0.5 counts.
-Count 2: step in place on the left foot, on the balls of your feet, over 0.5 counts; step in place on the right foot, over 0.5 counts; left arm moves backward and to your left, low, over 1.5 counts; right arm moves down by your side, over 1.5 counts.
-Count 2 and: step in place on the left foot, on the balls of your feet, over 0.5 counts; step in place on the right foot, over 0.5 counts.
-Count 3: step forward and to your left on the left foot, over 0.5 counts; step forward and to your left on the right foot, over 1 count.
-Count 3 and: step in place on the left foot, over 0.5 counts; left leg lifts backward, low, over 1.5 counts; left arm moves forward and to your left, middle, over 1.5 counts.
-Count 4: step forward on the left foot, over 4.5 counts.
-Bar 4, count 1 and: left arm moves down by your side, over 1.5 counts.
+Count 4: step in place on the left foot, over half a count; right arm moves forward and to your left, low, over 1 count.
+Bar 3, count 1: step in place on the left foot, knees bent, over half a count; left arm moves to your left, middle, over 1 count; right arm moves to your right, low, over 1 count.
+Count 1 and: step in place on the left foot, on the balls of your feet, over half a count; step in place on the right foot, on the balls of your feet, over half a count.
+Count 2: step in place on the left foot, on the balls of your feet, over half a count; step in place on the right foot, over half a count; left arm moves backward and to your left, low, over a count and a half; right arm moves down by your side, over a count and a half.
+Count 2 and: step in place on the left foot, on the balls of your feet, over half a count; step in place on the right foot, over half a count.
+Count 3: step forward and to your left on the left foot, over half a count; step forward and to your left on the right foot, over 1 count.
+Count 3 and: step in place on the left foot, over half a count; left leg lifts backward, low, over a count and a half; left arm moves forward and to your left, middle, over a count and a half.
+Count 4: step forward on the left foot, over 4 and a half counts.
+Bar 4, count 1 and: left arm moves down by your side, over a count and a half.

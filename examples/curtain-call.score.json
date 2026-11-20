@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "title": "Curtain Call",
+  "tempo": 96,
+  "beatsPerBar": 4,
+  "grid": 1,
+  "startPosition": {},
+  "symbols": [
+    {
+      "id": "m1-left-arm",
+      "column": "left-arm",
+      "start": 0,
+      "duration": 2,
+      "direction": "forward",
+      "level": "high"
+    },
+    {
+      "id": "m2-right-arm",
+      "column": "right-arm",
+      "start": 0,
+      "duration": 2,
+      "direction": "forward",
+      "level": "high"
+    },
+    {
+      "id": "m3-left-arm",
+      "column": "left-arm",
+      "start": 2,
+      "duration": 2,
+      "direction": "left",
+      "level": "high"
+    },
+    {
+      "id": "m4-right-arm",
+      "column": "right-arm",
+      "start": 2,
+      "duration": 2,
+      "direction": "right",
+      "level": "high"
+    },
+    {
+      "id": "m5-right-support",
+      "column": "right-support",
+      "start": 4,
+      "duration": 1,
+      "direction": "forward",
+      "level": "middle"
+    },
+    {
+      "id": "m6-left-support",
+      "column": "left-support",
+      "start": 5,
+      "duration": 1,
+      "direction": "forward",
+      "level": "middle"
+    }
+  ]
+}

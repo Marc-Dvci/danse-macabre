@@ -2,7 +2,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { describe as describeLesson, parseLesson, type ColumnId, type LessonLine, type Score } from '../src/index';
-import { DIRECTION_WORDS, LESSON_COLUMN_ORDER } from '../src/lesson-words';
+import { DIRECTION_WORDS, LESSON_COLUMN_ORDER, parseDurationWords } from '../src/lesson-words';
 import { runOptions } from './generators';
 import { genScore } from './lesson-generators';
 
@@ -53,6 +53,8 @@ const TOKEN_RE = /\b(left|right|arms?|legs?|foot|forward|backward|high|middle|lo
 // Turn words: the rotation and the amount. `counter-clockwise` is listed first so it is not read as `clockwise`.
 const TURN_TOKEN_RE = /\b(counter-clockwise|clockwise|a quarter|three quarters|a half|a full turn)\b/g;
 const NUMBER_RE = /\b\d+(?:\.\d+)?\b/g;
+// Durations as the lesson says them; they are checked as durations and removed before the word checks.
+const DURATION_PHRASE_RE = /, over (half a count|a count and a half|\d+ and a half counts|\d+(?:\.\d+)? counts?)/g;
 
 /** Turn words that a turn symbol with this rotation may contribute. */
 const TURN_WORDS_OF_ROTATION: Record<'cw' | 'ccw', string[]> = { cw: ['clockwise'], ccw: ['counter-clockwise'] };
@@ -132,15 +134,27 @@ function checkLine(score: Score, line: LessonLine): void {
     numbers.add(String(line.count));
     numbers.add(String(line.bar));
   }
+  // Each duration must be the duration of a symbol in this line. Removing durations first keeps "a count and a half"
+  // from being read as the turn amount "a half".
+  const durations = new Set<number>();
+  for (const id of line.symbolIds) {
+    const s = score.symbols.find((x) => x.id === id);
+    if (s) durations.add(s.duration);
+  }
+  const text = line.text.replace(DURATION_PHRASE_RE, (_all, words: string) => {
+    const d = parseDurationWords(words);
+    if (d === null || !durations.has(d)) throw new Error(`duration without a symbol "${words}" in "${line.text}"`);
+    return '';
+  });
   // Start and metre lines: the start text names only the start cells, and the metre line names only score fields.
-  for (const m of line.text.matchAll(TOKEN_RE)) {
+  for (const m of text.matchAll(TOKEN_RE)) {
     const word = m[1]!.replace(/^arms$/, 'arm').replace(/^legs$/, 'leg');
     if (!tokens.has(word)) throw new Error(`word without a symbol "${word}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
-  for (const m of line.text.matchAll(TURN_TOKEN_RE)) {
+  for (const m of text.matchAll(TURN_TOKEN_RE)) {
     if (!tokens.has(m[1]!)) throw new Error(`turn word without a symbol "${m[1]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
-  for (const m of line.text.matchAll(NUMBER_RE)) {
+  for (const m of text.matchAll(NUMBER_RE)) {
     if (!numbers.has(m[0])) throw new Error(`number without a symbol "${m[0]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
 }

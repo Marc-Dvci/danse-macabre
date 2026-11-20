@@ -2,22 +2,22 @@ CMU Graphics Lab Motion Capture Database, subject 20, trial 01
 Start standing on both feet, arms down by your sides.
 4 counts per bar, 100 counts per minute.
 Bar 1, count 1: right arm moves forward and to your right, middle, over 1 count.
-Count 3: left arm moves forward and to your left, middle, over 0.5 counts.
-Count 3 and: left arm moves forward and to your left, low, over 0.5 counts; right arm moves forward and to your right, low, over 0.5 counts.
-Bar 2, count 1 and: right arm moves forward and to your right, middle, over 0.5 counts.
-Count 2: left arm moves forward and to your left, low, over 0.5 counts.
-Count 2 and: right arm moves forward and to your right, low, over 0.5 counts.
-Count 3: left arm moves forward and to your left, low, over 0.5 counts.
-Count 3 and: left arm moves down by your side, over 0.5 counts; right arm moves forward and to your right, low, over 0.5 counts.
-Bar 3, count 1: left arm moves forward, low, over 0.5 counts.
-Count 1 and: left arm moves forward, low, over 0.5 counts; right arm moves forward and to your left, low, over 0.5 counts.
-Count 2: right arm moves forward and to your left, low, over 0.5 counts.
-Count 2 and: left arm moves forward, low, over 1 count; right arm moves forward and to your right, middle, over 1.5 counts.
+Count 3: left arm moves forward and to your left, middle, over half a count.
+Count 3 and: left arm moves forward and to your left, low, over half a count; right arm moves forward and to your right, low, over half a count.
+Bar 2, count 1 and: right arm moves forward and to your right, middle, over half a count.
+Count 2: left arm moves forward and to your left, low, over half a count.
+Count 2 and: right arm moves forward and to your right, low, over half a count.
+Count 3: left arm moves forward and to your left, low, over half a count.
+Count 3 and: left arm moves down by your side, over half a count; right arm moves forward and to your right, low, over half a count.
+Bar 3, count 1: left arm moves forward, low, over half a count.
+Count 1 and: left arm moves forward, low, over half a count; right arm moves forward and to your left, low, over half a count.
+Count 2: right arm moves forward and to your left, low, over half a count.
+Count 2 and: left arm moves forward, low, over 1 count; right arm moves forward and to your right, middle, over a count and a half.
 Count 4: right arm moves forward and to your right, low, over 1 count.
-Count 4 and: left arm moves forward and to your left, low, over 0.5 counts.
+Count 4 and: left arm moves forward and to your left, low, over half a count.
 Bar 4, count 1 and: left arm moves forward, low, over 1 count.
-Count 3: left arm moves forward and to your left, low, over 0.5 counts.
-Count 3 and: left arm moves down by your side, over 0.5 counts.
-Count 4: left arm moves forward and to your left, low, over 0.5 counts.
-Bar 5, count 2: left arm moves forward, low, over 0.5 counts; right arm moves forward and to your left, low, over 0.5 counts.
-Count 2 and: left arm moves forward and to your right, low, over 0.5 counts.
+Count 3: left arm moves forward and to your left, low, over half a count.
+Count 3 and: left arm moves down by your side, over half a count.
+Count 4: left arm moves forward and to your left, low, over half a count.
+Bar 5, count 2: left arm moves forward, low, over half a count; right arm moves forward and to your left, low, over half a count.
+Count 2 and: left arm moves forward and to your right, low, over half a count.
