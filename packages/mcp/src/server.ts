@@ -14,7 +14,7 @@ import { resolveInWorkspace } from './paths';
 import { ALL_TOOLS } from './tools/index';
 
 export const SERVER_NAME = 'danse-macabre';
-export const SERVER_VERSION = '0.1.0';
+export const SERVER_VERSION = '1.0.0';
 const CLIP_SCHEME = 'clip://';
 
 export type ServerOptions = {

@@ -1,6 +1,6 @@
 {
   "name": "@danse/mcp",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "MCP server (stdio) that exposes the Danse Macabre notation engine to AI agents.",
   "type": "module",
   "license": "Apache-2.0",

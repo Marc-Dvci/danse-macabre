@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "labanotation",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Write, check, perform and describe dance in Labanotation: compose a phrase move by move, validate it, play it on a 3D skeleton, and read it as a spoken lesson.",
   "author": {
     "name": "Marc Donovici"
