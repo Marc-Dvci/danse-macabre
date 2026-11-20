@@ -1,0 +1,74 @@
+/** A point or direction in metres (x to the dancer's right when facing +z, y up, z forward). */
+export type Vec3 = { x: number; y: number; z: number };
+
+export type JointName =
+  | 'pelvis'
+  | 'left-hip'
+  | 'right-hip'
+  | 'left-knee'
+  | 'right-knee'
+  | 'left-ankle'
+  | 'right-ankle'
+  | 'left-shoulder'
+  | 'right-shoulder'
+  | 'left-elbow'
+  | 'right-elbow'
+  | 'left-wrist'
+  | 'right-wrist'
+  | 'neck'
+  | 'head';
+
+/** One pose. `t` is in seconds. Joint positions are in metres. */
+export type Frame = { t: number; joints: Record<JointName, Vec3> };
+
+export type ColumnId =
+  | 'left-support'
+  | 'right-support'
+  | 'left-leg'
+  | 'right-leg'
+  | 'left-arm'
+  | 'right-arm';
+
+export type Direction =
+  | 'place'
+  | 'forward'
+  | 'backward'
+  | 'left'
+  | 'right'
+  | 'left-forward'
+  | 'right-forward'
+  | 'left-backward'
+  | 'right-backward';
+
+export type Level = 'high' | 'middle' | 'low';
+
+/** A direction and a level. Gesture cells are the 24 sector cells plus `place high` and `place low`. */
+export type Cell = { direction: Direction; level: Level };
+
+/** One written symbol. `start` and `duration` are in beats. */
+export type Symbol = {
+  id: string;
+  column: ColumnId;
+  start: number;
+  duration: number;
+  direction: Direction;
+  level: Level;
+};
+
+export type Score = {
+  version: 1;
+  title: string;
+  /** Beats per minute. */
+  tempo: number;
+  beatsPerBar: number;
+  /** Grid unit in beats. */
+  grid: number;
+  startPosition: Partial<Record<ColumnId, Cell>>;
+  symbols: Symbol[];
+  source?: string;
+};
+
+/** Orthonormal axes of the dancer's body. `right` and `forward` are horizontal. */
+export type BodyAxes = { up: Vec3; right: Vec3; forward: Vec3 };
+
+export type ValidationResult = { ok: true } | { ok: false; errors: string[] };

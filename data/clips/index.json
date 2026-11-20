@@ -1,0 +1,77 @@
+{
+ "source": "CMU Graphics Lab Motion Capture Database, mocap.cs.cmu.edu (free for all uses, no resale; created with funding from NSF EIA-0196217)",
+ "clips": [
+  {
+   "id": "macarena",
+   "title": "Macarena",
+   "seconds": 10.7,
+   "subject": "143",
+   "trial": "35",
+   "description": "Macarena Dance"
+  },
+  {
+   "id": "chicken-dance",
+   "title": "Chicken Dance",
+   "seconds": 6.5,
+   "subject": "143",
+   "trial": "34",
+   "description": "Chicken Dance"
+  },
+  {
+   "id": "twist",
+   "title": "The Twist",
+   "seconds": 4.7,
+   "subject": "141",
+   "trial": "12",
+   "description": "Dance, Twist"
+  },
+  {
+   "id": "russian-dance",
+   "title": "Russian dance",
+   "seconds": 12.0,
+   "subject": "90",
+   "trial": "30",
+   "description": "russian dance"
+  },
+  {
+   "id": "salsa",
+   "title": "Salsa",
+   "seconds": 37.4,
+   "subject": "60",
+   "trial": "01",
+   "description": "salsa dance"
+  },
+  {
+   "id": "modern-arms-high",
+   "title": "Modern dance: arms held high",
+   "seconds": 11.3,
+   "subject": "05",
+   "trial": "12",
+   "description": "dance - arms held high, pointe tendue a terre, upper body rotation"
+  },
+  {
+   "id": "modern-pirouette",
+   "title": "Modern dance: expressive arms, pirouette",
+   "seconds": 9.4,
+   "subject": "05",
+   "trial": "02",
+   "description": "dance - expressive arms, pirouette"
+  },
+  {
+   "id": "side-arabesque",
+   "title": "Modern dance: side arabesque",
+   "seconds": 16.0,
+   "subject": "49",
+   "trial": "09",
+   "description": "dance - arms held high, side arabesque"
+  },
+  {
+   "id": "chicken-dance-duet-a",
+   "title": "Chicken dance (duet, dancer A)",
+   "seconds": 10.7,
+   "subject": "20",
+   "trial": "01",
+   "description": "chicken dance (2 subjects - subject A)"
+  }
+ ]
+}
