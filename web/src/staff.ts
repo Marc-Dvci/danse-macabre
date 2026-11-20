@@ -12,7 +12,8 @@ export interface Glyph {
   w: number;
   h: number;
   polygon: Array<[number, number]>;
-  level: "high" | "middle" | "low";
+  /** Null for a turn glyph, which has no level. */
+  level: "high" | "middle" | "low" | null;
   amount?: string;
   label: string;
 }

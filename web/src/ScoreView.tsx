@@ -98,7 +98,7 @@ export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height
               <title>{g.label}</title>
               <polygon
                 points={pts}
-                fill={g.level === "low" ? color : g.level === "high" ? "url(#hatch)" : "none"}
+                fill={g.kind === "turn" ? "none" : g.level === "low" ? color : g.level === "high" ? "url(#hatch)" : "none"}
                 stroke={color}
                 strokeWidth={0.8}
                 strokeLinejoin="round"

@@ -19,8 +19,8 @@ const STANDING_COLUMNS: readonly ColumnId[] = ['left-support', 'right-support', 
 const ARM_COLUMNS: readonly ColumnId[] = ['left-arm', 'right-arm'];
 
 /**
- * Start line (requirement 1.5). Both supports at `place middle` and both legs at `place low` read as standing on both
- * feet. Both arms at `place low` read as arms down by the sides. Other start cells are named as symbols are.
+ * Start line (requirement 1.5). Both supports at `place middle`, with each leg at `place low` or not written, read as
+ * standing on both feet. Both arms at `place low` read as arms down by the sides. Other start cells are named as symbols are.
  */
 function startLine(score: Score): LessonLine {
   const sp = score.startPosition;
@@ -28,18 +28,20 @@ function startLine(score: Score): LessonLine {
     const cell = sp[column];
     return cell !== undefined && cell.direction === direction && cell.level === level;
   };
+  // Standing: both supports in place at the middle level; a leg either hangs straight down or is not written.
+  const legDownOrUnwritten = (column: ColumnId): boolean => sp[column] === undefined || is(column, 'place', 'low');
   const standing =
     is('left-support', 'place', 'middle') &&
     is('right-support', 'place', 'middle') &&
-    is('left-leg', 'place', 'low') &&
-    is('right-leg', 'place', 'low');
+    legDownOrUnwritten('left-leg') &&
+    legDownOrUnwritten('right-leg');
   const armsDown = ARM_COLUMNS.every((c) => is(c, 'place', 'low'));
 
   const items: string[] = [];
   const ids: string[] = [];
   if (standing) {
     items.push('standing on both feet');
-    ids.push(...STANDING_COLUMNS.map((c) => `start:${c}`));
+    ids.push(...STANDING_COLUMNS.filter((c) => sp[c] !== undefined).map((c) => `start:${c}`));
   }
   if (armsDown) {
     items.push('arms down by your sides');

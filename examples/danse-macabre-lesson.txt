@@ -1,46 +1,50 @@
-Start standing, arms down by your sides, step in place on the left foot, standing normally, step in place on the right foot, standing normally.
+Start standing on both feet, arms down by your sides.
 3 counts per bar, 193 counts per minute.
-Bar 1, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 2, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Count 3: step in place on the right foot, standing normally, over 1 count.
-Bar 3, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 4, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Bar 5, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 6, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Count 3: step in place on the right foot, standing normally, over 1 count.
-Bar 7, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 8, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Bar 9, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 10, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Count 3: step in place on the right foot, standing normally, over 1 count.
-Bar 11, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 12, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Bar 13, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 14, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
-Count 3: step in place on the right foot, standing normally, over 1 count.
-Bar 15, count 1: step forward on the left foot, standing normally, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
-Count 2: step to your right on the right foot, standing normally, over 1 count.
-Count 3: step in place on the left foot, standing normally, over 1 count.
-Bar 16, count 1: step backward on the right foot, standing normally, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
-Count 2: step to your left on the left foot, standing normally, over 1 count.
+Bar 1, count 1: step forward on the left foot, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 2, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: step in place on the right foot, over 1 count.
+Bar 3, count 1: step forward on the left foot, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 4, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: turn a half clockwise on the right foot, over 1 count.
+Bar 5, count 1: step forward on the left foot, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 6, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: step in place on the right foot, over 1 count.
+Bar 7, count 1: step forward on the left foot, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 8, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: turn a half clockwise on the right foot, over 1 count.
+Bar 9, count 1: step forward on the left foot, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 10, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: step in place on the right foot, over 1 count.
+Bar 11, count 1: step forward on the left foot, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 12, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: turn a half clockwise on the right foot, over 1 count.
+Bar 13, count 1: step forward on the left foot, over 1 count; left arm moves to your left, high, over 3 counts; right arm moves to your right, high, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 14, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: step in place on the right foot, over 1 count.
+Bar 15, count 1: step forward on the left foot, over 1 count; left arm moves to your left, middle, over 3 counts; right arm moves to your right, middle, over 3 counts.
+Count 2: step to your right on the right foot, over 1 count.
+Count 3: step in place on the left foot, over 1 count.
+Bar 16, count 1: step backward on the right foot, over 1 count; left arm moves straight up, over 3 counts; right arm moves straight up, over 3 counts.
+Count 2: step to your left on the left foot, over 1 count.
+Count 3: turn a half clockwise on the right foot, over 1 count.
