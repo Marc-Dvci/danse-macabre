@@ -2,7 +2,7 @@ import { bodyFrame } from './body-frame';
 import { heldCells, hysteresisCells } from './held-cells';
 import { limbBaseJoint, limbEndJoint } from './rig';
 import { canonicalScore, GESTURE_COLUMNS } from './score';
-import { angularSpeeds, moveEdges, restFrames, smooth } from './segment';
+import { angularSpeeds, holdFrames, moveEdges, restFrames, smooth } from './segment';
 import type { BodyAxes, Cell, ColumnId, Frame, Score, Symbol, Vec3 } from './types';
 import { sub } from './vec';
 
@@ -23,6 +23,10 @@ export type NotateOptions = {
   hysteresis?: number;
   /** Height of an ankle above the other ankle for the foot to count as off the floor, in metres (Requirement 4.7). Default 0.10. */
   liftHeight?: number;
+  /** Shortest hold in seconds that counts as a rest (Requirement 4.4, rule b). Default 0.35. */
+  dwellTime?: number;
+  /** Largest angle in degrees from the start of a hold that still counts as holding (Requirement 4.4, rule b). Default 8. */
+  dwellAngle?: number;
 };
 
 /** A move of one limb, from the frame where it starts to the frame where it ends, with the cell it settles in. */
@@ -46,6 +50,8 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
   const restSpeed = options.restSpeed ?? 3;
   const hysteresis = options.hysteresis ?? 4;
   const liftHeight = options.liftHeight ?? 0.1;
+  const dwellTime = options.dwellTime ?? 0.35;
+  const dwellAngle = options.dwellAngle ?? 8;
   const n = frames.length;
   const t0 = frames[0]!.t;
   const times = frames.map((f) => f.t - t0);
@@ -68,9 +74,15 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
     const cells = heldCells(hysteresisCells(vectors, axes, hysteresis), times, minHold, endTime);
     startPosition[column] = cells[0]!;
 
-    // Requirement 4.4: rests from the smoothed speed, moves between them, edges from the raw speed.
+    // Requirement 4.4: rests from the smoothed speed and from holds, moves between consecutive rests, edges from the
+    // raw speed.
     const raw = angularSpeeds(vectors, times);
-    const rests = restFrames(smooth(raw, times, smoothing), restSpeed);
+    const rests = [
+      ...new Set([
+        ...restFrames(smooth(raw, times, smoothing), restSpeed),
+        ...holdFrames(vectors, times, dwellTime, dwellAngle),
+      ]),
+    ].sort((a, b) => a - b);
     const moves: Move[] = [];
     for (let i = 0; i + 1 < rests.length; i++) {
       const edges = moveEdges(raw, rests[i]!, rests[i + 1]!);

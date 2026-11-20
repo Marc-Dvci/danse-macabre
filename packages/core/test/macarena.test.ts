@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import clip from '../../../data/clips/macarena.json';
 import { bodyFrame, notateGestures, quantizeGesture, type Frame, type JointName, type Vec3 } from '../src/index';
 import { hysteresisCells, heldCells } from '../src/held-cells';
-import { angularSpeeds, moveEdges, restFrames, smooth } from '../src/segment';
+import { angularSpeeds, holdFrames, moveEdges, restFrames, smooth } from '../src/segment';
 import { sub } from '../src/vec';
 
 type RawClip = { fps: number; joints: JointName[]; frames: number[][][] };
@@ -68,8 +68,10 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
       const times = frames.map((f) => f.t);
       const held = heldCells(hysteresisCells(vectors, axes, 4), times, 0.12, times[times.length - 1]! + 1 / 30);
       const raw = angularSpeeds(vectors, times);
-      const rests = restFrames(smooth(raw, times, 0.2), 3);
-      console.log(`macarena ${col}-arm rests (s): ${rests.slice(0, 14).map((r) => (r / 30).toFixed(2)).join(' ')}`);
+      const rests = [
+        ...new Set([...restFrames(smooth(raw, times, 0.2), 3), ...holdFrames(vectors, times, 0.35, 8)]),
+      ].sort((a, b) => a - b);
+      console.log(`macarena ${col}-arm rests incl. holds (s): ${rests.slice(0, 14).map((r) => (r / 30).toFixed(2)).join(' ')}`);
       for (let i = 0; i + 1 < rests.length && i < 6; i++) {
         const e = moveEdges(raw, rests[i]!, rests[i + 1]!);
         if (!e) continue;
@@ -86,6 +88,7 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
       .filter((s) => s.column === 'left-arm' || s.column === 'right-arm')
       .sort((a, b) => a.start - b.start || (a.column < b.column ? -1 : 1));
     const first = arms.slice(0, 8);
+    console.log(`macarena arm symbols, total: ${arms.length}`);
     console.log('macarena first eight arm symbols (column, start in beats, direction, level):');
     for (const s of first) console.log(`  ${s.column}  start ${s.start}  ${s.direction}  ${s.level}`);
 

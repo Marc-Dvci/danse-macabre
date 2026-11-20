@@ -89,6 +89,35 @@ export function restFrames(smoothed: number[], restSpeed: number): number[] {
 }
 
 /**
+ * Returns the frames that belong to holds of one limb (Requirement 4.4, rule b). A hold is a run of frames that starts at
+ * frame `i`, lasts at least `dwellTime` seconds, and keeps the limb vector within `dwellAngle` degrees of its vector at
+ * frame `i`. Holds are found greedily from the first frame: each hold runs to its last frame that still satisfies the
+ * angle rule, and the search resumes after it. Every frame of a hold is returned, because a hold is a rest from its
+ * first frame to its last frame.
+ * @param vectors Limb vectors, one per frame. A zero vector has angle 0 to any vector (see `angleDeg`).
+ * @param times Frame times in seconds, increasing.
+ * @param dwellTime Shortest hold in seconds.
+ * @param dwellAngle Largest allowed angle in degrees from the vector at the hold's first frame.
+ * @returns Sorted frame indices.
+ */
+export function holdFrames(vectors: Vec3[], times: number[], dwellTime: number, dwellAngle: number): number[] {
+  const n = vectors.length;
+  const out: number[] = [];
+  let i = 0;
+  while (i < n) {
+    let j = i;
+    while (j + 1 < n && angleDeg(vectors[i]!, vectors[j + 1]!) <= dwellAngle) j++;
+    if (j > i && times[j]! - times[i]! >= dwellTime) {
+      for (let k = i; k <= j; k++) out.push(k);
+      i = j + 1;
+    } else {
+      i++;
+    }
+  }
+  return out;
+}
+
+/**
  * Returns the frames where one move starts and ends, between two rests. The move starts at the frame before its first
  * frame of motion and ends at its last frame of motion. Motion means raw speed of at least MOVE_EDGE_FRACTION of the
  * move's peak speed. Raw speed is used here, not the smoothed speed, because the smoothing window would move each edge

@@ -29,39 +29,44 @@ a failing requirement test stay unticked.
   - [x] 5.2 Example tests: `perform.test.ts`
   - [x] 5.3 `perform.ts`
 
-- [x] 6. Gesture notation (Req 4)
-  - [x] 6.1 Example tests: `notate.test.ts`. Covers one symbol per settled cell (4.4, the old transit test is replaced),
-        a leg move that ends on the floor (4.7), the minHold rule (4.3), and hysteresis (4.8) with a control at 0 degrees
+- [ ] 6. Gesture notation (Req 4)
+  - [x] 6.1 Example tests: `notate.test.ts`. Covers one symbol per settled cell (4.4), a leg move that ends on the floor
+        (4.7), the minHold rule (4.3), and hysteresis (4.8) with a control at 0 degrees. The settled-cell test fails
+        after holds (task 6.6, design Known limit 4).
   - [x] 6.2 `held-cells.ts`: `hysteresisCells` (4.8), `heldCells` (4.3)
   - [x] 6.3 `segment.ts`: `restFrames` (4.4 rests), `moveEdges` (4.4 move edges, D13)
   - [x] 6.4 `notate.ts`: moves, lift filter (4.7), grid rounding (4.5)
-  - [ ] 6.5 Requirement 4.4 leaves sustained motion without a rest as one move (known limit 3). Owner decision needed.
+  - [x] 6.5 Requirement 4.4 rule (b), holds with `dwellTime` 0.35 s and `dwellAngle` 8 degrees (owner answer 1, D17).
+        `segment.ts` `holdFrames`, merged into the rests in `notate.ts`. Resolves the sparse Macarena notation (design
+        Known limit 3): 16 arm symbols, first left-arm symbol `forward middle` at beat 1.
+  - [ ] 6.6 Holds move symbol edges on generated scores: the settled-cell test fails and P7.5 fails (design Known
+        limit 4). Owner decision needed.
 
 - [x] 7. Mirror and tempo (Req 6)
   - [x] 7.1 `mirror.ts`
   - [x] 7.2 Example tests: `mirror.test.ts`
 
-- [x] 8. Round-trip and invariance properties (Req 7)
+- [ ] 8. Round-trip and invariance properties (Req 7)
   - [x] 8.1 Generators: `genGestureScore` (7.5 domain, D9, D10), `genRandomFrames`, `runOptions` (FC_SEED, D16)
   - [x] 8.2 P7.3 and P7.4 (`mirror.prop.test.ts`) pass at the default seed and at seeds 1, 42, 1234, 99991, 2024
-  - [x] 8.3 P7.5 (`roundtrip.prop.test.ts`) passes at the default seed and at the same five seeds
+  - [ ] 8.3 P7.5 (`roundtrip.prop.test.ts`) fails at seeds 1, 42, 1234, 99991, 2024 after holds (task 6.6)
   - [x] 8.4 P7.6 and P7.7 pass
 
 - [x] 9. Public API
   - [x] 9.1 `index.ts` exports every public function and type, and `WORLD_AXES`
 
-- [ ] 10. Requirement 8: real motion capture (`macarena.test.ts`)
+- [x] 10. Requirement 8: real motion capture (`macarena.test.ts`)
   - [x] 10.1 8.1 frame-0 body frame: passes
-  - [ ] 10.2 8.2: the right arm's first symbol is `forward middle` at beat 1.5. The left arm's first symbol is
-        `backward low` at beat 1, so the check fails (known limit 3).
+  - [x] 10.2 8.2: the first symbol of each arm is `forward middle` within 2 beats (left arm at beat 1, right arm at beat
+        1.5). Passes with holds. The test also prints the total arm symbols (16) and the first eight.
 
 - [ ] 11. Checks
   - [x] 11.1 `pnpm --filter @danse/core typecheck` passes
-  - [ ] 11.2 `pnpm --filter @danse/core test` fails in 3 of 51 tests: two in `known-limits.test.ts` (pinned to the old
-        transit rule, listed for removal) and 8.2 in `macarena.test.ts`.
+  - [ ] 11.2 `pnpm --filter @danse/core test` fails in 2 of 49 tests: the settled-cell example test in `notate.test.ts`
+        and P7.5 in `roundtrip.prop.test.ts` (task 6.6). `known-limits.test.ts` has been removed by the owner.
 
-- [ ] 12. Owner decisions
-  - [ ] 12.1 Remove `test/known-limits.test.ts` (it pins the superseded 4.4 rule).
-  - [ ] 12.2 Decide known limit 3: keep 8.2 as written and accept sparse notation on the Macarena, or change 4.4 (for
-        example, a rest after a hold within a cell). No change was made without a decision.
+- [x] 12. Owner decisions
+  - [x] 12.1 Remove `test/known-limits.test.ts` (owner removed it).
+  - [x] 12.2 Known limit 3 (sparse notation): answered as Requirement 4.4 rule (b), holds (task 6.5).
   - [ ] 12.3 Confirm the 5% move-edge threshold (D13).
+  - [ ] 12.4 Decide task 6.6: how a hold should treat the slow end of a move (design Known limit 4).

@@ -12,11 +12,11 @@ Implements `requirements.md` in `packages/core/src`. Public API is exported from
 | `body-frame.ts` | `WORLD_AXES`, `bodyFrame(frame, previous?)` | 2 |
 | `quantize.ts` | `SECTOR_NAMES`, `GESTURE_CELLS` (26 cells), `quantizeGesture(v, axes)`, `cellCenter(cell, axes)`, internal `sectorIndex(azimuth)` and `cellMargin(v, cell, axes)` | 3 |
 | `held-cells.ts` | `hysteresisCells(vectors, axes, hysteresis)` (4.8), `heldCells(raw, times, minHold, endTime)` (4.3) | 4.3, 4.8 |
-| `segment.ts` | `angularSpeeds`, `smooth`, `restFrames` (4.4 rests), `moveEdges` (4.4 move edges) | 4.4 |
+| `segment.ts` | `angularSpeeds`, `smooth`, `restFrames` (4.4 rests), `holdFrames` (4.4 holds), `moveEdges` (4.4 move edges) | 4.4 |
 | `rig.ts` | `Rig`, `standardRig()`, `buildFrame`, `limbBaseJoint(column)`, `limbEndJoint(column)` | 5.1, 5.3 |
 | `interpolate.ts` | `slerp(u0, u1, k)` with the antipodal case, `smoothstep(u)` | 5.2 |
 | `perform.ts` | `performGestures(score, options?)` | 5 |
-| `notate.ts` | `notateGestures(frames, options)`: orchestrates held cells, moves, leg lift filter, grid rounding | 4 |
+| `notate.ts` | `notateGestures(frames, options)`: orchestrates held cells, rests and holds, moves, leg lift filter, grid rounding | 4 |
 | `mirror.ts` | `mirrorScore`, `mirrorFrames`, `retime` | 6 |
 | `index.ts` | Public exports | 1.1 |
 
@@ -34,12 +34,14 @@ bodyFrame(frame: Frame, previous?: BodyAxes): BodyAxes;
 quantizeGesture(v: Vec3, axes: BodyAxes): Cell;          // throws RangeError on the zero vector
 cellCenter(cell: Cell, axes: BodyAxes): Vec3;            // throws on {place, middle}
 cellMargin(v: Vec3, cell: Cell, axes: BodyAxes): number; // degrees from v to the nearest cell boundary
+holdFrames(vectors: Vec3[], times: number[], dwellTime: number, dwellAngle: number): number[]; // 4.4 holds, internal
 validateScore(score: Score): { ok: true } | { ok: false; errors: string[] };
 canonicalScore(score: Score): Score;
 standardRig(): Rig;
 performGestures(score: Score, options?: { fps?: number; rig?: Rig }): Frame[];
 notateGestures(frames: Frame[], options: NotateOptions): Score;
-  // NotateOptions = { tempo; beatsPerBar; grid; title; minHold?; smoothing?; restSpeed?; hysteresis?; liftHeight? }
+  // NotateOptions = { tempo; beatsPerBar; grid; title; minHold?; smoothing?; restSpeed?; hysteresis?; liftHeight?;
+  //                   dwellTime?; dwellAngle? }
 mirrorScore(score: Score): Score;
 mirrorFrames(frames: Frame[]): Frame[];
 retime(score: Score, factor: number): Score;
@@ -73,13 +75,18 @@ For each gesture column, in this order:
    `≥ minHold` (until the next change or the end of the clip). The first run is the start cell.
 4. **Speeds (4.4).** Raw angular speed `r[k]` between frames `k−1` and `k` (`r[0] = r[1]`). Smoothed speed `s[k]` is the
    mean of the raw speeds within `smoothing / 2` seconds of frame `k` (prefix sums).
-5. **Rests (4.4), `restFrames`.** A local minimum of `s` is a frame with `s[k] ≤` both neighbours. A flat run of equal
-   minima counts once, at its middle frame. Each minimum `m` is a rest when `s[m] < restSpeed` or
-   `s[m] < 0.25 · min(leftPeak, rightPeak)`. The peaks are the maxima of `s` between `m` and the adjacent minima (or the
-   clip ends). Frames 0 and `n−1` are always rests.
+5. **Rests (4.4), `restFrames` and `holdFrames`.** Two kinds of rest, merged into one sorted list.
+   (a) A local minimum of `s` is a frame with `s[k] ≤` both neighbours. A flat run of equal minima counts once, at its
+   middle frame. Each minimum `m` is a rest when `s[m] < restSpeed` or `s[m] < 0.25 · min(leftPeak, rightPeak)`. The
+   peaks are the maxima of `s` between `m` and the adjacent minima (or the clip ends). Frames 0 and `n−1` are always
+   rests.
+   (b) A hold, from `holdFrames`: a run that starts at frame `i`, ends at the last frame `j` whose vector is within
+   `dwellAngle` of the vector at `i`, and lasts at least `dwellTime` (`t_j − t_i ≥ dwellTime`). The search is greedy:
+   after a hold it resumes at `j + 1`, otherwise at `i + 1`. Every frame from `i` to `j` is a rest (D17).
 6. **Moves and edges (4.4), `moveEdges`.** For consecutive rests `a < b`, the motion frames are `k ∈ (a, b]` with
    `r[k] ≥ 0.05 · max r over (a, b]`. The move starts at the frame before the first motion frame and ends at the last
-   motion frame. A move with no motion is skipped.
+   motion frame. A move with no motion is skipped. Consecutive rests inside one hold give a move whose two ends hold the
+   same cell, so step 7 skips it.
 7. **Move symbols.** For each move with start frame `p` and end frame `q`: the start cell is `held[p]`, the settled cell
    is `held[q]`. Skip the move when the cells are equal, or when `held[q]` holds for less than `minHold` after `q`.
    Otherwise the move gives one symbol for the settled cell.
@@ -94,7 +101,8 @@ For each gesture column, in this order:
 - **D2 (dropped).** The earlier lift decision is replaced by Requirement 4.7.
 - **D3 Minimum hold (4.3).** Applied to runs of cells after hysteresis (step 3). A one-frame blip never becomes a held
   cell. Covered by `notate.test.ts` ("ignores a cell that holds for less than minHold").
-- **D4 Zero limb vector.** Notation keeps the held cell. `quantizeGesture` throws on zero.
+- **D4 Zero limb vector.** Notation keeps the held cell. `quantizeGesture` throws on zero. In `holdFrames`, `angleDeg`
+  gives 0 for a zero vector, so a zero vector counts as inside a hold.
 - **D5 Validation adds `grid > 0`.** Without it the multiple-of-grid test in 1.3 has no meaning.
 - **D6 Missing start cell.** `performGestures` treats a column with no `startPosition` entry as `place low`. A zero
   vector in frame 0 gives the same default.
@@ -109,8 +117,8 @@ For each gesture column, in this order:
 - **D12 Test data path.** `macarena.test.ts` imports the JSON clip. `tsconfig.json` sets `resolveJsonModule`.
 - **D13 Symbol edges from raw speed (4.4).** Requirement 4.4 defines rests on the smoothed speed. The symbol's time edges
   are taken from the raw speed inside the rest-to-rest interval, with the threshold `0.05 · peak`. The smoothing window
-  The 5% threshold was picked from the shape of the ease curve before any test ran. It has not been measured against the
-  round trip; P7.5 passes at the seeds listed in the report. Owner to confirm.
+  would move each edge by up to half its width. The 5% threshold was picked from the shape of the ease curve before any
+  test ran. It has not been measured against the round trip alone. Owner to confirm (task 12.3).
 - **D14 Hysteresis margin (4.8).** `cellMargin` is the smallest angle from the vector to a band edge of the candidate cell,
   or to one of its two sector planes. For a sector cell, the plane distance `asin(|v·n| / |v|)` is used. It is never
   larger than the distance to the boundary segment, so the margin is conservative.
@@ -119,21 +127,31 @@ For each gesture column, in this order:
   mirrored vectors agree.
 - **D16 Seed hook (tests).** `runOptions(n)` in `test/generators.ts` reads the environment variable `FC_SEED` and passes it
   to fast-check as `seed`. A non-integer value throws. Without the variable the run is random, as before.
+- **D17 Holds are rests (4.4 rule b).** Owner decision (answer 1 and 2). A hold is a rest from its first frame to its
+  last frame, with `dwellTime` 0.35 s and `dwellAngle` 8 degrees. Each hold frame is added to the rest list, so a
+  sway inside a hold never starts a move. The hold rule is anchored at the vector at the start of the window, so its
+  window can include the slow end of a neighbouring move. That effect is Known limit 4.
 
 ## Known limits
 
-1. **Resolved (Requirement 4.4).** The transit cells are no longer written. `test/known-limits.test.ts` pins the old
-   rule and now fails. The owner is asked to remove it.
+1. **Resolved (Requirement 4.4).** The transit cells are no longer written. `test/known-limits.test.ts` pinned the old
+   rule and the owner has removed it.
 2. **Resolved (Requirement 3.3).** The boundary rule is mirror-symmetric (D15). The earlier float-dependent failure of
-   P7.4 is not reproduced in the seeds listed under Properties. Failing seeds from the earlier session were not
-   re-run.
-3. **Sparse notation on a real clip (Requirement 4.4).** A move has no rest unless the smoothed speed falls below
-   `restSpeed` or below a quarter of its neighbouring peaks. A sustained motion becomes one move, and that move writes one
-   symbol for the cell it ends in. In the Macarena, the left arm moves from 0.63 s to 3.83 s with no rest, so that
-   whole sweep gives one symbol (`backward low` at beat 1). The left arm's `forward middle` hold from 0.80 s to 2.23 s
-   has no rest: the smoothed speed at the sampled frames (every 0.2 s) falls to 8.7 deg/s at 1.9 s, above `restSpeed`
-   (3 deg/s), and between 0.9 s and 2.1 s the samples range from 8.7 to 108.9 deg/s. The whole clip gives 4 arm symbols.
-   This is the rule as written, and Requirement 8.2 fails on it (see Requirement 8).
+   P7.4 is not reproduced in the seeds listed under Properties.
+3. **Resolved for the Macarena by holds (Requirement 4.4 rule b, D17).** Before holds the whole clip gave 4 arm symbols,
+   and the left arm's `forward middle` hold (0.80 s to 2.23 s) had no rest. With holds the Macarena test prints 16
+   arm symbols in total, and the first left-arm symbol is `forward middle` at beat 1 (0.6 s at 100 bpm). The right arm's
+   first symbol is `forward middle` at beat 1.5. No constant was tuned.
+4. **Open: holds move symbol edges on generated scores (Requirement 4.4 rule b, Requirement 7.5).** A hold starts at the
+   first frame whose vector is within 8 degrees of the vector at the window start. A move that decelerates slowly into
+   its end cell has its last few degrees inside that window, so the hold starts before the move ends. The move is then
+   cut at the hold, and the symbol ends early. The start edge has the mirror problem: the window starts at the rest
+   before a move and runs on into the move's first few degrees, so the move starts late. Measured with
+   `holdFrames(vectors, times, 0.35, 8)` on the P7.5 counterexample (tempo 60, one right-arm symbol at start 0.5 beat,
+   duration 1 beat, right-forward high). The raw arm speed is 14.4 deg/s at 0.60 s, 28.2 deg/s at 0.70 s and 47.0 deg/s
+   at 1.00 s. The notated symbol is at start 1 beat, duration 0.5 beat, so both edges move. The notate example test
+   "writes one symbol for the cell the arm settles in" fails with the same cause: it expects `[right, middle, 1, 2]` and
+   gets `[right, middle, 1.5, 1]`. Owner decision needed (see Requirement 8 notes and the report).
 
 ## Correctness properties (Requirement 7)
 
@@ -144,8 +162,8 @@ Each property runs with `numRuns: 200` or 500. Generators are in `test/generator
 | P7.1 | Exactly one of 26 cells contains each non-zero vector; `cellCenter` quantises back | 3.1–3.4 | `quantize.prop.test.ts` | pass |
 | P7.2 | Yaw of vector and axes together gives the same cell | 3, 2 | `quantize.prop.test.ts` | pass |
 | P7.3 | `mirrorScore(mirrorScore(s)) = s` | 6.1 | `mirror.prop.test.ts` | pass |
-| P7.4 | `canonical(notate(mirrorFrames(f))) = canonical(mirrorScore(notate(f)))` | 4, 6 | `mirror.prop.test.ts` | pass (seeds in report) |
-| P7.5 | Round trip of symbols for the 7.5 domain (`genGestureScore`) | 4, 5 | `roundtrip.prop.test.ts` | pass (seeds in report) |
+| P7.4 | `canonical(notate(mirrorFrames(f))) = canonical(mirrorScore(notate(f)))` | 4, 6 | `mirror.prop.test.ts` | pass at seeds 1, 42, 1234, 99991, 2024 (after holds) |
+| P7.5 | Round trip of symbols for the 7.5 domain (`genGestureScore`) | 4, 5 | `roundtrip.prop.test.ts` | FAIL at seeds 1, 42, 1234, 99991, 2024 (after holds); see Known limit 4 |
 | P7.6 | `performGestures(retime(s, 2))` at frame k equals `performGestures(s)` at 2k | 6.3, 5 | `tempo.prop.test.ts` | pass |
 | P7.7 | `validateScore(notate(f)).ok` for generated performances and random frames | 4, 1.3 | `notate.prop.test.ts` | pass |
 
@@ -163,15 +181,19 @@ The diagnostic P7.5d (arm-only sprints) was removed earlier. It tested the 60 de
 ## Requirement 8
 
 - `macarena.test.ts` loads `data/clips/macarena.json` (CMU subject 143, trial 35).
-- 8.1 checks frame 0 forward against (−0.48, 0, −0.88) at one decimal place. Passes.
-- 8.2 notates at 100 bpm. It logs the rests and moves of both arms, and the first eight arm symbols. It asserts that the
-  first symbol of each arm is `forward middle` with start at most 2 beats. The right arm passes (`forward middle`, start
-  1.5 beats). The left arm fails: its first symbol is `backward low` at 1 beat (known limit 3). Requirement 8.2 is
-  stated as an expectation and the owner decides whether the test or the rule should change. No constants were tuned.
+- 8.1 checks frame 0 forward against (−0.48, 0, −0.88) at one decimal place. Passes. Measured: (−0.511, 0.000, −0.859).
+- 8.2 notates at 100 bpm. It logs the raw cells of the first 4 s, the rests (including holds) of both arms, the total
+  number of arm symbols and the first eight. It asserts that the first symbol of each arm is `forward middle` with start
+  at most 2 beats. Passes after holds: 16 arm symbols in total; the first eight are left-arm `forward middle` at 1,
+  right-arm `forward middle` at 1.5, left-arm `right-forward middle` at 3.5, left-arm `forward middle` at 4.5, left-arm
+  `left-forward high` at 5.5, right-arm `right low` at 5.5, left-arm `backward low` at 6.5, right-arm `right-backward
+  low` at 7.5. No constant was tuned.
 
-## Notation tests added with the 4.8 change
+## Notation tests
 
 - `notate.test.ts`: "keeps the held cell for a limb resting within the hysteresis width of a boundary" (hysteresis 4)
   and its control with hysteresis 0. The arm alternates every 0.5 s between 21° and 24° of elevation, around the
   22.5° middle/high boundary.
+- `notate.test.ts`: "writes one symbol for the cell the arm settles in, not for the cells it passes through". FAILS
+  after holds (Known limit 4).
 - `quantize.test.ts`: boundary azimuths 22.5, 67.5, 112.5, 157.5 and their negatives go to the sector farther from forward.
