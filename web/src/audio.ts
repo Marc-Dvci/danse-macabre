@@ -35,16 +35,20 @@ export function speechAvailable(): boolean {
   return typeof window !== "undefined" && "speechSynthesis" in window;
 }
 
-/** Speak a lesson line, interrupting any line still being spoken. */
-export function say(text: string, rate = 1): void {
-  if (!speechAvailable()) return;
+/** Speak a lesson line, interrupting any line still being spoken. Resolves when the line has been said. */
+export function say(text: string, rate = 1): Promise<void> {
+  if (!speechAvailable()) return Promise.resolve();
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.rate = rate;
   u.lang = "en-GB";
   const voice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith("en"));
   if (voice) u.voice = voice;
-  window.speechSynthesis.speak(u);
+  return new Promise((resolve) => {
+    u.onend = () => resolve();
+    u.onerror = () => resolve();
+    window.speechSynthesis.speak(u);
+  });
 }
 
 export function hush(): void {

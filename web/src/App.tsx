@@ -3,6 +3,7 @@ import { Watch } from "./Watch";
 import { About } from "./About";
 import { Capture } from "./Capture";
 import { Search } from "./Search";
+import { Prologue, prologueSeen } from "./Prologue";
 
 type Tab = "watch" | "video" | "search" | "about";
 
@@ -20,6 +21,7 @@ function tabFromHash(): Tab {
 
 export function App() {
   const [tab, setTab] = useState<Tab>(tabFromHash);
+  const [prologue, setPrologue] = useState(() => !prologueSeen() && tabFromHash() === "watch");
   useEffect(() => {
     const on = () => setTab(tabFromHash());
     window.addEventListener("hashchange", on);
@@ -31,6 +33,7 @@ export function App() {
 
   return (
     <div className="app">
+      {prologue && <Prologue onEnter={() => setPrologue(false)} />}
       <header className="masthead">
         <div>
           <h1>

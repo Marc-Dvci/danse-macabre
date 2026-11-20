@@ -34,6 +34,8 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
   const [view, setView] = useState<View>("front");
   const [show, setShow] = useState<Show>("both");
   const [readAloud, setReadAloud] = useState(false);
+  const [learn, setLearn] = useState(false);
+  const waiting = useRef(false);
   const [countBell, setCountBell] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [scoreHeight, setScoreHeight] = useState(600);
@@ -182,7 +184,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     let raf = 0;
     let prev = performance.now();
     const tick = (now: number) => {
-      const dt = ((now - prev) / 1000) * speed;
+      const dt = waiting.current ? 0 : ((now - prev) / 1000) * speed;
       prev = now;
       setTime((t) => {
         const next = t + dt;
@@ -202,7 +204,16 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
         });
         if (li !== lastLine.current) {
           lastLine.current = li;
-          if (readAloud && li >= 0) say(lesson[li]!.text, Math.min(1.4, Math.max(0.8, speed)));
+          if (readAloud && li >= 0) {
+            const spoken = say(`${lesson[li]!.label}. ${lesson[li]!.text}`, Math.min(1.4, Math.max(0.8, speed)));
+            if (learn) {
+              // Learn mode: the dance waits for the sentence, then carries on.
+              waiting.current = true;
+              void spoken.then(() => {
+                waiting.current = false;
+              });
+            }
+          }
         }
         return next;
       });
@@ -210,7 +221,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, score, speed, duration, countBell, readAloud, lesson, scoreOnly]);
+  }, [playing, score, speed, duration, countBell, readAloud, learn, lesson, scoreOnly]);
 
   useEffect(() => {
     if (!playing) hush();
@@ -295,7 +306,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             </p>
           </div>
         </div>
-        <div className="caption" aria-live="polite">
+        <div className="caption" aria-live={readAloud ? "off" : "polite"}>
           {current ? (
             <>
               <span className="count">{current.label}</span>
@@ -409,6 +420,9 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             onChange={(e) => setReadAloud(e.target.checked)}
           />{" "}
           Read aloud
+        </label>
+        <label className="toggle">
+          <input type="checkbox" checked={learn} disabled={!readAloud} onChange={(e) => setLearn(e.target.checked)} /> Wait for each line
         </label>
         <span className="source">
           {clip?.music ? clip.music.credit : `${info.description} · ${CLIP_SOURCE.split(" (")[0]}`}

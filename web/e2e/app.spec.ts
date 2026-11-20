@@ -1,6 +1,23 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test.beforeEach(async ({ page }, info) => {
+  if (info.title.startsWith("prologue")) return;
+  await page.addInitScript(() => window.localStorage.setItem("danse-macabre:prologue-seen", "1"));
+});
+
+test("prologue: shown on a first visit, gone after Enter, and free of axe violations", async ({ page }) => {
+  await page.goto("/");
+  const dialog = page.getByRole("dialog", { name: "Danse Macabre" });
+  await expect(dialog).toBeVisible();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations.map((v) => v.id)).toEqual([]);
+  await page.getByRole("button", { name: "Enter the dance" }).click();
+  await expect(dialog).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole("dialog", { name: "Danse Macabre" })).toBeHidden();
+});
+
 test("watch: a dance loads, its score is written, and playback moves the count", async ({ page }) => {
   await page.goto("/#watch");
   const scoreSvg = page.locator("svg[aria-label^='Labanotation score']");

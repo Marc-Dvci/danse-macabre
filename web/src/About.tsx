@@ -3,7 +3,7 @@ import { Legend } from "./Legend";
 
 export function About() {
   return (
-    <div className="page">
+    <div className="page" tabIndex={0} role="region" aria-label="About Danse Macabre">
       <article className="prose">
         <figure className="plate">
           <img src="./art/the-trumpeters-of-death.webp" alt="Woodcut: skeletons blowing trumpets and beating drums under an arch" />
