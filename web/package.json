@@ -8,7 +8,7 @@
     "build": "node scripts/copy-mediapipe.mjs && tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run --passWithNoTests --dir src",
     "assets": "node scripts/copy-mediapipe.mjs",
     "e2e": "playwright test --grep-invert measure",
     "measure": "playwright test -g measure"
