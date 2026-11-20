@@ -1,5 +1,5 @@
 // Dance clips from the CMU Graphics Lab Motion Capture Database, converted by tools/cmu_import.py.
-import type { Frame, JointName } from "@danse/core";
+import type { Frame, JointName, Score } from "@danse/core";
 import manifest from "../../data/clips/index.json";
 
 export interface ClipInfo {
@@ -16,7 +16,24 @@ export interface Clip extends ClipInfo {
   joints: JointName[];
   raw: number[][][];
   frames: Frame[];
+  /** A dance that exists only as a written score (no recording), with optional music. */
+  score?: Score;
+  music?: { src: string; offset: number; credit: string };
 }
+
+/** Score-only dances shown at the top of the list. */
+export const FEATURED: ClipInfo[] = [
+  {
+    id: "finale",
+    title: "Danse macabre",
+    seconds: 40,
+    subject: "score",
+    trial: "",
+    description: "A waltz written as a score, danced by a ring of skeletons to Saint-Saëns (1874), Fourestier recording (1953, public domain)",
+  },
+];
+
+const scoreLoaders = import.meta.glob<Score>("../../data/scores/*.score.json", { import: "default" });
 
 export const CLIP_SOURCE: string = manifest.source;
 export const CLIPS: ClipInfo[] = manifest.clips;
@@ -31,6 +48,24 @@ const cache = new Map<string, Promise<Clip>>();
 export function loadClip(id: string): Promise<Clip> {
   const hit = cache.get(id);
   if (hit) return hit;
+  if (id === "finale") {
+    const load = scoreLoaders["../../data/scores/danse-macabre.score.json"]!;
+    const p = load().then((score) => ({
+      ...FEATURED[0]!,
+      fps: 30,
+      joints: [] as JointName[],
+      raw: [],
+      frames: [] as Frame[],
+      score,
+      music: {
+        src: `${import.meta.env.BASE_URL}audio/danse-macabre-fourestier-1953.opus`,
+        offset: 1.24,
+        credit: "Saint-Saëns, Danse macabre (1874). Orchestre des Concerts Colonne, Louis Fourestier, 1953. Public domain, via the BnF and Wikimedia Commons.",
+      },
+    }));
+    cache.set(id, p);
+    return p;
+  }
   const info = CLIPS.find((c) => c.id === id);
   const load = loaders[`../../data/clips/${id}.json`];
   if (!info || !load) return Promise.reject(new Error(`Unknown clip ${id}`));

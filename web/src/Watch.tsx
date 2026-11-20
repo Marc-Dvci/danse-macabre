@@ -1,6 +1,6 @@
 // Watch: pick a dance, see the recording as a ghost and the score danced by the skeleton, hear it on the count.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CLIPS, CLIP_SOURCE, customClips, loadClip, onCustomClips, type Clip } from "./clips";
+import { CLIPS, CLIP_SOURCE, FEATURED, customClips, loadClip, onCustomClips, type Clip } from "./clips";
 import { ScoreView } from "./ScoreView";
 import { SymbolEditor } from "./SymbolEditor";
 import { BEAT_HEIGHT, layoutStaff } from "./staff";
@@ -24,6 +24,8 @@ type Show = "both" | "score" | "recording";
 
 export function Watch({ initial }: { initial?: string }) {
   const [clipId, setClipId] = useState(initial ?? CLIPS[0]!.id);
+  const [ensemble, setEnsemble] = useState(true);
+  const music = useRef<HTMLAudioElement | null>(null);
   const [clip, setClip] = useState<Clip | null>(null);
   const [mirrored, setMirrored] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -40,7 +42,7 @@ export function Watch({ initial }: { initial?: string }) {
   const [edits, setEdits] = useState<Record<string, { direction: string; level: string }>>({});
   const [extra, setExtra] = useState(customClips);
   useEffect(() => onCustomClips(() => setExtra(customClips())), []);
-  const all = [...CLIPS, ...extra];
+  const all = [...FEATURED, ...CLIPS, ...extra];
 
   const stageHost = useRef<HTMLDivElement>(null);
   const stage = useRef<Stage | null>(null);
@@ -66,9 +68,10 @@ export function Watch({ initial }: { initial?: string }) {
 
   const notated: Score | null = useMemo(() => {
     if (!clip) return null;
-    const s = notateClip(centreClip(clip.frames), clip.title);
+    const s = clip.score ?? notateClip(centreClip(clip.frames), clip.title);
     return mirrored ? mirror(s) : s;
   }, [clip, mirrored]);
+  const scoreOnly = !!clip?.score;
 
   // The reader's edits, applied on top of the written score.
   const score: Score | null = useMemo(() => {
@@ -116,12 +119,48 @@ export function Watch({ initial }: { initial?: string }) {
     if (!s) return;
     const scorePose = sample(performed, time);
     const recPose = sample(recording, time);
+    if (scoreOnly && ensemble && score) {
+      // A canon: each skeleton in the ring starts one bar after the one before.
+      const bar = (60 / score.tempo) * score.beatsPerBar;
+      const poses = Array.from({ length: 6 }, (_, i) => sample(performed, Math.max(0, time - i * bar)));
+      s.showEnsemble(poses.filter((p): p is NonNullable<typeof p> => p !== null));
+    } else {
+      s.showEnsemble([]);
+    }
     if (show !== "recording" && scorePose) s.show(scorePose);
     s.showBones(show !== "recording");
     s.showGhost(show !== "score" ? recPose : null);
     if (show === "recording" && recPose) s.show(recPose);
     s.showBones(show !== "recording");
-  }, [time, performed, recording, show]);
+  }, [time, performed, recording, show, scoreOnly, ensemble, score]);
+
+  // Music for score-only dances, kept in step with the clock.
+  useEffect(() => {
+    const m = clip?.music;
+    if (!m) {
+      music.current?.pause();
+      music.current = null;
+      return;
+    }
+    const a = new Audio(m.src);
+    a.preload = "auto";
+    music.current = a;
+    return () => a.pause();
+  }, [clip]);
+  useEffect(() => {
+    const a = music.current;
+    const m = clip?.music;
+    if (!a || !m) return;
+    a.playbackRate = speed;
+    if (playing) {
+      const want = time / 1 + m.offset;
+      if (Math.abs(a.currentTime - want) > 0.25) a.currentTime = want;
+      void a.play().catch(() => undefined);
+    } else {
+      a.pause();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, speed, clip]);
 
   // Playback clock, bell on each count, spoken lesson on each line.
   const lastBeat = useRef(-1);
@@ -142,7 +181,7 @@ export function Watch({ initial }: { initial?: string }) {
         const b = Math.floor(secondsToBeats(score, next));
         if (b !== lastBeat.current) {
           lastBeat.current = b;
-          if (countBell) bell(b % score.beatsPerBar === 0);
+          if (countBell && !scoreOnly) bell(b % score.beatsPerBar === 0);
         }
         const li = lesson.findIndex((l, i) => {
           const nb = lesson[i + 1]?.beat ?? Infinity;
@@ -159,7 +198,7 @@ export function Watch({ initial }: { initial?: string }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, score, speed, duration, countBell, readAloud, lesson]);
+  }, [playing, score, speed, duration, countBell, readAloud, lesson, scoreOnly]);
 
   useEffect(() => {
     if (!playing) hush();
@@ -199,7 +238,11 @@ export function Watch({ initial }: { initial?: string }) {
           <button key={d.id} className="dance" aria-current={d.id === clipId} onClick={() => setClipId(d.id)}>
             <span className="name">{d.title}</span>
             <span className="meta">
-              {d.subject === "video" ? `${d.seconds} s · read from video` : `${d.seconds} s · CMU subject ${d.subject}, trial ${d.trial}`}
+              {d.subject === "video"
+                ? `${d.seconds} s · read from video`
+                : d.subject === "score"
+                  ? "Written score · six dancers · 1953 recording"
+                  : `${d.seconds} s · CMU subject ${d.subject}, trial ${d.trial}`}
             </span>
           </button>
         ))}
@@ -338,6 +381,11 @@ export function Watch({ initial }: { initial?: string }) {
         <label className="toggle">
           <input type="checkbox" checked={mirrored} onChange={(e) => setMirrored(e.target.checked)} /> Mirror
         </label>
+        {scoreOnly && (
+          <label className="toggle">
+            <input type="checkbox" checked={ensemble} onChange={(e) => setEnsemble(e.target.checked)} /> Ring of dancers
+          </label>
+        )}
         <label className="toggle">
           <input type="checkbox" checked={countBell} onChange={(e) => setCountBell(e.target.checked)} /> Count bell
         </label>
@@ -351,7 +399,7 @@ export function Watch({ initial }: { initial?: string }) {
           Read aloud
         </label>
         <span className="source">
-          {info.description} · {CLIP_SOURCE.split(" (")[0]}
+          {clip?.music ? clip.music.credit : `${info.description} · ${CLIP_SOURCE.split(" (")[0]}`}
         </span>
       </div>
     </div>
