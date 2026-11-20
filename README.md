@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/Marc-Dvci/danse-macabre/actions/workflows/codeql.yml/badge.svg)](https://github.com/Marc-Dvci/danse-macabre/actions/workflows/codeql.yml)
 [![Live site](https://github.com/Marc-Dvci/danse-macabre/actions/workflows/live.yml/badge.svg)](https://github.com/Marc-Dvci/danse-macabre/actions/workflows/live.yml)
 [![Licence: Apache 2.0](https://img.shields.io/badge/licence-Apache%202.0-blue.svg)](LICENSE)
-![Tests: 219](https://img.shields.io/badge/tests-219-brightgreen)
+![Tests: 224](https://img.shields.io/badge/tests-224-brightgreen)
 ![Engine coverage: 99.44% of lines](https://img.shields.io/badge/engine%20coverage-99.44%25%20of%20lines-brightgreen)
 ![axe: 0 violations](https://img.shields.io/badge/axe-0%20violations-brightgreen)
 
@@ -42,8 +42,8 @@ Code links point at lines in the release tag `v1.0.0`.
 |---|---|
 | Potential Impact | [The problem](#the-problem). The spoken lesson: [`describe`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/lesson.ts#L91-L128), and the law that every word it says comes from a symbol: [`lesson.prop.test.ts`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/test/lesson.prop.test.ts#L111). The learner's view from behind, the bell on the count and "Wait for each line" are on the Watch screen. 0 axe violations on every page ([Evidence](#evidence)) |
 | Technological Implementation | [How Kiro is used](#how-kiro-is-used), [`.kiro/`](.kiro) and every run in [`docs/KIRO_BUILD.md`](docs/KIRO_BUILD.md). The engine: [`notate`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/notate.ts#L165-L192), [`perform`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/perform.ts#L150-L226), and the round trip between them: [`roundtrip.prop.test.ts`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/test/roundtrip.prop.test.ts#L13). The MCP server: [`defineTool`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/mcp/src/tool.ts#L23-L51), [`resolveInWorkspace`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/mcp/src/paths.ts#L28-L46) |
-| Design | [See it work](#see-it-work) and [The costume does a job](#the-costume-does-a-job). The bones and the ghost, drawn each frame: [`Watch.tsx`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/Watch.tsx#L139-L158). The ring of skeletons in canon: [`showEnsemble`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/stage/stage.ts#L200-L223) |
-| Innovation / Idea | [How it works](#how-it-works). Video to score in the browser: [`readVideo`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/capture/poseReader.ts#L126-L153), checked against motion capture of the same take: [`armAgreement`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/compare.ts#L98-L116). Phrase search with mirror images: [`findPhrase`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/search.ts#L87-L102). Agents read and write dance through nine MCP tools |
+| Design | [See it work](#see-it-work) and [The costume does a job](#the-costume-does-a-job). The bones and the ghost, drawn each frame: [`Watch.tsx`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/Watch.tsx#L151-L177), with the danced limb lit like an ember. The ring of skeletons in canon: [`showEnsemble`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/stage/stage.ts#L226-L249). Candlelight and skeletons rising from the floor: [`animate`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/stage/stage.ts#L146-L158); a wisp on every press: [`wisp`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/effects.ts#L11-L33) |
+| Innovation / Idea | [How it works](#how-it-works). Video to score in the browser: [`readVideo`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/capture/poseReader.ts#L128-L155), checked against motion capture of the same take: [`armAgreement`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/web/src/compare.ts#L98-L116). Phrase search with mirror images: [`findPhrase`](https://github.com/Marc-Dvci/danse-macabre/blob/v1.0.0/packages/core/src/search.ts#L87-L102). Agents read and write dance through nine MCP tools |
 | Presentation | The GIFs in [See it work](#see-it-work), the [architecture](#how-it-works), the [claims table](#claims-and-the-tests-that-pin-them) and [`docs/RESULTS.md`](docs/RESULTS.md) |
 
 ## See it work
@@ -55,7 +55,7 @@ the candle, and the symbol being danced turns red.
 ![The Macarena playing on the Watch screen: the bone skeleton dances from the score with the pale recording behind it, the staff scrolls down under a red line on the right, and the caption below the stage changes on every count](docs/figures/watch-macarena.gif)
 
 **Learn it.** From behind, your left is the dancer's left. Mirror the dance, slow it down, or click a symbol and change
-it: the skeleton dances the change at once.
+it: its limb turns red on the skeleton, which dances the change at once.
 
 ![The Macarena seen from behind, then mirrored; playback pauses, an arm symbol on the staff is clicked, the editor opens with the nine directions and the three levels, the level is changed to low, and the dance plays on with the change](docs/figures/behind-mirror-edit.gif)
 
@@ -64,8 +64,9 @@ each line" on, the dance waits until the sentence has been said.
 
 ![The Lesson tab while the Macarena plays: lines such as "Bar 1, count 2: left arm moves forward, middle, over half a count" scroll past, and the line being danced is marked in red](docs/figures/lesson.gif)
 
-**From video.** The pose model reads a dancer from video in the browser, and the same engine writes the score. On the
-CMU reference video of a take, the arms agree with the motion capture of that same take in 90% of checks.
+**From video.** The pose model reads a dancer from video in the browser, and the same engine writes the score; then the
+video plays again with the pose it found. On the CMU reference video of a take, the arms agree with the motion capture
+of that same take in 90% of checks.
 
 ![The From video page: the CMU reference video plays with the pose drawn over the dancer, frame by frame, and the page reports "Written: 50 symbols at 100 counts per minute" and that the arms hold the same direction and level as the motion capture in 90% of 70 checks](docs/figures/from-video.gif)
 
@@ -122,11 +123,13 @@ Danse Macabre is entered in the Costume Contest. Every spooky element in the int
 | The skeleton | Bones show each limb's direction with nothing in the way, so a reader can check a symbol against the body. It dances only what the score says |
 | The pale ghost behind it | The recording, centred on the same spot. Where ghost and bones part, the score has left something out |
 | The engraved floor ring | Laban's eight directions, turning with the dancer, because in Labanotation "forward" is wherever the dancer faces |
-| The candle on the staff | The playhead: the score scrolls under it, and the symbol being danced turns red |
+| The candle on the staff | The playhead: the score scrolls under it, the symbol being danced turns red, and the flame flares on every count with the bell, harder on the first count of a bar |
+| The ember in the bones | The limb whose symbol is being danced glows like an ember, and the limb of a selected symbol turns red, so a reader sees which bones each symbol moves |
 | The bell | Strikes every count, with a deeper tone on the first count of a bar, so the count can be followed without looking |
 | The view from behind | Puts the learner's left where the dancer's left is |
 | Holbein's woodcuts | The *Dance of Death* (1520s), inverted to bone on ink, line the walls of the stage and open the app |
 | The finale | Six skeletons in canon around a soloist, waltzing to Saint-Saëns's *Danse macabre* (1874) from a score Kiro choreographed through the MCP server |
+| Wisps, mist and smoke | A press on a control leaves a pale wisp; each screen rises out of a mist; choosing a dance lifts a veil of smoke while the skeleton rises from the floor, and fog drifts across it under a flickering candlelight. All of it stops for readers who ask for reduced motion |
 
 The look holds to one rule: plain words first. Every control says what it does ("Read aloud", "Mirror", "Wait for
 each line"), every page passes axe-core with no violations, and the layout holds on a 390-pixel phone screen.
@@ -181,6 +184,7 @@ position, so their speed never reaches a true rest) and the spec gained a rule f
 | Phrase search finds a phrase and its mirror image | [`search.ts`](packages/core/src/search.ts) | [`search.prop.test.ts`](packages/core/test/search.prop.test.ts), [`app.spec.ts`](web/e2e/app.spec.ts) |
 | The MCP tools refuse bad input and paths outside the workspace, and never throw | [`tool.ts`](packages/mcp/src/tool.ts), [`paths.ts`](packages/mcp/src/paths.ts) | [`tools.test.ts`](packages/mcp/test/tools.test.ts), [`paths.test.ts`](packages/mcp/test/paths.test.ts) |
 | Every page has no axe violations; the lesson follows the dance; the layout holds at 390 pixels | [`web/src`](web/src) | [`app.spec.ts`](web/e2e/app.spec.ts) |
+| The candle flares on every count and harder on the first of a bar; the controls stay still while the count changes; reduced motion stops the wisps | [`ScoreView.tsx`](web/src/ScoreView.tsx), [`effects.ts`](web/src/effects.ts), [`styles.css`](web/src/styles.css) | [`app.spec.ts`](web/e2e/app.spec.ts) |
 
 ## Evidence
 
@@ -195,7 +199,7 @@ Every figure comes from [`docs/RESULTS.md`](docs/RESULTS.md), written by `node s
 | It reads video | On the CMU reference video of a take, the arms hold the same direction and level as in the motion capture of that take in 90% of 70 checks (93% the same or a neighbouring cell); 52% (66%) on a turning take filmed from behind |
 | The notation keeps its laws | 33 fast-check properties, 100 to 500 generated cases each, at the fixed seed 1928 in CI, and at further seeds in [`docs/measure/fidelity.md`](docs/measure/fidelity.md) |
 | Phrase search finds mirror images | In all nine dances, the first two bars are found, mirrored, at their own beat in the mirrored dance |
-| Tests | 154 engine tests, 52 MCP server tests and 13 browser tests with axe-core (0 violations on every page): 219 in all, in random order, in CI on every push |
+| Tests | 154 engine tests, 52 MCP server tests and 18 browser tests with axe-core (0 violations on every page): 224 in all, in random order, in CI on every push |
 | Coverage | Engine: 99.44% of lines, 92.82% of branches. MCP server: 97.26% of lines, 76.85% of branches. CI fails below the floors |
 
 The notation rules were tuned by one number, replay fidelity on the nine dances, and checked against the properties
