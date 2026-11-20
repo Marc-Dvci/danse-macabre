@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm -r typecheck
+      - name: Unit and property tests
+        run: pnpm -r test
+      - name: Build the app
+        run: pnpm --filter @danse/web build
+      - name: Install Chromium
+        run: pnpm --filter @danse/web exec playwright install --with-deps chromium
+      - name: The app in a real browser, with axe
+        run: pnpm --filter @danse/web e2e
