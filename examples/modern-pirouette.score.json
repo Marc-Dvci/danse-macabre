@@ -1,0 +1,240 @@
+{
+ "version": 1,
+ "title": "Modern dance: expressive arms, pirouette",
+ "tempo": 100,
+ "beatsPerBar": 4,
+ "grid": 0.5,
+ "startPosition": {
+  "left-support": {
+   "direction": "place",
+   "level": "middle"
+  },
+  "left-leg": {
+   "direction": "right-backward",
+   "level": "low"
+  },
+  "left-arm": {
+   "direction": "place",
+   "level": "low"
+  },
+  "right-support": {
+   "direction": "place",
+   "level": "middle"
+  },
+  "right-arm": {
+   "direction": "place",
+   "level": "low"
+  }
+ },
+ "symbols": [
+  {
+   "id": "left-support-0",
+   "column": "left-support",
+   "start": 0.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-1",
+   "column": "left-support",
+   "start": 1,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-2",
+   "column": "left-support",
+   "start": 2,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-3",
+   "column": "left-support",
+   "start": 7,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-4",
+   "column": "left-support",
+   "start": 8,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-5",
+   "column": "left-support",
+   "start": 8.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-6",
+   "column": "left-support",
+   "start": 9,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-7",
+   "column": "left-support",
+   "start": 9.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-8",
+   "column": "left-support",
+   "start": 10,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-9",
+   "column": "left-support",
+   "start": 10.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-10",
+   "column": "left-support",
+   "start": 11,
+   "duration": 4.5,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-leg-0",
+   "column": "left-leg",
+   "start": 10.5,
+   "duration": 1.5,
+   "direction": "backward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-0",
+   "column": "left-arm",
+   "start": 6,
+   "duration": 2,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-1",
+   "column": "left-arm",
+   "start": 8,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-2",
+   "column": "left-arm",
+   "start": 9,
+   "duration": 1.5,
+   "direction": "left-backward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-3",
+   "column": "left-arm",
+   "start": 10.5,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-4",
+   "column": "left-arm",
+   "start": 12.5,
+   "duration": 1.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-0",
+   "column": "right-support",
+   "start": 8.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-1",
+   "column": "right-support",
+   "start": 9,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-2",
+   "column": "right-support",
+   "start": 9.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-3",
+   "column": "right-support",
+   "start": 10,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-0",
+   "column": "right-arm",
+   "start": 4.5,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "right-arm-1",
+   "column": "right-arm",
+   "start": 6,
+   "duration": 1,
+   "direction": "right-backward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-2",
+   "column": "right-arm",
+   "start": 7,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-3",
+   "column": "right-arm",
+   "start": 8,
+   "duration": 1,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-4",
+   "column": "right-arm",
+   "start": 9,
+   "duration": 1.5,
+   "direction": "place",
+   "level": "low"
+  }
+ ],
+ "source": "CMU Graphics Lab Motion Capture Database, subject 05, trial 02"
+}

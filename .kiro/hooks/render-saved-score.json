@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "render-saved-score",
+      "description": "When an agent saves a score in examples/, draw its staff as SVG and write its spoken lesson next to it, and show the first lesson lines.",
+      "trigger": "PostFileSave",
+      "matcher": "examples[/\\\\][^/\\\\]+\\.score\\.json$",
+      "action": { "type": "command", "command": "pnpm exec tsx scripts/render-score.ts" },
+      "timeout": 120
+    }
+  ]
+}

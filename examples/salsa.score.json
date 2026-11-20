@@ -1,0 +1,1112 @@
+{
+ "version": 1,
+ "title": "Salsa",
+ "tempo": 100,
+ "beatsPerBar": 4,
+ "grid": 0.5,
+ "startPosition": {
+  "left-arm": {
+   "direction": "right-forward",
+   "level": "low"
+  },
+  "right-support": {
+   "direction": "place",
+   "level": "high"
+  },
+  "right-arm": {
+   "direction": "left-forward",
+   "level": "low"
+  }
+ },
+ "symbols": [
+  {
+   "id": "left-support-0",
+   "column": "left-support",
+   "start": 1.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-1",
+   "column": "left-support",
+   "start": 4.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-2",
+   "column": "left-support",
+   "start": 6.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-3",
+   "column": "left-support",
+   "start": 8.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-4",
+   "column": "left-support",
+   "start": 10.5,
+   "duration": 1,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-5",
+   "column": "left-support",
+   "start": 12,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-6",
+   "column": "left-support",
+   "start": 12.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-7",
+   "column": "left-support",
+   "start": 13,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-8",
+   "column": "left-support",
+   "start": 13.5,
+   "duration": 1.5,
+   "direction": "left-backward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-9",
+   "column": "left-support",
+   "start": 15,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-10",
+   "column": "left-support",
+   "start": 15.5,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-11",
+   "column": "left-support",
+   "start": 18,
+   "duration": 0.5,
+   "direction": "right-backward",
+   "level": "low"
+  },
+  {
+   "id": "left-support-12",
+   "column": "left-support",
+   "start": 19,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-13",
+   "column": "left-support",
+   "start": 19.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-14",
+   "column": "left-support",
+   "start": 20,
+   "duration": 3,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "left-support-15",
+   "column": "left-support",
+   "start": 28,
+   "duration": 1,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "left-support-16",
+   "column": "left-support",
+   "start": 29.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-17",
+   "column": "left-support",
+   "start": 31.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-18",
+   "column": "left-support",
+   "start": 33,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-19",
+   "column": "left-support",
+   "start": 34.5,
+   "duration": 1,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-20",
+   "column": "left-support",
+   "start": 36.5,
+   "duration": 0.5,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-21",
+   "column": "left-support",
+   "start": 38,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-22",
+   "column": "left-support",
+   "start": 39.5,
+   "duration": 1,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-23",
+   "column": "left-support",
+   "start": 41.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-24",
+   "column": "left-support",
+   "start": 43,
+   "duration": 1,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "left-support-25",
+   "column": "left-support",
+   "start": 44.5,
+   "duration": 1.5,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "left-support-26",
+   "column": "left-support",
+   "start": 47,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-27",
+   "column": "left-support",
+   "start": 48,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-28",
+   "column": "left-support",
+   "start": 49.5,
+   "duration": 1,
+   "direction": "right-backward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-29",
+   "column": "left-support",
+   "start": 51.5,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "left-support-30",
+   "column": "left-support",
+   "start": 53,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "high"
+  },
+  {
+   "id": "left-support-31",
+   "column": "left-support",
+   "start": 54,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-32",
+   "column": "left-support",
+   "start": 54.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-33",
+   "column": "left-support",
+   "start": 59.5,
+   "duration": 1,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "left-leg-0",
+   "column": "left-leg",
+   "start": 19,
+   "duration": 2.5,
+   "direction": "left-forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-0",
+   "column": "left-arm",
+   "start": 4.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-1",
+   "column": "left-arm",
+   "start": 5.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-2",
+   "column": "left-arm",
+   "start": 7,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-3",
+   "column": "left-arm",
+   "start": 7.5,
+   "duration": 1.5,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-4",
+   "column": "left-arm",
+   "start": 9.5,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-5",
+   "column": "left-arm",
+   "start": 10,
+   "duration": 2,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-6",
+   "column": "left-arm",
+   "start": 13.5,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-7",
+   "column": "left-arm",
+   "start": 14,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-8",
+   "column": "left-arm",
+   "start": 15,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "left-arm-9",
+   "column": "left-arm",
+   "start": 16,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-10",
+   "column": "left-arm",
+   "start": 17.5,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-11",
+   "column": "left-arm",
+   "start": 20,
+   "duration": 1,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-12",
+   "column": "left-arm",
+   "start": 23,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-13",
+   "column": "left-arm",
+   "start": 24.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-14",
+   "column": "left-arm",
+   "start": 25.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-15",
+   "column": "left-arm",
+   "start": 29.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-16",
+   "column": "left-arm",
+   "start": 30.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-17",
+   "column": "left-arm",
+   "start": 37,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "left-arm-18",
+   "column": "left-arm",
+   "start": 38.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-arm-19",
+   "column": "left-arm",
+   "start": 40,
+   "duration": 2,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-20",
+   "column": "left-arm",
+   "start": 43,
+   "duration": 0.5,
+   "direction": "backward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-21",
+   "column": "left-arm",
+   "start": 45,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-22",
+   "column": "left-arm",
+   "start": 47,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-23",
+   "column": "left-arm",
+   "start": 48.5,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-24",
+   "column": "left-arm",
+   "start": 50.5,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-25",
+   "column": "left-arm",
+   "start": 52,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-26",
+   "column": "left-arm",
+   "start": 53,
+   "duration": 1,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-27",
+   "column": "left-arm",
+   "start": 54.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-28",
+   "column": "left-arm",
+   "start": 58,
+   "duration": 1,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-29",
+   "column": "left-arm",
+   "start": 59,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-0",
+   "column": "right-support",
+   "start": 0.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-1",
+   "column": "right-support",
+   "start": 5.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-2",
+   "column": "right-support",
+   "start": 6.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-3",
+   "column": "right-support",
+   "start": 8,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-4",
+   "column": "right-support",
+   "start": 10,
+   "duration": 0.5,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-5",
+   "column": "right-support",
+   "start": 11.5,
+   "duration": 1,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-6",
+   "column": "right-support",
+   "start": 13,
+   "duration": 1,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-7",
+   "column": "right-support",
+   "start": 14.5,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-8",
+   "column": "right-support",
+   "start": 16,
+   "duration": 1,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-9",
+   "column": "right-support",
+   "start": 17,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-10",
+   "column": "right-support",
+   "start": 22.5,
+   "duration": 2.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-support-11",
+   "column": "right-support",
+   "start": 25.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-12",
+   "column": "right-support",
+   "start": 26,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-13",
+   "column": "right-support",
+   "start": 27,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-14",
+   "column": "right-support",
+   "start": 29,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-15",
+   "column": "right-support",
+   "start": 30.5,
+   "duration": 2.5,
+   "direction": "right-forward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-16",
+   "column": "right-support",
+   "start": 34,
+   "duration": 1,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "right-support-17",
+   "column": "right-support",
+   "start": 36,
+   "duration": 0.5,
+   "direction": "right-backward",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-18",
+   "column": "right-support",
+   "start": 37,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-19",
+   "column": "right-support",
+   "start": 38.5,
+   "duration": 1,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "right-support-20",
+   "column": "right-support",
+   "start": 40.5,
+   "duration": 0.5,
+   "direction": "left-backward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-21",
+   "column": "right-support",
+   "start": 41,
+   "duration": 0.5,
+   "direction": "right-backward",
+   "level": "high"
+  },
+  {
+   "id": "right-support-22",
+   "column": "right-support",
+   "start": 42.5,
+   "duration": 1,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "right-support-23",
+   "column": "right-support",
+   "start": 44,
+   "duration": 1,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "right-support-24",
+   "column": "right-support",
+   "start": 46,
+   "duration": 2,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-25",
+   "column": "right-support",
+   "start": 49,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "right-support-26",
+   "column": "right-support",
+   "start": 50.5,
+   "duration": 1,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "right-support-27",
+   "column": "right-support",
+   "start": 52,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "right-support-28",
+   "column": "right-support",
+   "start": 54,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-29",
+   "column": "right-support",
+   "start": 57,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-30",
+   "column": "right-support",
+   "start": 60,
+   "duration": 1.5,
+   "direction": "backward",
+   "level": "high"
+  },
+  {
+   "id": "right-leg-0",
+   "column": "right-leg",
+   "start": 4.5,
+   "duration": 1.5,
+   "direction": "backward",
+   "level": "low"
+  },
+  {
+   "id": "right-leg-1",
+   "column": "right-leg",
+   "start": 17,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-leg-2",
+   "column": "right-leg",
+   "start": 22,
+   "duration": 1.5,
+   "direction": "right-forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-0",
+   "column": "right-arm",
+   "start": 5.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-1",
+   "column": "right-arm",
+   "start": 6.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-2",
+   "column": "right-arm",
+   "start": 7.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-3",
+   "column": "right-arm",
+   "start": 8.5,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-4",
+   "column": "right-arm",
+   "start": 9.5,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-5",
+   "column": "right-arm",
+   "start": 10.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-6",
+   "column": "right-arm",
+   "start": 11.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-7",
+   "column": "right-arm",
+   "start": 12.5,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-8",
+   "column": "right-arm",
+   "start": 13,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-9",
+   "column": "right-arm",
+   "start": 15,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-10",
+   "column": "right-arm",
+   "start": 15.5,
+   "duration": 1.5,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-11",
+   "column": "right-arm",
+   "start": 18,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-12",
+   "column": "right-arm",
+   "start": 19.5,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-13",
+   "column": "right-arm",
+   "start": 21.5,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-14",
+   "column": "right-arm",
+   "start": 23,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-15",
+   "column": "right-arm",
+   "start": 26,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-16",
+   "column": "right-arm",
+   "start": 28,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-17",
+   "column": "right-arm",
+   "start": 31,
+   "duration": 1,
+   "direction": "forward",
+   "level": "high"
+  },
+  {
+   "id": "right-arm-18",
+   "column": "right-arm",
+   "start": 32,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-19",
+   "column": "right-arm",
+   "start": 32.5,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-20",
+   "column": "right-arm",
+   "start": 35,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-21",
+   "column": "right-arm",
+   "start": 36.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-22",
+   "column": "right-arm",
+   "start": 38.5,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-23",
+   "column": "right-arm",
+   "start": 39,
+   "duration": 3,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-24",
+   "column": "right-arm",
+   "start": 42,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-25",
+   "column": "right-arm",
+   "start": 42.5,
+   "duration": 1.5,
+   "direction": "left-backward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-26",
+   "column": "right-arm",
+   "start": 44,
+   "duration": 1.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-27",
+   "column": "right-arm",
+   "start": 45.5,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-28",
+   "column": "right-arm",
+   "start": 46.5,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "high"
+  },
+  {
+   "id": "right-arm-29",
+   "column": "right-arm",
+   "start": 47.5,
+   "duration": 1.5,
+   "direction": "forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-30",
+   "column": "right-arm",
+   "start": 49,
+   "duration": 1,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-31",
+   "column": "right-arm",
+   "start": 50,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-32",
+   "column": "right-arm",
+   "start": 51.5,
+   "duration": 1.5,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-33",
+   "column": "right-arm",
+   "start": 53,
+   "duration": 1,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-34",
+   "column": "right-arm",
+   "start": 57,
+   "duration": 1,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-35",
+   "column": "right-arm",
+   "start": 59,
+   "duration": 1.5,
+   "direction": "left-forward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-36",
+   "column": "right-arm",
+   "start": 60.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  }
+ ],
+ "source": "CMU Graphics Lab Motion Capture Database, subject 60, trial 01"
+}

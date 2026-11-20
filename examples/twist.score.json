@@ -1,0 +1,340 @@
+{
+ "version": 1,
+ "title": "The Twist",
+ "tempo": 100,
+ "beatsPerBar": 4,
+ "grid": 0.5,
+ "startPosition": {
+  "left-support": {
+   "direction": "place",
+   "level": "high"
+  },
+  "left-arm": {
+   "direction": "place",
+   "level": "low"
+  },
+  "right-support": {
+   "direction": "place",
+   "level": "high"
+  },
+  "right-arm": {
+   "direction": "place",
+   "level": "low"
+  }
+ },
+ "symbols": [
+  {
+   "id": "left-support-0",
+   "column": "left-support",
+   "start": 1,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-1",
+   "column": "left-support",
+   "start": 1.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-2",
+   "column": "left-support",
+   "start": 2,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-3",
+   "column": "left-support",
+   "start": 2.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-4",
+   "column": "left-support",
+   "start": 3,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-5",
+   "column": "left-support",
+   "start": 3.5,
+   "duration": 0.5,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "left-support-6",
+   "column": "left-support",
+   "start": 4,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-7",
+   "column": "left-support",
+   "start": 4.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-8",
+   "column": "left-support",
+   "start": 5,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "low"
+  },
+  {
+   "id": "left-support-9",
+   "column": "left-support",
+   "start": 5.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "left-support-10",
+   "column": "left-support",
+   "start": 6,
+   "duration": 0.5,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-11",
+   "column": "left-support",
+   "start": 6.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-12",
+   "column": "left-support",
+   "start": 7,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-13",
+   "column": "left-support",
+   "start": 7.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-14",
+   "column": "left-support",
+   "start": 8,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "left-support-15",
+   "column": "left-support",
+   "start": 8.5,
+   "duration": 0.5,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "left-support-16",
+   "column": "left-support",
+   "start": 9,
+   "duration": 0.5,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-0",
+   "column": "left-arm",
+   "start": 2,
+   "duration": 0.5,
+   "direction": "left-forward",
+   "level": "middle"
+  },
+  {
+   "id": "left-arm-1",
+   "column": "left-arm",
+   "start": 3.5,
+   "duration": 0.5,
+   "direction": "left",
+   "level": "low"
+  },
+  {
+   "id": "left-arm-2",
+   "column": "left-arm",
+   "start": 7,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-0",
+   "column": "right-support",
+   "start": 1,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-1",
+   "column": "right-support",
+   "start": 1.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-2",
+   "column": "right-support",
+   "start": 2,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-3",
+   "column": "right-support",
+   "start": 2.5,
+   "duration": 1.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-4",
+   "column": "right-support",
+   "start": 4,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-5",
+   "column": "right-support",
+   "start": 4.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-6",
+   "column": "right-support",
+   "start": 5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "low"
+  },
+  {
+   "id": "right-support-7",
+   "column": "right-support",
+   "start": 5.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "right-support-8",
+   "column": "right-support",
+   "start": 6,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-9",
+   "column": "right-support",
+   "start": 6.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-10",
+   "column": "right-support",
+   "start": 7,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-support-11",
+   "column": "right-support",
+   "start": 7.5,
+   "duration": 0.5,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-0",
+   "column": "right-arm",
+   "start": 1,
+   "duration": 0.5,
+   "direction": "right-backward",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-1",
+   "column": "right-arm",
+   "start": 2,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-2",
+   "column": "right-arm",
+   "start": 3,
+   "duration": 0.5,
+   "direction": "right-forward",
+   "level": "middle"
+  },
+  {
+   "id": "right-arm-3",
+   "column": "right-arm",
+   "start": 4.5,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-4",
+   "column": "right-arm",
+   "start": 5.5,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-5",
+   "column": "right-arm",
+   "start": 6,
+   "duration": 0.5,
+   "direction": "right",
+   "level": "low"
+  },
+  {
+   "id": "right-arm-6",
+   "column": "right-arm",
+   "start": 6.5,
+   "duration": 0.5,
+   "direction": "forward",
+   "level": "middle"
+  }
+ ],
+ "source": "CMU Graphics Lab Motion Capture Database, subject 141, trial 12"
+}

@@ -1,0 +1,22 @@
+CMU Graphics Lab Motion Capture Database, subject 90, trial 30
+Start with arms down by your sides.
+4 counts per bar, 100 counts per minute.
+Bar 2, count 2 and: left arm moves forward and to your right, low, over 1.5 counts.
+Count 3: right arm moves forward and to your left, low, over 1.5 counts.
+Count 4: left arm moves forward and to your left, middle, over 1.5 counts.
+Count 4 and: right arm moves forward, middle, over 2 counts.
+Bar 3, count 1 and: left arm moves forward and to your right, middle, over 1 count.
+Count 2: right leg lifts forward, middle, over 0.5 counts.
+Count 2 and: left arm moves forward and to your left, middle, over 1 count.
+Count 3: left leg lifts forward, middle, over 0.5 counts; right arm moves forward and to your right, middle, over 0.5 counts.
+Count 3 and: left arm moves forward and to your right, middle, over 1 count.
+Count 4: right arm moves forward, middle, over 0.5 counts.
+Bar 4, count 1: left leg lifts forward, middle, over 0.5 counts; right arm moves forward and to your right, middle, over 0.5 counts.
+Count 1 and: left arm moves forward and to your right, middle, over 0.5 counts; right arm moves forward, middle, over 0.5 counts.
+Count 2: left arm moves forward and to your left, middle, over 1 count.
+Count 2 and: right arm moves forward and to your right, middle, over 0.5 counts.
+Count 3: left arm moves forward and to your right, middle, over 1 count.
+Count 3 and: right arm moves forward, low, over 0.5 counts.
+Count 4: left arm moves to your left, low, over 2 counts.
+Bar 5, count 2: left arm moves down by your side, over 0.5 counts.
+Count 2 and: right arm moves down by your side, over 1 count.

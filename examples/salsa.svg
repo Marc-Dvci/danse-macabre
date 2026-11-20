@@ -1,0 +1,525 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="1560" viewBox="0 0 128 1560">
+<title>Salsa</title>
+<defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4"><path d="M0 4 L4 0" stroke="#000" stroke-width="1"/></pattern></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<line x1="32" y1="1560" x2="32" y2="0" stroke="#000"/>
+<line x1="64" y1="1560" x2="64" y2="0" stroke="#000"/>
+<line x1="96" y1="1560" x2="96" y2="0" stroke="#000"/>
+<line x1="32" y1="1536" x2="96" y2="1536" stroke="#000" stroke-width="1"/>
+<line x1="32" y1="1533" x2="96" y2="1533" stroke="#000" stroke-width="1"/>
+<line x1="32" y1="1440" x2="96" y2="1440" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="1344" x2="96" y2="1344" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="1248" x2="96" y2="1248" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="1152" x2="96" y2="1152" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="1056" x2="96" y2="1056" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="960" x2="96" y2="960" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="864" x2="96" y2="864" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="768" x2="96" y2="768" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="672" x2="96" y2="672" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="576" x2="96" y2="576" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="480" x2="96" y2="480" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="384" x2="96" y2="384" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="288" x2="96" y2="288" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="192" x2="96" y2="192" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="96" x2="96" y2="96" stroke="#000" stroke-width="1.5"/>
+<line x1="32" y1="0" x2="96" y2="0" stroke="#000" stroke-width="1.5"/>
+<text x="29" y="1532" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1508" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1484" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="1460" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="1436" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1412" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1388" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="1364" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="1340" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1316" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1292" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="1268" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="1244" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1220" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1196" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="1172" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="1148" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1124" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1100" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="1076" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="1052" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="1028" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="1004" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="980" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="956" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="932" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="908" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="884" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="860" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="836" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="812" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="788" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="764" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="740" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="716" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="692" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="668" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="644" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="620" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="596" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="572" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="548" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="524" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="500" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="476" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="452" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="428" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="404" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="380" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="356" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="332" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="308" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="284" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="260" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="236" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="212" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="188" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="164" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="140" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="116" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<text x="29" y="92" font-family="sans-serif" font-size="9" text-anchor="end">1</text>
+<text x="29" y="68" font-family="sans-serif" font-size="9" text-anchor="end">2</text>
+<text x="29" y="44" font-family="sans-serif" font-size="9" text-anchor="end">3</text>
+<text x="29" y="20" font-family="sans-serif" font-size="9" text-anchor="end">4</text>
+<g data-symbol-id="start:left-arm">
+<polygon points="16,1560 0,1560 0,1544 16,1536" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="start:right-support">
+<polygon points="64,1560 80,1560 80,1536 64,1536" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="start:right-arm">
+<polygon points="112,1560 128,1560 128,1544 112,1536" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-0">
+<polygon points="64,1500 48,1500 48,1488 64,1488" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-1">
+<polygon points="64,1428 48,1428 48,1412 56,1412 56,1404 64,1404" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-2">
+<polygon points="64,1380 48,1380 48,1364 56,1364 56,1356 64,1356" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-3">
+<polygon points="64,1332 48,1332 48,1308 64,1308" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-4">
+<polygon points="64,1284 56,1284 56,1276 48,1276 48,1260 64,1260" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-5">
+<polygon points="64,1248 48,1248 48,1236 64,1236" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-6">
+<polygon points="64,1236 48,1236 48,1224 64,1224" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-7">
+<polygon points="64,1224 48,1224 48,1212 64,1212" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-8">
+<polygon points="64,1200 48,1212 48,1176 64,1176" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-9">
+<polygon points="64,1176 48,1176 48,1164 64,1164" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-10">
+<polygon points="64,1164 48,1164 48,1152 64,1156" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-11">
+<polygon points="64,1104 48,1100 48,1092 64,1092" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-12">
+<polygon points="64,1080 48,1080 48,1068 64,1068" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-13">
+<polygon points="64,1068 48,1068 48,1056 64,1056" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-14">
+<polygon points="48,1056 48,984 64,1020" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-15">
+<polygon points="48,864 48,840 64,852" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-16">
+<polygon points="64,828 48,828 48,812 56,812 56,804 64,804" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-17">
+<polygon points="64,780 48,780 48,764 64,756" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-18">
+<polygon points="64,744 48,744 48,728 56,728 56,720 64,720" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="732" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-19">
+<polygon points="64,708 56,708 56,700 48,700 48,684 64,684" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-20">
+<polygon points="64,660 64,648 48,654" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="654" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-21">
+<polygon points="64,624 48,624 48,608 56,608 56,600 64,600" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="612" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-22">
+<polygon points="64,588 56,588 56,580 48,580 48,564 64,564" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-23">
+<polygon points="64,540 48,540 48,528 64,528" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="534" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-24">
+<polygon points="64,504 64,480 48,492" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-25">
+<polygon points="64,468 64,432 48,450" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-26">
+<polygon points="64,408 48,408 48,396 64,396" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-27">
+<polygon points="64,384 48,384 48,368 56,368 56,360 64,360" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="372" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-28">
+<polygon points="64,348 48,340 48,324 64,324" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-29">
+<polygon points="48,300 48,288 64,294" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-30">
+<polygon points="64,264 48,264 48,256 64,252" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-31">
+<polygon points="64,240 48,240 48,228 64,228" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="56" cy="234" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-support-32">
+<polygon points="64,228 48,228 48,204 64,204" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-support-33">
+<polygon points="64,108 56,108 56,100 48,100 48,84 64,84" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-leg-0">
+<polygon points="48,1080 32,1080 32,1020 48,1040" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="40" cy="1050" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-arm-0">
+<polygon points="16,1428 0,1428 0,1404 16,1404" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-1">
+<polygon points="16,1404 0,1404 0,1388 16,1380" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-2">
+<polygon points="16,1368 0,1368 0,1360 8,1360 8,1356 16,1356" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-3">
+<polygon points="16,1356 0,1356 0,1332 16,1320" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-4">
+<polygon points="16,1308 0,1308 0,1300 8,1300 8,1296 16,1296" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-5">
+<polygon points="16,1296 0,1296 0,1264 8,1264 8,1248 16,1248" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="8" cy="1272" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-arm-6">
+<polygon points="16,1212 0,1212 0,1204 8,1204 8,1200 16,1200" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-7">
+<polygon points="16,1200 0,1200 0,1188 16,1192" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-8">
+<polygon points="16,1176 0,1176 0,1160 8,1160 8,1152 16,1152" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-9">
+<polygon points="16,1152 0,1152 0,1128 16,1128" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-10">
+<polygon points="16,1116 0,1116 0,1080 16,1092" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-11">
+<polygon points="0,1056 0,1032 16,1044" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-12">
+<polygon points="16,984 0,984 0,960 16,968" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-13">
+<polygon points="16,948 0,948 0,932 16,924" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-14">
+<polygon points="16,924 0,924 0,900 16,900" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-15">
+<polygon points="16,828 0,828 0,804 16,804" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-16">
+<polygon points="16,804 0,804 0,788 16,780" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-17">
+<polygon points="16,648 0,648 0,640 8,640 8,636 16,636" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-18">
+<polygon points="16,612 0,612 0,600 16,600" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-19">
+<polygon points="16,576 0,576 0,544 16,528" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-20">
+<polygon points="16,504 8,504 8,500 0,500 0,492 16,492" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-21">
+<polygon points="16,456 0,456 0,432 8,432 8,420 16,420" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-22">
+<polygon points="16,408 0,408 0,384 8,384 8,372 16,372" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-23">
+<polygon points="16,372 0,372 0,364 16,360" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-24">
+<polygon points="16,324 0,324 0,288 16,300" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-25">
+<polygon points="16,288 0,288 0,272 16,264" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-26">
+<polygon points="16,264 0,264 0,248 8,248 8,240 16,240" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-27">
+<polygon points="16,228 0,228 0,212 8,212 8,204 16,204" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="8" cy="216" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="left-arm-28">
+<polygon points="16,144 0,144 0,128 8,128 8,120 16,120" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="left-arm-29">
+<polygon points="16,120 0,120 0,96 16,96" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-0">
+<polygon points="64,1524 80,1524 80,1512 64,1512" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-1">
+<polygon points="64,1404 80,1404 80,1388 72,1388 72,1380 64,1380" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-2">
+<polygon points="64,1380 80,1380 80,1368 64,1368" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-3">
+<polygon points="64,1344 80,1344 80,1332 64,1332" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-4">
+<polygon points="64,1296 72,1296 72,1292 80,1292 80,1284 64,1284" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-5">
+<polygon points="64,1260 72,1260 72,1252 80,1252 80,1236 64,1236" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-6">
+<polygon points="64,1224 80,1224 80,1200 64,1200" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-7">
+<polygon points="80,1188 80,1164 64,1176" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="1176" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-8">
+<polygon points="64,1152 80,1152 80,1128 64,1128" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-9">
+<polygon points="64,1128 64,1104 80,1116" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="1116" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-10">
+<polygon points="64,996 64,936 80,966" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-11">
+<polygon points="64,924 80,924 80,912 64,912" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-12">
+<polygon points="64,912 80,912 80,900 64,900" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="906" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-13">
+<polygon points="64,888 64,876 80,882" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="882" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-14">
+<polygon points="64,840 80,840 80,832 72,832 72,828 64,828" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="834" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-15">
+<polygon points="64,804 80,804 80,744 64,764" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-16">
+<polygon points="64,720 64,696 80,708" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-17">
+<polygon points="64,668 80,672 80,660 64,660" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="72" cy="666" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-support-18">
+<polygon points="64,648 80,648 80,632 64,624" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-19">
+<polygon points="64,612 64,588 80,600" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-20">
+<polygon points="64,564 80,560 80,552 64,552" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-21">
+<polygon points="64,548 80,552 80,540 64,540" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-22">
+<polygon points="80,516 80,492 64,504" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-23">
+<polygon points="80,480 80,456 64,468" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-24">
+<polygon points="64,432 80,432 80,384 64,384" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-25">
+<polygon points="64,360 64,348 80,354" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-26">
+<polygon points="64,324 64,300 80,312" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-27">
+<polygon points="64,288 64,276 80,282" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-28">
+<polygon points="64,240 80,240 80,228 64,228" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-29">
+<polygon points="64,168 80,168 80,156 64,156" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-support-30">
+<polygon points="64,96 72,96 72,84 80,84 80,60 64,60" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-leg-0">
+<polygon points="80,1428 88,1428 88,1416 96,1416 96,1392 80,1392" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-leg-1">
+<polygon points="80,1128 80,1116 96,1122" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-leg-2">
+<polygon points="80,1008 96,1008 96,972 80,984" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="88" cy="990" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-arm-0">
+<polygon points="112,1404 128,1404 128,1380 112,1380" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-1">
+<polygon points="112,1380 128,1380 128,1364 120,1364 120,1356 112,1356" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-2">
+<polygon points="112,1356 128,1356 128,1332 112,1340" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-3">
+<polygon points="112,1332 128,1332 128,1308 112,1308" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-4">
+<polygon points="112,1308 128,1308 128,1284 112,1292" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-5">
+<polygon points="112,1284 128,1284 128,1268 120,1268 120,1260 112,1260" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-6">
+<polygon points="112,1260 128,1260 128,1248 112,1248" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-7">
+<polygon points="112,1236 128,1236 128,1228 112,1224" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-8">
+<polygon points="112,1224 128,1224 128,1200 112,1200" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-9">
+<polygon points="112,1176 128,1176 128,1168 112,1164" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-10">
+<polygon points="112,1164 128,1164 128,1128 112,1140" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-11">
+<polygon points="112,1104 128,1104 128,1080 112,1080" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-12">
+<polygon points="112,1068 128,1068 128,1044 120,1044 120,1032 112,1032" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-13">
+<polygon points="112,1020 128,1020 128,996 112,984" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-14">
+<polygon points="112,984 128,984 128,960 112,960" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-15">
+<polygon points="112,912 128,912 128,888 112,896" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-16">
+<polygon points="112,864 128,864 128,848 112,840" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-17">
+<polygon points="112,792 128,792 128,776 120,776 120,768 112,768" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-18">
+<polygon points="112,768 128,768 128,756 112,760" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="120" cy="762" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-arm-19">
+<polygon points="112,756 128,756 128,732 120,732 120,720 112,720" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-20">
+<polygon points="112,696 128,696 128,672 112,660" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-21">
+<polygon points="112,660 128,660 128,644 120,644 120,636 112,636" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-22">
+<polygon points="112,612 112,600 128,606" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-23">
+<polygon points="112,600 128,600 128,552 112,528" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-24">
+<polygon points="112,528 128,528 128,516 112,516" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-25">
+<polygon points="112,516 128,504 128,480 112,480" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-26">
+<polygon points="112,480 112,444 128,462" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-27">
+<polygon points="112,444 128,444 128,428 120,428 120,420 112,420" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="120" cy="432" r="1.8" fill="#000"/>
+</g>
+<g data-symbol-id="right-arm-28">
+<polygon points="112,420 128,420 128,408 112,412" fill="url(#hatch)" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-29">
+<polygon points="112,396 128,396 128,372 120,372 120,360 112,360" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-30">
+<polygon points="112,360 128,360 128,336 112,344" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-31">
+<polygon points="112,336 128,336 128,312 112,312" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-32">
+<polygon points="112,300 128,300 128,264 112,276" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-33">
+<polygon points="112,264 128,264 128,248 112,240" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-34">
+<polygon points="112,168 128,168 128,144 112,144" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-35">
+<polygon points="112,120 128,120 128,96 112,84" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+<g data-symbol-id="right-arm-36">
+<polygon points="112,84 128,84 128,72 112,72" fill="#000" stroke="#000" stroke-width="1"/>
+</g>
+</svg>

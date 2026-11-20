@@ -1,0 +1,7 @@
+CMU Graphics Lab Motion Capture Database, subject 49, trial 09
+Start standing on both feet, arms down by your sides.
+4 counts per bar, 100 counts per minute.
+Bar 1, count 3: left arm moves forward and to your left, high, over 5.5 counts.
+Count 4: right arm moves forward, high, over 3.5 counts.
+Bar 2, count 3 and: right arm moves to your right, high, over 2 counts.
+Count 4 and: left arm moves to your left, high, over 0.5 counts.

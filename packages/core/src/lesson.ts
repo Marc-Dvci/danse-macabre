@@ -28,19 +28,23 @@ function startLine(score: Score): LessonLine {
     const cell = sp[column];
     return cell !== undefined && cell.direction === direction && cell.level === level;
   };
-  // Standing: both supports in place at the middle level; a leg either hangs straight down or is not written.
+  // Standing: both supports in place at the same level; a leg either hangs straight down or is not written.
   const legDownOrUnwritten = (column: ColumnId): boolean => sp[column] === undefined || is(column, 'place', 'low');
-  const standing =
-    is('left-support', 'place', 'middle') &&
-    is('right-support', 'place', 'middle') &&
-    legDownOrUnwritten('left-leg') &&
-    legDownOrUnwritten('right-leg');
+  const standLevel = (['middle', 'high', 'low'] as const).find(
+    (lv) => is('left-support', 'place', lv) && is('right-support', 'place', lv),
+  );
+  const standing = standLevel !== undefined && legDownOrUnwritten('left-leg') && legDownOrUnwritten('right-leg');
+  const standingWords: Record<Level, string> = {
+    middle: 'standing on both feet',
+    high: 'standing on the balls of both feet',
+    low: 'standing on both feet, knees bent',
+  };
   const armsDown = ARM_COLUMNS.every((c) => is(c, 'place', 'low'));
 
   const items: string[] = [];
   const ids: string[] = [];
   if (standing) {
-    items.push('standing on both feet');
+    items.push(standingWords[standLevel!]);
     ids.push(...STANDING_COLUMNS.filter((c) => sp[c] !== undefined).map((c) => `start:${c}`));
   }
   if (armsDown) {

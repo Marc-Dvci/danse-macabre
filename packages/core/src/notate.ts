@@ -1,5 +1,5 @@
 import { bodyFrame } from './body-frame';
-import { footContacts } from './contact';
+import { footContacts, standingHeight } from './contact';
 import { heldCells, hysteresisCells } from './held-cells';
 import { limbBaseJoint, limbEndJoint } from './rig';
 import { notateSupports, type SupportOptions } from './notate-supports';
@@ -180,5 +180,13 @@ export function notate(frames: Frame[], options: NotateAllOptions): Score {
     return arrival >= 0 && !onFloor[arrival];
   });
 
-  return canonicalScore({ ...gestures, symbols: [...kept, ...supports] });
+  // A foot on the floor at the first frame starts as a support in place, at the level of the pelvis then.
+  const startPosition = { ...gestures.startPosition };
+  const standing = standingHeight(frames, contacts);
+  const h0 = frames[0]!.joints.pelvis.y;
+  const level = h0 < 0.93 * standing ? 'low' : h0 > 1.03 * standing ? 'high' : 'middle';
+  if (contacts.left[0]) startPosition['left-support'] = { direction: 'place', level };
+  if (contacts.right[0]) startPosition['right-support'] = { direction: 'place', level };
+
+  return canonicalScore({ ...gestures, startPosition, symbols: [...kept, ...supports] });
 }
