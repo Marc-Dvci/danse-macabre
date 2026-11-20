@@ -1,5 +1,5 @@
 // Edit one symbol: pick a new direction and level. The skeleton dances the edited score at once.
-import type { LabanSymbol } from "./engine";
+import type { DirectionSymbol } from "./engine";
 
 const DIRECTIONS = [
   ["left-forward", "forward", "right-forward"],
@@ -21,7 +21,7 @@ const ICON: Record<string, string> = {
 };
 
 interface Props {
-  symbol: LabanSymbol;
+  symbol: DirectionSymbol;
   edited: boolean;
   onChange: (direction: string, level: string) => void;
   onReset: () => void;

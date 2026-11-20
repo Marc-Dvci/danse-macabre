@@ -33,7 +33,8 @@ export const FEATURED: ClipInfo[] = [
   },
 ];
 
-const scoreLoaders = import.meta.glob<Score>("../../data/scores/*.score.json", { import: "default" });
+// The finale was choreographed by Kiro through the MCP server's compose_score tool (examples/compose-finale.mjs).
+const scoreLoaders = import.meta.glob<Score>("../../examples/danse-macabre.score.json", { import: "default" });
 
 export const CLIP_SOURCE: string = manifest.source;
 export const CLIPS: ClipInfo[] = manifest.clips;
@@ -49,7 +50,7 @@ export function loadClip(id: string): Promise<Clip> {
   const hit = cache.get(id);
   if (hit) return hit;
   if (id === "finale") {
-    const load = scoreLoaders["../../data/scores/danse-macabre.score.json"]!;
+    const load = scoreLoaders["../../examples/danse-macabre.score.json"]!;
     const p = load().then((score) => ({
       ...FEATURED[0]!,
       fps: 30,

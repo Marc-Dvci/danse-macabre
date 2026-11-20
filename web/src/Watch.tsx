@@ -15,6 +15,8 @@ import {
   notateClip,
   performScore,
   secondsToBeats,
+  isDirectionSymbol,
+  type DirectionSymbol,
   type Frame,
   type LessonLine,
   type Score,
@@ -90,17 +92,22 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
       ...notated,
       symbols: notated.symbols.map((s) => {
         const e = edits[s.id];
-        return e ? { ...s, direction: e.direction as typeof s.direction, level: e.level as typeof s.level } : s;
+        if (!e || !isDirectionSymbol(s)) return s;
+        return { ...s, direction: e.direction as DirectionSymbol["direction"], level: e.level as DirectionSymbol["level"] };
       }),
     };
   }, [notated, edits]);
-  const selectedSymbol = score?.symbols.find((s) => s.id === selected) ?? null;
+  const found = score?.symbols.find((s) => s.id === selected) ?? null;
+  const selectedSymbol = found && isDirectionSymbol(found) ? found : null;
 
   const performed = useMemo(() => (score ? performScore(score) : []), [score]);
   const lesson: LessonLine[] = useMemo(() => (score ? describeScore(score) : []), [score]);
   const layout = useMemo(() => (score ? layoutStaff(score) : null), [score]);
-  const duration = Math.max(lastTime(recording), lastTime(performed));
-  const beat = score ? secondsToBeats(score, time) : 0;
+  // A score-only dance with music plays its phrase over and over for as long as the music lasts.
+  const phrase = lastTime(performed);
+  const duration = clip?.music ? 42 : Math.max(lastTime(recording), phrase);
+  const loopTime = (t: number) => (scoreOnly && phrase > 0 ? t % phrase : t);
+  const beat = score ? secondsToBeats(score, loopTime(time)) : 0;
 
   useEffect(() => {
     if (!stageHost.current) return;
@@ -131,12 +138,12 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
   useEffect(() => {
     const s = stage.current;
     if (!s) return;
-    const scorePose = sample(performed, time);
+    const scorePose = sample(performed, loopTime(time));
     const recPose = sample(recording, time);
     if (scoreOnly && ensemble && score) {
       // A canon: each skeleton in the ring starts one bar after the one before.
       const bar = (60 / score.tempo) * score.beatsPerBar;
-      const poses = Array.from({ length: 6 }, (_, i) => sample(performed, Math.max(0, time - i * bar)));
+      const poses = Array.from({ length: 6 }, (_, i) => sample(performed, loopTime(Math.max(0, time - i * bar))));
       s.showEnsemble(poses.filter((p): p is NonNullable<typeof p> => p !== null));
     } else {
       s.showEnsemble([]);
@@ -146,7 +153,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     s.showGhost(show !== "score" ? recPose : null);
     if (show === "recording" && recPose) s.show(recPose);
     s.showBones(show !== "recording");
-  }, [time, performed, recording, show, scoreOnly, ensemble, score]);
+  }, [time, performed, recording, show, scoreOnly, ensemble, score, phrase]);
 
   // Music for score-only dances, kept in step with the clock.
   useEffect(() => {
@@ -199,7 +206,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
         }
         const li = lesson.findIndex((l, i) => {
           const nb = lesson[i + 1]?.beat ?? Infinity;
-          const cur = secondsToBeats(score, next);
+          const cur = secondsToBeats(score, loopTime(next));
           return cur >= l.beat && cur < nb;
         });
         if (li !== lastLine.current) {

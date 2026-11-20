@@ -1,7 +1,7 @@
 // Staff geometry for ScoreView, in staff units with y up (time runs upward). The layout itself comes from
 // @danse/core's layoutStaff; this file adapts it for the view and keeps the glyph shapes for the legend.
 import { layoutStaff as coreLayout } from "@danse/core";
-import type { Score, LabanSymbol } from "./engine";
+import { isDirectionSymbol, type Score, type LabanSymbol } from "./engine";
 
 export interface Glyph {
   symbolId: string;
@@ -62,6 +62,10 @@ export function unitShape(direction: string): Array<[number, number]> {
 
 function describeSymbol(s: LabanSymbol): string {
   const part = s.column.replace("-", " ").replace("support", "foot, step");
+  if (!isDirectionSymbol(s)) {
+    const turn = s as unknown as { rotation: string; amount: number };
+    return `${part}: turn ${turn.amount} ${turn.rotation === "cw" ? "clockwise" : "counter-clockwise"}, ${s.duration} counts`;
+  }
   const dir = s.direction === "place" ? "place" : s.direction.replace("-", " ");
   return `${part}: ${dir} ${s.level}, ${s.duration} ${s.duration === 1 ? "count" : "counts"}`;
 }
@@ -84,10 +88,13 @@ export function layoutStaff(score: Score): StaffLayout {
     counts: core.counts.map((c) => ({ y: c.y, label: c.label })),
     glyphs: core.glyphs.map((g) => {
       const sym = bySymbol.get(g.symbolId);
+      const turn = g as unknown as { kind?: string; amount?: number };
+      const amountLabel: Record<number, string> = { 0.25: "1/4", 0.5: "1/2", 0.75: "3/4", 1: "1" };
       return {
         symbolId: g.symbolId,
         column: g.column,
-        kind: "direction" as const,
+        kind: turn.kind === "turn" ? ("turn" as const) : ("direction" as const),
+        amount: turn.kind === "turn" && turn.amount !== undefined ? amountLabel[turn.amount] : undefined,
         x: g.x,
         y: g.y,
         w: g.w,

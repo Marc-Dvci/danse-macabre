@@ -1,5 +1,5 @@
 // Compare a score read from video with the score of the same take read from motion capture.
-import type { Frame, Score } from "./engine";
+import { isDirectionSymbol, type Frame, type Score } from "./engine";
 
 const ARMS = ["left-arm", "right-arm"] as const;
 const SECTORS = [
@@ -18,7 +18,7 @@ export function heldCell(score: Score, column: string, beat: number): string | n
   let cell = score.startPosition[column as keyof Score["startPosition"]];
   let best = -Infinity;
   for (const s of score.symbols) {
-    if (s.column !== column) continue;
+    if (s.column !== column || !isDirectionSymbol(s)) continue;
     const end = s.start + s.duration;
     if (end <= beat + 1e-9 && end > best) {
       best = end;

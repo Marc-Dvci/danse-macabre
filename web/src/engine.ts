@@ -2,16 +2,20 @@
 import {
   describe,
   findPhrase,
+  isDirectionSymbol,
+  isTurnSymbol,
   mirrorFrames,
   mirrorScore,
-  notateGestures,
-  performGestures,
+  notate,
+  perform,
+  type DirectionSymbol,
   type Frame,
   type Score,
   type Symbol as LabanSymbol,
 } from "@danse/core";
 
-export type { Frame, Score, LabanSymbol };
+export type { Frame, Score, LabanSymbol, DirectionSymbol };
+export { isDirectionSymbol, isTurnSymbol };
 
 export interface NotateSettings {
   tempo: number;
@@ -22,11 +26,11 @@ export interface NotateSettings {
 export const DEFAULT_SETTINGS: NotateSettings = { tempo: 100, beatsPerBar: 4, grid: 0.5 };
 
 export function notateClip(frames: Frame[], title: string, s: NotateSettings = DEFAULT_SETTINGS): Score {
-  return notateGestures(frames, { ...s, title });
+  return notate(frames, { ...s, title });
 }
 
 export function performScore(score: Score, fps = 30): Frame[] {
-  return performGestures(score, { fps });
+  return perform(score, { fps });
 }
 
 export function mirror(score: Score): Score {

@@ -58,6 +58,23 @@ language model decides anything in the app.
 
 ## How Kiro is used
 
+Kiro built the notation engine (`packages/core`) and its tests from specs, through the Kiro CLI driven headless. I
+wrote each spec's requirements in EARS form and the steering; Kiro wrote each `design.md` and `tasks.md`, then the
+code and the tests, task by task. The web app is built around the engine's public API.
+
+| Kiro feature | What it does here |
+|---|---|
+| Specs | Four specs in [`.kiro/specs/`](.kiro/specs): `laban-core` (score model, quantisation, notation, playback, mirror, tempo), `supports-and-turns`, `lesson-search-layout` (spoken lesson, phrase search, staff layout and SVG) and `dance-mcp`. The 1928 rules are the requirements |
+| Property-based testing | The laws of the notation as fast-check properties, 200 runs each: every limb direction falls in exactly one of the 26 cells; mirroring twice gives the dance back; mirroring commutes with notation; dancing a score and writing it down again gives the same score; the spoken lesson parses back into the same symbols, and every word it says comes from a symbol |
+| Hooks | [`guard.json`](.kiro/hooks/guard.json) refuses deletes, pushes and credential reads before any tool runs; [`properties-on-save.json`](.kiro/hooks/properties-on-save.json) runs the property tests whenever Kiro saves engine code; [`verify-on-stop.json`](.kiro/hooks/verify-on-stop.json) typechecks and tests everything when a session ends; [`notate-new-clip.json`](.kiro/hooks/notate-new-clip.json) writes a newly saved dance clip down as a score, a staff and a lesson |
+| Steering | [`product.md`](.kiro/steering/product.md), [`tech.md`](.kiro/steering/tech.md), [`rules.md`](.kiro/steering/rules.md), and [`notation.md`](.kiro/steering/notation.md), loaded only for engine and spec files, which carries the Labanotation subset |
+| Custom agents | [`notator`](.kiro/agents/notator.json) builds from the specs and cannot edit its own rules; [`repetiteur`](.kiro/agents/repetiteur.json) reviews and can write nothing |
+
+Kiro asked before it bent a rule. When the first round-trip property failed, it traced the failure to two
+requirements that contradicted each other and asked which one to change, instead of weakening the test. When real
+motion capture of the Macarena produced only four arm symbols, it measured why (dancers sway while they hold a
+position, so their speed never reaches a true rest) and the spec gained a rule for holds.
+
 ## Evidence
 
 ## Quickstart
