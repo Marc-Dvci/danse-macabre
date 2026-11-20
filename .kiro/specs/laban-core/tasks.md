@@ -41,9 +41,11 @@ a failing requirement test stay unticked.
         Known limit 3). The count was 16 arm symbols before task 6.7 and is 12 after it.
   - [x] 6.7 First-frame rule (Requirement 4.4 rule b, owner answer 1, D18): `holdFrames(vectors, times, raw,
         speedRests, dwellTime, dwellAngle)` starts a hold only where raw speed is below 5% of the peak of the move before
-        it. Example test: `hold-frames.test.ts` (2 tests, pass). The Macarena test call is updated to the new signature.
-  - [ ] 6.6 Holds move symbol edges on generated scores, on the departure side only (design Known limit 4). The
-        arrival side is fixed by 6.7. The settled-cell example test and P7.5 still fail. Owner decision needed (12.4).
+        it. Example test: `hold-frames.test.ts` (3 tests, pass). The Macarena test call is updated to the new signature.
+  - [x] 6.6 Holds move symbol edges on generated scores, on the departure side (design Known limit 4, D19). Owner extension
+        of Requirement 4.4 rule b: a hold's last frame must have raw speed below 5% of the peak of the move after it.
+        `holdFrames` implements it. Example test: `hold-frames.test.ts` ("ends the hold at frame 25, before the fast start
+        of the departure"). The settled-cell example test and P7.5 pass after this change.
 
 - [x] 7. Mirror and tempo (Req 6)
   - [x] 7.1 `mirror.ts`
@@ -51,10 +53,10 @@ a failing requirement test stay unticked.
 
 - [ ] 8. Round-trip and invariance properties (Req 7)
   - [x] 8.1 Generators: `genGestureScore` (7.5 domain, D9, D10), `genRandomFrames`, `runOptions` (FC_SEED, D16)
-  - [ ] 8.2 P7.3 and P7.4 (`mirror.prop.test.ts`) pass at the default seed and at seeds 1, 42, 1234, 99991, 2024. After
-        task 6.7, the unseeded suite passes them. Seeded runs at 1, 42, 1234, 99991, 2024 are not re-measured: the seeded
-        command was blocked by a hook in this session.
-  - [ ] 8.3 P7.5 (`roundtrip.prop.test.ts`) fails after task 6.7 (unseeded run, Known limit 4). Seeded runs not re-measured.
+  - [x] 8.2 P7.3 and P7.4 (`mirror.prop.test.ts`) pass at seeds 1, 42, 1234, 99991, 2024 (each one run by
+        `$env:FC_SEED` and `vitest run`, after task 6.6), and in the unseeded full run (52 of 52).
+  - [x] 8.3 P7.5 (`roundtrip.prop.test.ts`) passes at seeds 1, 42, 1234, 99991, 2024 (after task 6.6), and in the
+        unseeded full run (52 of 52).
   - [x] 8.4 P7.6 and P7.7 pass
 
 - [x] 9. Public API
@@ -65,15 +67,18 @@ a failing requirement test stay unticked.
   - [x] 10.2 8.2: the first symbol of each arm is `forward middle` within 2 beats (left arm at beat 1, right arm at beat
         1.5). Passes with holds and D18. The test also prints the total arm symbols (12 after D18) and the first eight.
 
-- [ ] 11. Checks
+  - [x] 10.2 8.2: the first symbol of each arm is `forward middle` within 2 beats (left arm at beat 1, right arm at beat
+        1.5). Passes with holds and D19. The test prints 10 arm symbols in total and the first eight.
+
+- [x] 11. Checks
   - [x] 11.1 `pnpm --filter @danse/core typecheck` passes (exit 0)
-  - [ ] 11.2 `pnpm --filter @danse/core test` fails in 2 of 51 tests: the settled-cell example test in `notate.test.ts`
-        and P7.5 in `roundtrip.prop.test.ts` (task 6.6). 49 pass, including the 2 new tests in `hold-frames.test.ts`.
-        `known-limits.test.ts` has been removed by the owner.
+  - [x] 11.2 `pnpm --filter @danse/core test` passes 52 of 52 tests in 15 files. This includes the settled-cell example
+        test in `notate.test.ts`, P7.5, and the 3 tests in `hold-frames.test.ts`. `known-limits.test.ts` has been removed by
+        the owner.
 
 - [x] 12. Owner decisions
   - [x] 12.1 Remove `test/known-limits.test.ts` (owner removed it).
   - [x] 12.2 Known limit 3 (sparse notation): answered as Requirement 4.4 rule (b), holds (task 6.5).
   - [x] 12.3 Confirm the 5% move-edge threshold (D13). Owner confirmed.
-  - [ ] 12.4 Decide task 6.6, the departure side of a hold: a mirror of D18 for the last hold frame, or a smaller
-        `dwellAngle`? (design Known limit 4). Owner has answered only the arrival side (answer 1).
+  - [x] 12.4 Task 6.6, the departure side of a hold. The owner extended Requirement 4.4 rule b with the last-frame rule
+        (D19). Implemented in `holdFrames`. The alternative of a smaller `dwellAngle` is not applied. No owner answer on it.

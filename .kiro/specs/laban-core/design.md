@@ -83,8 +83,11 @@ For each gesture column, in this order:
    (b) A hold, from `holdFrames`: a run that starts at frame `i`, ends at the last frame `j` whose vector is within
    `dwellAngle` of the vector at `i`, and lasts at least `dwellTime` (`t_j − t_i ≥ dwellTime`). The first frame `i`
    must have raw speed `r[i] < 0.05 · max r over (p, i]`, where `p` is the last rest before `i` (Requirement 4.4 rule b,
-   owner answer 1, D18). Frame 0 is exempt. The search is greedy: after a hold it resumes at `j + 1`, otherwise at
-   `i + 1`. Every frame from `i` to `j` is a rest (D17).
+   owner answer 1, D18). Frame 0 is exempt. The last frame `j` must have raw speed `r[j] < 0.05 · max r over (j, q]`,
+   where `q` is the first speed rest after `j` (or `n−1`) (Requirement 4.4 rule b, owner extension, D19). The last frame
+   `n−1` is exempt, and so is a move with no motion. The hold ends at the largest frame `j` within the angle reach that
+   passes the speed test and lasts at least `dwellTime`. Otherwise no hold starts at `i`. The search then resumes at
+   `j + 1` after a hold, otherwise at `i + 1`. Every frame from `i` to `j` is a rest (D17).
 6. **Moves and edges (4.4), `moveEdges`.** For consecutive rests `a < b`, the motion frames are `k ∈ (a, b]` with
    `r[k] ≥ 0.05 · max r over (a, b]`. The move starts at the frame before the first motion frame and ends at the last
    motion frame. A move with no motion is skipped. Consecutive rests inside one hold give a move whose two ends hold the
@@ -140,6 +143,12 @@ For each gesture column, in this order:
   the move's last motion frame. `holdFrames` takes `raw` and the speed rests for this check. Covered by
   `test/hold-frames.test.ts`: a fast 90° arrival at frame 10 followed by a slow drift must give a hold starting at frame
   11, not 10.
+- **D19 Hold end before the slow start of a move (4.4 rule b, owner extension).** A hold's last frame `j` must have raw
+  speed below 5% (`MOVE_EDGE_FRACTION`) of the peak raw speed of the move after it. That move runs from `j` to the first
+  speed rest after `j`. This keeps the slow start of a departure in the move, so the symbol starts at the departure, not
+  after it. `holdFrames` takes the same inputs as before. The clip's last frame and a move with no motion are exempt.
+  Covered by `test/hold-frames.test.ts`. Measured by P7.4 and P7.5 at seeds 1, 42, 1234, 99991 and 2024 (all pass), and
+  by the full core suite (51 of 51 pass). The seeds and counts are in the report of this session.
 
 ## Known limits
 
@@ -149,18 +158,12 @@ For each gesture column, in this order:
    P7.4 is not reproduced in the seeds listed under Properties.
 3. **Resolved for the Macarena by holds (Requirement 4.4 rule b, D17).** Before holds the whole clip gave 4 arm symbols,
    and the left arm's `forward middle` hold (0.80 s to 2.23 s) had no rest. With holds and the first-frame rule (D18)
-   the Macarena test prints 12 arm symbols in total (16 before D18), and the first left-arm symbol is `forward middle`
+   the Macarena test prints 10 arm symbols in total after D19 (12 after D18, 16 before D18), and the first left-arm symbol is `forward middle`
    at beat 1 (0.6 s at 100 bpm). The right arm's first symbol is `forward middle` at beat 1.5. No constant was tuned.
-4. **Open: the departure edge of a hold (Requirement 4.4 rule b, Requirement 7.5).** D18 fixes the arrival: a hold
-   cannot start on the slow tail of a move. A hold's last frame has no such check. The last frame `j` is the last frame
-   within `dwellAngle` of the hold's first vector. The likely cause, not measured here, is that the first few degrees of the
-   next move fall inside the hold. Then the move starts after `j`, and grid rounding moves the symbol start later. Measured with the unseeded run of
-   P7.5 after D18 (counterexample, tempo 60, one left-leg symbol `right-forward high` at start 0.5 beat, duration 1 beat,
-   with the other leg at `place low`): the notated symbol is at start 1 beat, duration 0.5 beat. The notate example test
-   "writes one symbol for the cell the arm settles in" fails the same way: it expects `[right, middle, 1, 2]` and gets
-   `[right, middle, 1.5, 1.5]`. The owner has not yet chosen a fix for the departure side. Options for the owner: a
-   departure rule that mirrors D18 (the last hold frame's raw speed must be below 5% of the next move's peak), or a
-   smaller `dwellAngle`. Neither has been implemented or measured.
+4. **Resolved (Requirement 4.4 rule b, D19).** The last frame of a hold must be slow relative to the move after it. The
+   departure case that failed P7.5 (counterexample: tempo 60, one left-leg symbol `right-forward high` at start 0.5 beat,
+   duration 1 beat, notated at start 1 beat with duration 0.5 beat) is covered by the fix. The notate example test
+   "writes one symbol for the cell the arm settles in" passes after D19.
 
 ## Correctness properties (Requirement 7)
 
@@ -171,8 +174,8 @@ Each property runs with `numRuns: 200` or 500. Generators are in `test/generator
 | P7.1 | Exactly one of 26 cells contains each non-zero vector; `cellCenter` quantises back | 3.1–3.4 | `quantize.prop.test.ts` | pass |
 | P7.2 | Yaw of vector and axes together gives the same cell | 3, 2 | `quantize.prop.test.ts` | pass |
 | P7.3 | `mirrorScore(mirrorScore(s)) = s` | 6.1 | `mirror.prop.test.ts` | pass |
-| P7.4 | `canonical(notate(mirrorFrames(f))) = canonical(mirrorScore(notate(f)))` | 4, 6 | `mirror.prop.test.ts` | Passed in the unseeded run of the full suite after D18. Seeded runs at 1, 42, 1234, 99991, 2024 not yet re-measured after D18 (the seeded command was blocked by a hook) |
-| P7.5 | Round trip of symbols for the 7.5 domain (`genGestureScore`) | 4, 5 | `roundtrip.prop.test.ts` | FAIL in the unseeded run after D18 (see Known limit 4). Seeded runs not re-measured after D18 |
+| P7.4 | `canonical(notate(mirrorFrames(f))) = canonical(mirrorScore(notate(f)))` | 4, 6 | `mirror.prop.test.ts` | pass at seeds 1, 42, 1234, 99991, 2024 (after D19), and in the unseeded full core run |
+| P7.5 | Round trip of symbols for the 7.5 domain (`genGestureScore`) | 4, 5 | `roundtrip.prop.test.ts` | pass at seeds 1, 42, 1234, 99991, 2024 (after D19), and in the unseeded full core run |
 | P7.6 | `performGestures(retime(s, 2))` at frame k equals `performGestures(s)` at 2k | 6.3, 5 | `tempo.prop.test.ts` | pass |
 | P7.7 | `validateScore(notate(f)).ok` for generated performances and random frames | 4, 1.3 | `notate.prop.test.ts` | pass |
 
@@ -193,17 +196,17 @@ The diagnostic P7.5d (arm-only sprints) was removed earlier. It tested the 60 de
 - 8.1 checks frame 0 forward against (−0.48, 0, −0.88) at one decimal place. Passes. Measured: (−0.511, 0.000, −0.859).
 - 8.2 notates at 100 bpm. It logs the raw cells of the first 4 s, the rests (including holds) of both arms, the total
   number of arm symbols and the first eight. It asserts that the first symbol of each arm is `forward middle` with start
-  at most 2 beats. Passes after D18 with 12 arm symbols in total (measured by `vitest run test/macarena.test.ts`). The
-  first eight: left-arm `forward middle` at 1, right-arm `forward middle` at 1.5, left-arm `right-forward middle` at 2.5,
-  left-arm `forward middle` at 4.5, left-arm `left-forward high` at 5.5, right-arm `right low` at 5.5, left-arm
-  `backward low` at 6, right-arm `forward middle` at 7. No constant was tuned. The earlier 16-symbol result (before D18)
-  is not reproduced.
+  at most 2 beats. Passes after D19 with 10 arm symbols in total (measured by `vitest run test/macarena.test.ts`). The
+  first eight: left-arm `forward middle` at 1, right-arm `forward middle` at 1.5, left-arm `left-forward high` at 5.5,
+  right-arm `right low` at 5.5, left-arm `backward low` at 6, left-arm `forward middle` at 7, right-arm `forward middle`
+  at 7, left-arm `right-forward middle` at 11.5. No constant was tuned. The 12-symbol count of D18 and the 16-symbol
+  count before D18 are not reproduced by the current run.
 
 ## Notation tests
 
 - `notate.test.ts`: "keeps the held cell for a limb resting within the hysteresis width of a boundary" (hysteresis 4)
   and its control with hysteresis 0. The arm alternates every 0.5 s between 21° and 24° of elevation, around the
   22.5° middle/high boundary.
-- `notate.test.ts`: "writes one symbol for the cell the arm settles in, not for the cells it passes through". FAILS
-  (Known limit 4).
+- `notate.test.ts`: "writes one symbol for the cell the arm settles in, not for the cells it passes through". Passes
+  after D19.
 - `quantize.test.ts`: boundary azimuths 22.5, 67.5, 112.5, 157.5 and their negatives go to the sector farther from forward.

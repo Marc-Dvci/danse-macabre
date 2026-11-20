@@ -36,3 +36,23 @@ describe('holdFrames (Requirement 4.4 rule b)', () => {
     expect(holds).toEqual(Array.from({ length: 30 }, (_, k) => 11 + k));
   });
 });
+
+describe('holdFrames departure rule (Requirement 4.4 rule b, last frame)', () => {
+  // Frames 0 to 9 face 0 degrees. Frame 10 jumps to 90 degrees (the arrival). Frames 11 to 25 stay at 90 degrees.
+  // From frame 26 the limb turns 1 degree per frame, which is 30 deg/s (the departure). The angle reach of a hold that
+  // starts at frame 11 runs past frame 25 into the departure, so frames 26 onward are inside the reach but fast.
+  const vectors: Vec3[] = [];
+  for (let k = 0; k <= 40; k++) {
+    if (k < 10) vectors.push(yaw(0));
+    else if (k <= 25) vectors.push(yaw(90));
+    else vectors.push(yaw(90 + (k - 25)));
+  }
+  const t = times(vectors.length);
+  const raw = angularSpeeds(vectors, t);
+  const speedRests = [0, 40];
+
+  it('ends the hold at frame 25, before the fast start of the departure', () => {
+    const holds = holdFrames(vectors, t, raw, speedRests, 0.35, 8);
+    expect(holds).toEqual(Array.from({ length: 15 }, (_, k) => 11 + k));
+  });
+});

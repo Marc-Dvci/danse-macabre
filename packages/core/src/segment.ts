@@ -94,9 +94,13 @@ export function restFrames(smoothed: number[], restSpeed: number): number[] {
  * frame `i`. The first frame `i` must also have a raw speed below MOVE_EDGE_FRACTION of the peak raw speed of the move
  * before it, where that move runs from the last rest before `i` (a speed rest, or the end of an earlier hold) to `i`.
  * This keeps the slow tail of an arrival in the move. Frame 0 is exempt, because no move precedes it.
- * Holds are found greedily from the first frame: each hold runs to its last frame that still satisfies the angle rule,
- * and the search resumes after it. Every frame of a hold is returned, because a hold is a rest from its first frame to
- * its last frame.
+ * The last frame `j` of a hold must have a raw speed below MOVE_EDGE_FRACTION of the peak raw speed of the move after
+ * it, where that move runs from `j` to the next speed rest. This keeps the slow start of a departure in the move. The
+ * last frame of the clip is exempt, because no move follows it, and so is a hold followed by no motion.
+ * The hold ends at the largest frame within the angle reach whose speed rule holds and whose duration is at least
+ * `dwellTime`.
+ * Holds are found greedily from the first frame, and the search resumes after each hold.
+ * Every frame of a hold is returned, because a hold is a rest from its first frame to its last frame.
  * @param vectors Limb vectors, one per frame. A zero vector has angle 0 to any vector (see `angleDeg`).
  * @param times Frame times in seconds, increasing.
  * @param raw Raw angular speed per frame, deg/s (see `angularSpeeds`).
@@ -116,18 +120,52 @@ export function holdFrames(
   const n = vectors.length;
   const isSpeedRest = new Uint8Array(n);
   for (const r of speedRests) isSpeedRest[r] = 1;
+
+  // nextRest[k] is the first speed rest after frame k, or the last frame when there is none. The move after frame k
+  // runs from k to nextRest[k].
+  const nextRest = new Int32Array(n);
+  let nr = n - 1;
+  for (let k = n - 1; k >= 0; k--) {
+    nextRest[k] = nr;
+    if (isSpeedRest[k]) nr = k;
+  }
+  // Peak raw speed of the move after frame j (Requirement 4.4 rule b, last frame).
+  const peakAfter = (j: number): number => {
+    let p = 0;
+    for (let k = j + 1; k <= nextRest[j]!; k++) p = Math.max(p, raw[k]!);
+    return p;
+  };
+  // The last frame of a hold is slow relative to the move after it. The last frame of the clip has no move after it,
+  // and a move with no motion has nothing to protect, so both pass.
+  const isSlowEnd = (j: number): boolean => {
+    if (j === n - 1) return true;
+    const p = peakAfter(j);
+    return p <= 0 || raw[j]! < MOVE_EDGE_FRACTION * p;
+  };
+
   const out: number[] = [];
   // Peak raw speed over the frames between the last rest and the frame before `i`.
   let peak = 0;
   let i = 0;
   while (i < n) {
     const startsHold = i === 0 || raw[i]! < MOVE_EDGE_FRACTION * peak;
-    let j = i;
-    if (startsHold) while (j + 1 < n && angleDeg(vectors[i]!, vectors[j + 1]!) <= dwellAngle) j++;
-    if (startsHold && j > i && times[j]! - times[i]! >= dwellTime) {
-      for (let k = i; k <= j; k++) out.push(k);
+    let reach = i;
+    if (startsHold) while (reach + 1 < n && angleDeg(vectors[i]!, vectors[reach + 1]!) <= dwellAngle) reach++;
+    // The hold ends at the largest frame in its angle reach that is long enough and slow at its end.
+    let end = -1;
+    if (startsHold) {
+      for (let j = reach; j > i; j--) {
+        if (times[j]! - times[i]! < dwellTime) break;
+        if (isSlowEnd(j)) {
+          end = j;
+          break;
+        }
+      }
+    }
+    if (end > i) {
+      for (let k = i; k <= end; k++) out.push(k);
       peak = 0;
-      i = j + 1;
+      i = end + 1;
     } else {
       peak = isSpeedRest[i] ? 0 : Math.max(peak, raw[i]!);
       i++;
