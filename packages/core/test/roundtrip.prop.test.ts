@@ -1,9 +1,9 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { canonicalScore, notateGestures, performGestures, type NotateOptions, type Score } from '../src/index';
-import { genGestureScore, symbolTuples } from './generators';
+import { genGestureScore, runOptions, symbolTuples } from './generators';
 
-const RUNS = { numRuns: 200 };
+const RUNS = runOptions(200);
 
 function notateOptions(s: Score): NotateOptions {
   return { tempo: s.tempo, beatsPerBar: s.beatsPerBar, grid: s.grid, title: s.title };

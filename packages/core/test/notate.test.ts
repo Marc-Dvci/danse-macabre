@@ -8,8 +8,9 @@ function score(symbols: Score['symbols'], startPosition: Score['startPosition'])
 }
 
 describe('notateGestures', () => {
-  it('writes a symbol for each cell the arm enters for at least minHold (Known limit 1)', () => {
-    // place low to right middle sweeps through right low (elevation -67.5 to -22.5), which holds for well over 0.12 s.
+  it('writes one symbol for the cell the arm settles in, not for the cells it passes through (Requirement 4.4)', () => {
+    // place low to right middle passes through right low (elevation -67.5 to -22.5). Only the settled cell is written,
+    // from the start of the move to its end.
     const input = score(
       [{ id: 'r0', column: 'right-arm', start: 1, duration: 2, direction: 'right', level: 'middle' }],
       { 'right-arm': { direction: 'place', level: 'low' } },
@@ -17,10 +18,7 @@ describe('notateGestures', () => {
     const out = notateGestures(performGestures(input), options);
     expect(validateScore(out)).toEqual({ ok: true });
     const arm = out.symbols.filter((s) => s.column === 'right-arm');
-    expect(arm.map((s) => [s.direction, s.level])).toEqual([
-      ['right', 'low'],
-      ['right', 'middle'],
-    ]);
+    expect(arm.map((s) => [s.direction, s.level, s.start, s.duration])).toEqual([['right', 'middle', 1, 2]]);
     expect(out.startPosition['right-arm']).toEqual({ direction: 'place', level: 'low' });
   });
 
@@ -70,5 +68,54 @@ describe('notateGestures', () => {
     // The same cell held for 0.5 s (15 frames) is longer than minHold, so it is written.
     const held = notateGestures(blip(30, 45), options);
     expect(held.symbols.filter((s) => s.column === 'right-arm')).toHaveLength(2);
+  });
+});
+
+/** Frames for a dancer whose right wrist is at forward, at the elevation given per frame. Other joints are fixed. */
+function armAtElevation(elevationOf: (k: number) => number, count: number): Frame[] {
+  const frames: Frame[] = [];
+  for (let k = 0; k < count; k++) {
+    const e = (elevationOf(k) * Math.PI) / 180;
+    const rightShoulder = { x: -0.2, y: 1.42, z: 0 };
+    const rightWrist = { x: -0.2, y: 1.42 + 0.6 * Math.sin(e), z: 0.6 * Math.cos(e) };
+    frames.push({
+      t: k / 30,
+      joints: {
+        pelvis: { x: 0, y: 0.95, z: 0 },
+        'left-hip': { x: 0.1, y: 0.95, z: 0 },
+        'right-hip': { x: -0.1, y: 0.95, z: 0 },
+        'left-knee': { x: 0.1, y: 0.5, z: 0 },
+        'right-knee': { x: -0.1, y: 0.5, z: 0 },
+        'left-ankle': { x: 0.1, y: 0.05, z: 0 },
+        'right-ankle': { x: -0.1, y: 0.05, z: 0 },
+        'left-shoulder': { x: 0.2, y: 1.42, z: 0 },
+        'right-shoulder': rightShoulder,
+        'left-elbow': { x: 0.4, y: 1.2, z: 0 },
+        'right-elbow': { x: -0.4, y: 1.2, z: 0 },
+        'left-wrist': { x: 0.2, y: 0.82, z: 0 },
+        'right-wrist': rightWrist,
+        neck: { x: 0, y: 1.45, z: 0 },
+        head: { x: 0, y: 1.6, z: 0 },
+      },
+    });
+  }
+  return frames;
+}
+
+describe('notateGestures hysteresis (Requirement 4.8)', () => {
+  // The right wrist alternates every 0.5 s between 21 and 24 degrees of elevation. The middle/high boundary is at 22.5.
+  // Both readings are within 4 degrees of it, so a limb held there keeps its cell.
+  const frames = armAtElevation((k) => (Math.floor(k / 15) % 2 === 0 ? 21 : 24), 180);
+
+  it('keeps the held cell for a limb resting within the hysteresis width of a boundary', () => {
+    const out = notateGestures(frames, { ...options, hysteresis: 4 });
+    expect(validateScore(out)).toEqual({ ok: true });
+    expect(out.symbols.filter((s) => s.column === 'right-arm')).toEqual([]);
+    expect(out.startPosition['right-arm']).toEqual({ direction: 'forward', level: 'middle' });
+  });
+
+  it('writes the changes when the hysteresis is 0, so the test above depends on the rule', () => {
+    const out = notateGestures(frames, { ...options, hysteresis: 0 });
+    expect(out.symbols.filter((s) => s.column === 'right-arm').length).toBeGreaterThan(0);
   });
 });

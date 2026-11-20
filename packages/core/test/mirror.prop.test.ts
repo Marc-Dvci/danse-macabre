@@ -9,9 +9,9 @@ import {
   type NotateOptions,
   type Score,
 } from '../src/index';
-import { genGestureScore } from './generators';
+import { genGestureScore, runOptions } from './generators';
 
-const RUNS = { numRuns: 200 };
+const RUNS = runOptions(200);
 
 function notateOptions(s: Score): NotateOptions {
   return { tempo: s.tempo, beatsPerBar: s.beatsPerBar, grid: s.grid, title: s.title };

@@ -18,8 +18,10 @@ only calls `@danse/core`; it holds no model and makes no network calls.
    - `find_phrase`: `{ score, phrase, mirror }` to matches;
    - `perform_score`: score to frames (`fps`), written to a file when `outPath` is given;
    - `render_score_svg`: score to an SVG string, written to a file when `outPath` is given;
-   - `compose_score`: a list of `{ count, column, direction, level, counts }` steps to a valid score (the way an agent
-     writes a phrase), rejecting invalid input with the validation errors.
+   - `compose_score`: `{ title, tempo, beatsPerBar, grid, startPosition?, moves }` where each move is
+     `{ count, column, direction, level, counts }` or `{ count, column, turn: "cw" | "ccw", amount, counts }`
+     (`count` is 1-based across the whole phrase), to a valid score: the way an agent writes a phrase. Invalid input
+     is rejected with the validation errors.
 2. WHEN a tool receives invalid input THE SYSTEM SHALL return an MCP error result whose text lists every problem,
    and SHALL not throw.
 3. THE SYSTEM SHALL read and write files only inside the directory given by `DANSE_WORKSPACE` (default: the current

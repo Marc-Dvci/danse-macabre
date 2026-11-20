@@ -610,3 +610,13 @@ input[type="range"] {
   font-size: 18px;
   padding: 4px 10px;
 }
+
+.file-pick span {
+  border-bottom: 1px dotted var(--bone-2);
+  cursor: pointer;
+}
+
+.file-pick:focus-within span {
+  outline: 2px solid var(--blood-2);
+  outline-offset: 3px;
+}

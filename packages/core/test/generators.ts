@@ -17,6 +17,19 @@ import {
 /** Grid used by every generated score: half a beat. */
 export const GRID = 0.5;
 
+/**
+ * Run options for a property. When the environment variable FC_SEED is set to an integer, the run uses that seed, so the
+ * same generated inputs can be replayed or several seeds can be compared. Without it fast-check picks a random seed.
+ * @param numRuns Number of generated inputs.
+ */
+export function runOptions(numRuns: number): fc.Parameters<unknown> {
+  const raw = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.FC_SEED;
+  if (raw === undefined || raw.trim() === '') return { numRuns };
+  const seed = Number(raw);
+  if (!Number.isInteger(seed)) throw new Error(`FC_SEED must be an integer, got "${raw}"`);
+  return { numRuns, seed };
+}
+
 const JOINTS: JointName[] = [
   'pelvis',
   'left-hip',

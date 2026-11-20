@@ -3,6 +3,9 @@
 import { describe, expect, it } from 'vitest';
 import clip from '../../../data/clips/macarena.json';
 import { bodyFrame, notateGestures, quantizeGesture, type Frame, type JointName, type Vec3 } from '../src/index';
+import { hysteresisCells, heldCells } from '../src/held-cells';
+import { angularSpeeds, moveEdges, restFrames, smooth } from '../src/segment';
+import { sub } from '../src/vec';
 
 type RawClip = { fps: number; joints: JointName[]; frames: number[][][] };
 
@@ -33,7 +36,7 @@ describe('Requirement 8.1: body frame of the Macarena (CMU subject 143, trial 35
 });
 
 describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
-  it('reports the first eight arm symbols and opens with right-arm forward middle, then left-arm forward middle', () => {
+  it('reports the first eight arm symbols and checks that each arm starts forward middle within two beats', () => {
     // Raw cells of the first 4 s, from the wrist minus the shoulder, before any rule of Requirement 4 is applied.
     for (const col of ['left', 'right'] as const) {
       const runs: string[] = [];
@@ -58,6 +61,26 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
       console.log(`macarena raw ${col}-arm cells:\n  ${runs.join('\n  ')}`);
     }
 
+    for (const col of ['left', 'right'] as const) {
+      const vectors = frames.map((f) => sub(f.joints[`${col}-wrist`], f.joints[`${col}-shoulder`]));
+      const axes: ReturnType<typeof bodyFrame>[] = [];
+      for (const f of frames) axes.push(bodyFrame(f, axes[axes.length - 1]));
+      const times = frames.map((f) => f.t);
+      const held = heldCells(hysteresisCells(vectors, axes, 4), times, 0.12, times[times.length - 1]! + 1 / 30);
+      const raw = angularSpeeds(vectors, times);
+      const rests = restFrames(smooth(raw, times, 0.2), 3);
+      console.log(`macarena ${col}-arm rests (s): ${rests.slice(0, 14).map((r) => (r / 30).toFixed(2)).join(' ')}`);
+      for (let i = 0; i + 1 < rests.length && i < 6; i++) {
+        const e = moveEdges(raw, rests[i]!, rests[i + 1]!);
+        if (!e) continue;
+        const a = held[e.start]!;
+        const b = held[e.end]!;
+        console.log(
+          `  move ${(rests[i]! / 30).toFixed(2)}-${(rests[i + 1]! / 30).toFixed(2)} s, motion ${times[e.start]!.toFixed(3)}-${times[e.end]!.toFixed(3)} s, start cell ${a.direction} ${a.level}, settled ${b.direction} ${b.level}`,
+        );
+      }
+    }
+
     const score = notateGestures(frames, { tempo: 100, beatsPerBar: 4, grid: 0.5, title: 'Macarena' });
     const arms = score.symbols
       .filter((s) => s.column === 'left-arm' || s.column === 'right-arm')
@@ -66,9 +89,12 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
     console.log('macarena first eight arm symbols (column, start in beats, direction, level):');
     for (const s of first) console.log(`  ${s.column}  start ${s.start}  ${s.direction}  ${s.level}`);
 
-    expect(first.slice(0, 2).map((s) => [s.column, s.direction, s.level])).toEqual([
-      ['right-arm', 'forward', 'middle'],
-      ['left-arm', 'forward', 'middle'],
-    ]);
+    // Requirement 8.2: the first symbol of each arm is forward middle within the first two beats. The order of the two
+    // arms is not asserted.
+    for (const col of ['left-arm', 'right-arm'] as const) {
+      const firstOfArm = arms.find((s) => s.column === col);
+      expect(firstOfArm && [firstOfArm.direction, firstOfArm.level]).toEqual(['forward', 'middle']);
+      expect(firstOfArm!.start).toBeLessThanOrEqual(2);
+    }
   });
 });

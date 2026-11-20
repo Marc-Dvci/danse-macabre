@@ -191,11 +191,13 @@ export function Capture({ onOpen }: { onOpen: (id: string) => void }) {
                 {s.title}
               </label>
             ))}
-            <label className="toggle">
+            <label className="toggle file-pick">
+              <span aria-hidden="true">Or open a video file…</span>
               <input
                 type="file"
                 accept="video/*"
                 aria-label="Open a video file"
+                className="sr-only"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
                   if (!f || !video.current) return;

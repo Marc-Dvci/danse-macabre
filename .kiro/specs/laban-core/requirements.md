@@ -72,14 +72,20 @@ edit it.
    time zero at the first frame.
 2. THE SYSTEM SHALL set `startPosition` from the cells of the first frame.
 3. THE SYSTEM SHALL ignore a cell change that lasts less than `options.minHold` seconds (default 0.12 s).
-4. THE SYSTEM SHALL split each limb's motion into moves at its rests. A rest is a local minimum of the smoothed
-   angular speed (centred moving average over `options.smoothing` seconds, default 0.2) that is below a quarter of
-   the lower of its two neighbouring peaks, or below `options.restSpeed` (default 3 deg/s). The first and last frames
-   are rests. WHEN the cell the limb holds at the end of a move differs from the cell it held at the start of that
-   move, and the new cell then holds for at least `minHold`, THE SYSTEM SHALL write one symbol for the new cell from
-   the start rest to the end rest. Cells the limb only passes through during a move are not written, as in written
-   Labanotation, where a symbol gives the destination. A slow move is notated as surely as a fast one, because its
-   ends are still minima of its own speed.
+4. THE SYSTEM SHALL split each limb's motion into moves at its rests. A rest is either
+   (a) a deep minimum: a local minimum of the smoothed angular speed (centred moving average over
+   `options.smoothing` seconds, default 0.2) below a quarter of the lower of its two neighbouring peaks or below
+   `options.restSpeed` (default 3 deg/s); or
+   (b) a hold: an interval of at least `options.dwellTime` seconds (default 0.35) during which the limb's direction
+   stays within `options.dwellAngle` degrees (default 8) of its direction at the start of the interval. A hold is a
+   rest from its first frame (the arrival) to its last frame (the departure). Real dancers sway while they hold a
+   position, so their speed rarely reaches a deep minimum; holds catch those positions.
+   The first and last frames are rests. WHEN the cell the limb holds at the end of a move differs from the cell it
+   held at the start of that move, and the new cell then holds for at least `minHold`, THE SYSTEM SHALL write one
+   symbol for the new cell. The symbol starts at the first frame after the departure rest where the raw angular speed
+   exceeds 5% of that move's peak speed, and ends at the last frame before the arrival rest where it does (decision
+   D13). Cells the limb only passes through during a move are not written, as in written Labanotation, where a symbol
+   gives the destination.
 8. THE SYSTEM SHALL apply a hysteresis of `options.hysteresis` degrees (default 4): a limb resting near a cell
    boundary keeps its previous cell unless its direction is more than that many degrees inside the new cell, so a
    limb held on a boundary does not flicker between two cells.

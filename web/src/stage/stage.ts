@@ -188,6 +188,35 @@ export class Stage {
     if (pose) this.ghost.update(pose);
   }
 
+  private ensemble: Skeleton[] = [];
+
+  /**
+   * Extra skeletons in a ring around the centre, each dancing the given pose (already offset in time by the caller),
+   * placed on the ring and turned to face the centre. An empty list removes them.
+   */
+  showEnsemble(poses: Pose[], radius = 2.1): void {
+    while (this.ensemble.length < poses.length) {
+      const sk = new Skeleton("bone");
+      this.ensemble.push(sk);
+      this.scene.add(sk.group);
+    }
+    this.ensemble.forEach((sk, i) => {
+      const pose = poses[i];
+      sk.group.visible = !!pose;
+      if (!pose) return;
+      const a = (i / poses.length) * Math.PI * 2 + Math.PI / poses.length;
+      const centre = new THREE.Vector3(Math.sin(a) * radius, 0, Math.cos(a) * radius);
+      // Each dancer faces the centre: rotate the pose (which faces +z) by the angle toward the origin.
+      const yaw = Math.atan2(-centre.x, -centre.z);
+      const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+      const moved = {} as Pose;
+      for (const [k, v] of Object.entries(pose) as Array<[keyof Pose, THREE.Vector3]>) {
+        moved[k] = v.clone().applyQuaternion(q).add(centre);
+      }
+      sk.update(moved);
+    });
+  }
+
   /** Hide or show the bone skeleton (when only the recording is shown). */
   showBones(on: boolean): void {
     this.skeleton.group.visible = on;

@@ -1,10 +1,10 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { cellCenter, GESTURE_CELLS, quantizeGesture, type BodyAxes, type Cell, type Vec3 } from '../src/index';
-import { arbAxes, arbNonZeroVector, arbYaw, yawAxes, yawVector } from './generators';
+import { arbAxes, arbNonZeroVector, arbYaw, runOptions, yawAxes, yawVector } from './generators';
 import { dot, length } from '../src/vec';
 
-const RUNS = { numRuns: 500 };
+const RUNS = runOptions(500);
 
 /** Elevation and azimuth of a vector, computed here from the definitions in Requirement 3.1. */
 function angles(v: Vec3, axes: BodyAxes): { e: number; a: number } {
@@ -13,10 +13,21 @@ function angles(v: Vec3, axes: BodyAxes): { e: number; a: number } {
   return { e, a };
 }
 
-/** True when azimuth a lies in the sector k of Requirement 3.3, measured as a circular distance from 45k. */
+/** Centre azimuth of sector j in degrees, in (-180, 180]. */
+function centreDeg(j: number): number {
+  const m = (((45 * j) % 360) + 360) % 360;
+  return m > 180 ? m - 360 : m;
+}
+
+/**
+ * True when azimuth a lies in the sector k of Requirement 3.3. A boundary (22.5 + 45m degrees from a centre) belongs to
+ * the sector whose centre is farther from forward. Written here from the rule, not from quantizeGesture.
+ */
 function inSector(a: number, k: number): boolean {
   const d = ((((a - 45 * k) % 360) + 540) % 360) - 180;
-  return d >= -22.5 && d < 22.5;
+  if (Math.abs(Math.abs(d) - 22.5) > 1e-7) return Math.abs(d) < 22.5;
+  const other = d > 0 ? (k + 1) % 8 : (k + 7) % 8;
+  return Math.abs(centreDeg(k)) > Math.abs(centreDeg(other));
 }
 
 /** Interval test of Requirement 3.2 and 3.3, written independently of quantizeGesture. */
