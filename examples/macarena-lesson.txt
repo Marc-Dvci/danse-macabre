@@ -1,0 +1,11 @@
+Source: CMU Graphics Lab Motion Capture Database, subject 143, trial 35 (Macarena Dance).
+Start standing, arms down by your sides, left leg moves straight down, right leg moves straight down.
+4 counts per bar, 100 counts per minute.
+Bar 1, count 2: left arm moves forward, middle, over 0.5 counts.
+Count 2 and: right arm moves forward, middle, over 0.5 counts.
+Bar 2, count 2 and: left arm moves forward and to your left, high, over 0.5 counts; right arm moves to your right, low, over 1.5 counts.
+Count 3: left arm moves backward, low, over 0.5 counts.
+Count 4: left arm moves forward, middle, over 4 counts; right arm moves forward, middle, over 4.5 counts.
+Bar 3, count 4 and: left arm moves forward and to your right, middle, over 1 count.
+Bar 4, count 2: left arm moves forward, middle, over 0.5 counts.
+Count 3: left arm moves forward and to your left, high, over 0.5 counts.

@@ -19,3 +19,19 @@ export { standardRig, type Rig } from './rig';
 export { performGestures, type PerformOptions } from './perform';
 export { notateGestures, type NotateOptions } from './notate';
 export { mirrorScore, mirrorFrames, retime } from './mirror';
+export { describe, type LessonLine } from './lesson';
+export { parseLesson, type LessonSymbol } from './lesson-parse';
+export { findPhrase, type PhraseMatch, type FindPhraseOptions } from './search';
+export {
+  layoutStaff,
+  type StaffOptions,
+  type StaffLayout,
+  type StaffGlyph,
+  type StaffColumn,
+  type StaffColumnId,
+  type StaffLine,
+  type StaffBar,
+  type StaffCount,
+} from './layout';
+export type { Point } from './layout-shapes';
+export { renderStaffSvg } from './staff-svg';
