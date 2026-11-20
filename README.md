@@ -68,7 +68,7 @@ each line" on, the dance waits until the sentence has been said.
 video plays again with the pose it found. On the CMU reference video of a take, the arms agree with the motion capture
 of that same take in 90% of checks.
 
-![The From video page: the CMU reference video plays with the pose drawn over the dancer, frame by frame, and the page reports "Written: 50 symbols at 100 counts per minute" and that the arms hold the same direction and level as the motion capture in 90% of 70 checks](docs/figures/from-video.gif)
+![The From video page: the CMU reference video plays with the pose drawn over the dancer, frame by frame, then the page reports "Written: 50 symbols at 100 counts per minute" and that the arms hold the same direction and level as the motion capture in 90% of 70 checks, while the video plays again with the pose drawn on the dancer](docs/figures/from-video.gif)
 
 **Search the scores.** Two arm moves cut from the Russian dance are found in three other dances, once as a mirror
 image. The search reads symbols, not pixels.

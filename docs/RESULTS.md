@@ -72,7 +72,7 @@ Measured 2026-11-20 by `pnpm --filter @danse/web measure` (the From video page i
 - Core property tests (fast-check): 33
 - MCP server tests passed: 52
 - MCP server tests failed: 0
-- Browser tests passed (Playwright, with axe): 13
+- Browser tests passed (Playwright, with axe): 18
 - Browser tests failed: 0
 
 ## Coverage
