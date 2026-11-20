@@ -1,16 +1,18 @@
 // Run the test suites and record their counts in docs/measure/tests.json, for docs/RESULTS.md.
-//   node scripts/count-tests.mjs            (core unit and property tests, and the browser tests)
+//   node scripts/count-tests.mjs            (core and MCP tests with coverage, and the browser tests)
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 const root = join(import.meta.dirname, "..");
-const run = (cmd, cwd = root) => execSync(cmd, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: true });
+// The property tests run at the fixed seed CI uses, so the counts and the coverage here match CI's.
+const env = { ...process.env, FC_SEED: process.env.FC_SEED ?? "1928" };
+const run = (cmd, cwd = root) => execSync(cmd, { cwd, env, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: true });
 
 const json = join(tmpdir(), `danse-core-${Date.now()}.json`);
 try {
-  run(`pnpm --filter @danse/core exec vitest run --reporter=json --outputFile="${json}"`);
+  run(`pnpm --filter @danse/core exec vitest run --coverage --reporter=json --outputFile="${json}"`);
 } catch {
   /* failures are counted below */
 }
@@ -21,7 +23,7 @@ const props = files.filter((f) => /\.prop\.test\.ts$/.test(f.name)).reduce((n, f
 
 const mcpJson = join(tmpdir(), `danse-mcp-${Date.now()}.json`);
 try {
-  run(`pnpm --filter @danse/mcp exec vitest run --reporter=json --outputFile="${mcpJson}"`);
+  run(`pnpm --filter @danse/mcp exec vitest run --coverage --reporter=json --outputFile="${mcpJson}"`);
 } catch {
   /* failures are counted below */
 }
@@ -53,6 +55,13 @@ const out = {
   "Browser tests passed (Playwright, with axe)": e2e.passed,
   "Browser tests failed": e2e.failed,
 };
+// Coverage of each package's src/, from the json-summary reporter (vitest.config.ts in each package).
+const coverage = {};
+for (const [name, dir] of [["Notation engine (packages/core)", "packages/core"], ["MCP server (packages/mcp)", "packages/mcp"]]) {
+  const total = JSON.parse(readFileSync(join(root, dir, "coverage", "coverage-summary.json"), "utf8")).total;
+  coverage[name] = { lines: total.lines.pct, branches: total.branches.pct, functions: total.functions.pct, statements: total.statements.pct };
+}
 mkdirSync(join(root, "docs", "measure"), { recursive: true });
+writeFileSync(join(root, "docs", "measure", "coverage.json"), JSON.stringify(coverage, null, 1));
 writeFileSync(join(root, "docs", "measure", "tests.json"), JSON.stringify(out, null, 1));
-console.log(out);
+console.log(out, coverage);

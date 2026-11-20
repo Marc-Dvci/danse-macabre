@@ -199,3 +199,21 @@ describe('MCP tools, in process (Requirement 3.1)', () => {
     expect(macarena?.description).toContain('subject 143');
   });
 });
+
+describe('MCP resources (Requirement 1.4)', () => {
+  it('reads clip://macarena as the clip file, unchanged', async () => {
+    const { contents } = await client.readResource({ uri: 'clip://macarena' });
+    const onDisk = await readFile(join(workspace, 'data', 'clips', 'macarena.json'), 'utf8');
+    expect(contents).toHaveLength(1);
+    expect(contents[0]?.mimeType).toBe('application/json');
+    expect((contents[0] as { text: string }).text).toBe(onDisk);
+  });
+
+  it('refuses a resource with another scheme', async () => {
+    await expect(client.readResource({ uri: 'file:///etc/passwd' })).rejects.toThrow(/unknown resource/);
+  });
+
+  it('refuses a clip that is not in the workspace', async () => {
+    await expect(client.readResource({ uri: 'clip://no-such-dance' })).rejects.toThrow(/unknown resource/);
+  });
+});

@@ -24,6 +24,7 @@ export { notateGestures, notate, type NotateOptions, type NotateAllOptions } fro
 export { notateSupports, type SupportOptions, type SupportNotateOptions } from './notate-supports';
 export { mirrorScore, mirrorFrames, retime } from './mirror';
 export { describe, type LessonLine } from './lesson';
+export { durationPhrase } from './lesson-words';
 export { parseLesson, type LessonSymbol } from './lesson-parse';
 export { findPhrase, type PhraseMatch, type FindPhraseOptions } from './search';
 export {

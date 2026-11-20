@@ -1,5 +1,5 @@
 // Edit one symbol: pick a new direction and level. The skeleton dances the edited score at once.
-import type { DirectionSymbol } from "./engine";
+import { durationWords, type DirectionSymbol } from "./engine";
 
 const DIRECTIONS = [
   ["left-forward", "forward", "right-forward"],
@@ -22,13 +22,15 @@ const ICON: Record<string, string> = {
 
 interface Props {
   symbol: DirectionSymbol;
+  /** Where the symbol starts, as "bar 2, count 3 and". */
+  when: string;
   edited: boolean;
   onChange: (direction: string, level: string) => void;
   onReset: () => void;
   onClose: () => void;
 }
 
-export function SymbolEditor({ symbol, edited, onChange, onReset, onClose }: Props) {
+export function SymbolEditor({ symbol, when, edited, onChange, onReset, onClose }: Props) {
   const gesture = !symbol.column.endsWith("support");
   const part = symbol.column.replace("-", " ").replace("support", "foot (step)");
   return (
@@ -36,12 +38,20 @@ export function SymbolEditor({ symbol, edited, onChange, onReset, onClose }: Pro
       <div className="editor-head">
         <strong>{part}</strong>
         <span>
-          count {symbol.start + 1}, {symbol.duration} {symbol.duration === 1 ? "count" : "counts"}
+          {when}, {durationWords(symbol.duration)}
         </span>
         <button className="chip" onClick={onClose} aria-label="Close editor">
           Close
         </button>
       </div>
+      {/* The nine directions, each drawn at the symbol's level, as on the staff: high striped, middle a dot, low solid. */}
+      <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
+        <defs>
+          <pattern id="editor-hatch" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="3" stroke="currentColor" strokeWidth="1.1" />
+          </pattern>
+        </defs>
+      </svg>
       <div className="editor-grid" role="group" aria-label="Direction">
         {DIRECTIONS.flat().map((d) => (
           <button
@@ -53,7 +63,13 @@ export function SymbolEditor({ symbol, edited, onChange, onReset, onClose }: Pro
             onClick={() => onChange(d, symbol.level)}
           >
             <svg viewBox="0 0 16 20" width="22" height="28" aria-hidden="true">
-              <path d={ICON[d]} fill={symbol.direction === d ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.2" />
+              <path
+                d={ICON[d]}
+                fill={symbol.level === "low" ? "currentColor" : symbol.level === "high" ? "url(#editor-hatch)" : "none"}
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+              {symbol.level === "middle" && <circle cx="8" cy="10.5" r="1.6" fill="currentColor" />}
             </svg>
           </button>
         ))}

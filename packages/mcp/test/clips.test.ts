@@ -1,4 +1,4 @@
-import { copyFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -51,5 +51,24 @@ describe('readClipFrames', () => {
 
   it('refuses a clip path outside the workspace', async () => {
     await expect(readClipFrames(workspace, '../../macarena.json')).rejects.toThrow(/outside the workspace/);
+  });
+
+  it.each([
+    ['a clip without a title', { id: 'x', fps: 30, joints: [], frames: [] }, /"id" and "title"/],
+    ['a clip with fps 0', { id: 'x', title: 'X', fps: 0, joints: [], frames: [] }, /"fps" must be a positive number/],
+    ['a clip whose frames are not an array', { id: 'x', title: 'X', fps: 30, joints: [], frames: {} }, /must be arrays/],
+    [
+      'a frame with fewer joints than the clip names',
+      { id: 'x', title: 'X', fps: 30, joints: ['pelvis', 'head'], frames: [[[0, 1, 0]]] },
+      /frame 0 has 1 joints, expected 2/,
+    ],
+  ])('refuses %s', async (_name, clip, message) => {
+    const file = join(workspace, 'data', 'clips', 'broken.json');
+    await writeFile(file, JSON.stringify(clip));
+    try {
+      await expect(readClipFrames(workspace, 'data/clips/broken.json')).rejects.toThrow(message);
+    } finally {
+      await rm(file);
+    }
   });
 });

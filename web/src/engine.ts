@@ -1,6 +1,7 @@
 // The web app's single entry into @danse/core. Every score, lesson line and pose shown comes through here.
 import {
   describe,
+  durationPhrase,
   findPhrase,
   isDirectionSymbol,
   isTurnSymbol,
@@ -59,6 +60,11 @@ export function beatsToSeconds(score: Score, beats: number): number {
 
 export function secondsToBeats(score: Score, seconds: number): number {
   return (seconds * score.tempo) / 60;
+}
+
+/** "half a count", "1 count", "a count and a half": a duration as the spoken lesson says it. */
+export function durationWords(beats: number): string {
+  return durationPhrase(beats).replace(/^over /, "");
 }
 
 /** "Bar 2, count 3 and" for a beat position. */

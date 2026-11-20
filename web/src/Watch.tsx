@@ -369,9 +369,13 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
               width={scoreWidth}
             />
           )}
-          {panel === "score" && selectedSymbol && (
+          {panel === "score" && selectedSymbol && score && (
             <SymbolEditor
               symbol={selectedSymbol}
+              when={(() => {
+                const w = countLabel(score, selectedSymbol.start);
+                return `bar ${w.bar}, count ${w.count}${w.and ? " and" : ""}`;
+              })()}
               edited={selectedSymbol.id in edits}
               onChange={(direction, level) => setEdits((e) => ({ ...e, [selectedSymbol.id]: { direction, level } }))}
               onReset={() =>

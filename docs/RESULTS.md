@@ -9,7 +9,7 @@ Settings: 100 counts per minute, 4 counts per bar, half-count grid. Source: CMU 
 | Dance | CMU | Seconds | Arm symbols | Leg symbols | Steps | Turns | Lesson lines | Lesson parses back | Valid score | Notation time (ms) |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Macarena | 143/35 | 10.7 | 22 | 0 | 7 | 0 | 23 | yes | yes | 6 |
-| Chicken Dance | 143/34 | 6.5 | 14 | 0 | 2 | 0 | 13 | yes | yes | 1 |
+| Chicken Dance | 143/34 | 6.5 | 14 | 0 | 2 | 0 | 13 | yes | yes | 2 |
 | The Twist | 141/12 | 4.7 | 10 | 0 | 29 | 0 | 19 | yes | yes | 1 |
 | Russian dance | 90/30 | 12.0 | 19 | 3 | 0 | 0 | 21 | yes | yes | 2 |
 | Salsa | 60/01 | 37.4 | 67 | 4 | 65 | 0 | 89 | yes | yes | 7 |
@@ -53,7 +53,7 @@ First eight arm symbols of the Macarena (CMU 143/35):
 
 ## The finale
 
-Danse macabre: opening waltz, 16 bars: 80 symbols, 3 counts per bar at 193 counts per minute. 
+Danse macabre: opening waltz, 16 bars: 80 symbols, 3 counts per bar at 193 counts per minute. Composed by Kiro through the MCP server's compose_score tool (`examples/compose-finale.mjs`).
 
 ## Video against motion capture
 
@@ -70,7 +70,16 @@ Measured 2026-11-20 by `pnpm --filter @danse/web measure` (the From video page i
 - Core tests failed: 0
 - Core test files: 31
 - Core property tests (fast-check): 33
-- MCP server tests passed: 45
+- MCP server tests passed: 52
 - MCP server tests failed: 0
-- Browser tests passed (Playwright, with axe): 9
+- Browser tests passed (Playwright, with axe): 13
 - Browser tests failed: 0
+
+## Coverage
+
+Measured by vitest with the v8 provider over each package's `src/`, by `node scripts/count-tests.mjs`. CI fails below the floors set in each package's `vitest.config.ts`.
+
+| Package | Lines | Branches | Functions | Statements |
+|---|---|---|---|---|
+| Notation engine (packages/core) | 99.44% | 92.82% | 100.00% | 97.64% |
+| MCP server (packages/mcp) | 97.26% | 76.85% | 97.67% | 94.14% |

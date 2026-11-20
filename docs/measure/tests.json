@@ -3,8 +3,8 @@
  "Core tests failed": 0,
  "Core test files": 31,
  "Core property tests (fast-check)": 33,
- "MCP server tests passed": 45,
+ "MCP server tests passed": 52,
  "MCP server tests failed": 0,
- "Browser tests passed (Playwright, with axe)": 9,
+ "Browser tests passed (Playwright, with axe)": 13,
  "Browser tests failed": 0
 }

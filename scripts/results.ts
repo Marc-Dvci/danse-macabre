@@ -1,6 +1,6 @@
 // Compute the figures quoted in the README and write docs/RESULTS.md.
 //   pnpm exec tsx scripts/results.ts
-// Inputs: every clip in data/clips, the finale score in data/scores, and docs/measure/video-vs-mocap.json (written by
+// Inputs: every clip in data/clips, the finale score in examples/, and docs/measure/video-vs-mocap.json (written by
 // `pnpm --filter @danse/web measure`). Test counts come from running the suites and are passed in through
 // docs/measure/tests.json (written by scripts/count-tests.mjs).
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -92,6 +92,9 @@ const video = existsSync(join(root, "docs/measure/video-vs-mocap.json"))
   ? read<{ measuredAt: string; results: Array<Record<string, string | number>> }>("docs/measure/video-vs-mocap.json")
   : null;
 const tests = existsSync(join(root, "docs/measure/tests.json")) ? read<Record<string, number>>("docs/measure/tests.json") : null;
+const coverage = existsSync(join(root, "docs/measure/coverage.json"))
+  ? read<Record<string, { lines: number; branches: number; functions: number; statements: number }>>("docs/measure/coverage.json")
+  : null;
 
 const md = [
   "# Results",
@@ -126,7 +129,7 @@ const md = [
   "",
   "## The finale",
   "",
-  `${finale.title}: ${finale.symbols.length} symbols, ${finale.beatsPerBar} counts per bar at ${finale.tempo} counts per minute. ${finale.source ?? ""}`,
+  `${finale.title}: ${finale.symbols.length} symbols, ${finale.beatsPerBar} counts per bar at ${finale.tempo} counts per minute. Composed by Kiro through the MCP server's compose_score tool (\`examples/compose-finale.mjs\`).`,
   "",
   "## Video against motion capture",
   "",
@@ -138,11 +141,25 @@ const md = [
         "|---|---|---|---|---|---|",
         ...video.results.map((r) => `| ${r.video} | ${r.symbols} | ${r.exactPercent}% | ${r.nearPercent}% | ${r.checks} | ${r.offsetSeconds} |`),
       ].join("\n")
-    : "Not measured yet.",
+    : "Measure with `pnpm --filter @danse/web measure`.",
   "",
   "## Tests",
   "",
   tests ? Object.entries(tests).map(([k, v]) => `- ${k}: ${v}`).join("\n") : "Run `node scripts/count-tests.mjs`.",
+  "",
+  "## Coverage",
+  "",
+  coverage
+    ? [
+        "Measured by vitest with the v8 provider over each package's `src/`, by `node scripts/count-tests.mjs`. CI fails below the floors set in each package's `vitest.config.ts`.",
+        "",
+        "| Package | Lines | Branches | Functions | Statements |",
+        "|---|---|---|---|---|",
+        ...Object.entries(coverage).map(
+          ([k, c]) => `| ${k} | ${c.lines.toFixed(2)}% | ${c.branches.toFixed(2)}% | ${c.functions.toFixed(2)}% | ${c.statements.toFixed(2)}% |`,
+        ),
+      ].join("\n")
+    : "Run `node scripts/count-tests.mjs`.",
   "",
 ].join("\n");
 

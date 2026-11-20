@@ -49,6 +49,8 @@ test("watch: editing a symbol changes the lesson line", async ({ page }) => {
   const glyph = page.locator("g[data-symbol-id^='right-arm']").first();
   await glyph.dispatchEvent("click");
   await expect(page.getByRole("dialog")).toBeVisible();
+  // The editor says where the symbol is the way the lesson does: bar, count, and a duration in words.
+  await expect(page.getByRole("dialog")).toContainText(/bar \d+, count \d+( and)?, (half a count|1 count|a count and a half|\d+( and a half)? counts)/);
   await page.getByRole("group", { name: "Level" }).getByRole("button", { name: "low" }).click();
   await page.getByRole("tab", { name: "Lesson" }).click();
   await expect(page.locator(".lesson-list")).toContainText("low");
