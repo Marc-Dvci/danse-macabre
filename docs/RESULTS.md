@@ -16,7 +16,7 @@ Settings: 100 counts per minute, 4 counts per bar, half-count grid. Source: CMU 
 | Modern dance: arms held high | 05/12 | 11.3 | 5 | 4 | 1 | 0 | 10 | yes | yes | 1 |
 | Modern dance: expressive arms, pirouette | 05/02 | 9.4 | 10 | 1 | 15 | 0 | 16 | yes | yes | 2 |
 | Modern dance: side arabesque | 49/09 | 16.0 | 4 | 0 | 0 | 0 | 6 | yes | yes | 2 |
-| Chicken dance (duet, dancer A) | 20/01 | 10.7 | 25 | 0 | 0 | 0 | 22 | yes | yes | 1 |
+| Chicken dance (duet, dancer A) | 20/01 | 10.7 | 25 | 0 | 0 | 0 | 22 | yes | yes | 2 |
 
 Total: 307 symbols from 118.7 seconds of dance.
 
@@ -57,12 +57,12 @@ Danse macabre: opening waltz, 16 bars: 80 symbols, 3 counts per bar at 193 count
 
 ## Video against motion capture
 
-Measured 2026-11-20 by `pnpm --filter @danse/web measure` (the From video page in Chromium, headless). The CMU reference video of a take is read by the pose model and written down; its arm cells are compared, every half count, with the score written from the motion capture of the same take, after lining the two up by wrist height.
+Measured 2026-11-20 by `pnpm --filter @danse/web measure` (the From video page in Chromium, with the pose model on the GPU delegate). The CMU reference video of a take is read by the pose model and written down; its arm cells are compared, every half count, with the score written from the motion capture of the same take, after lining the two up by wrist height.
 
 | Video | Symbols from video | Same direction and level | Same or neighbouring | Checks | Offset (s) |
 |---|---|---|---|---|---|
-| Modern dance: arms held high | 57 | 80% | 83% | 70 | 0.9 |
-| Modern dance: expressive arms, pirouette | 52 | 55% | 71% | 58 | 0.7 |
+| Modern dance: arms held high | 50 | 90% | 93% | 70 | 0.9 |
+| Modern dance: expressive arms, pirouette | 54 | 52% | 66% | 58 | 0.7 |
 
 ## Tests
 

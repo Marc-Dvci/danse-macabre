@@ -132,7 +132,7 @@ const md = [
   "",
   video
     ? [
-        `Measured ${video.measuredAt.slice(0, 10)} by \`pnpm --filter @danse/web measure\` (the From video page in Chromium, headless). The CMU reference video of a take is read by the pose model and written down; its arm cells are compared, every half count, with the score written from the motion capture of the same take, after lining the two up by wrist height.`,
+        `Measured ${video.measuredAt.slice(0, 10)} by \`pnpm --filter @danse/web measure\` (the From video page in Chromium, with the pose model on the ${video.results[0]?.delegate ?? "GPU"} delegate). The CMU reference video of a take is read by the pose model and written down; its arm cells are compared, every half count, with the score written from the motion capture of the same take, after lining the two up by wrist height.`,
         "",
         "| Video | Symbols from video | Same direction and level | Same or neighbouring | Checks | Offset (s) |",
         "|---|---|---|---|---|---|",

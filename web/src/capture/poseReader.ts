@@ -27,9 +27,14 @@ export function getLandmarker(): Promise<PoseLandmarker> {
         minPosePresenceConfidence: 0.5,
         minTrackingConfidence: 0.5,
       });
+    // The delegate in use is recorded on window, so a measurement can say which one it ran on.
+    const note = (d: string) => ((window as unknown as { __poseDelegate?: string }).__poseDelegate = d);
     try {
-      return await make("GPU");
+      const lm = await make("GPU");
+      note("GPU");
+      return lm;
     } catch {
+      note("CPU");
       return await make("CPU");
     }
   })();

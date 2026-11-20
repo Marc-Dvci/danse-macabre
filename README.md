@@ -13,7 +13,7 @@ blind dancer gets every movement said on its count, in plain words, from the sam
 | Category | Kiroween 2026, Costume Contest |
 | Built with | Kiro CLI (specs, property-based tests, hooks, steering, custom agents, an MCP server and a power), TypeScript, React, Three.js, MediaPipe Pose Landmarker, fast-check, Playwright, axe-core |
 | Data | Nine dances from the CMU Graphics Lab Motion Capture Database; two of its reference videos |
-| Headline | 307 symbols written from 118.7 s of nine real dances, every one spoken and parsed back; the skeleton follows the recordings within 23.5 degrees on average; read from video, the arms agree with motion capture of the same take in 80% of checks |
+| Headline | 307 symbols written from 118.7 s of nine real dances, every one spoken and parsed back; the skeleton follows the recordings within 23.5 degrees on average; read from video, the arms agree with motion capture of the same take in 90% of checks |
 
 Menu: [See it work](#see-it-work) · [The problem](#the-problem) · [How it works](#how-it-works) ·
 [The costume does a job](#the-costume-does-a-job) · [How Kiro is used](#how-kiro-is-used) · [Evidence](#evidence) ·
@@ -104,7 +104,7 @@ Every figure comes from [`docs/RESULTS.md`](docs/RESULTS.md), written by `pnpm e
 | It writes real dances down | 307 symbols from 118.7 seconds of nine CMU dances: arm and leg gestures, steps (65 in the salsa), all valid scores |
 | Every spoken word comes from a symbol | For all nine dances, the spoken lesson parses back into the same symbols; property-tested on generated scores, with turns |
 | The skeleton dances what was danced | Replay fidelity, the angle between each limb in the recording and in the skeleton dancing the score: 17.0 to 37.4 degrees per dance, 23.5 on average. Directions are 45 degrees apart, so 22.5 is half a direction |
-| It reads video | On the CMU reference video of a take, the arms hold the same direction and level as in the motion capture of that take in 80% of checks (83% the same or a neighbouring cell); 55% (71%) on a turning take filmed from behind |
+| It reads video | On the CMU reference video of a take, the arms hold the same direction and level as in the motion capture of that take in 90% of checks (93% the same or a neighbouring cell); 52% (66%) on a turning take filmed from behind |
 | The notation keeps its laws | Mirror twice gives the dance back; mirror commutes with notation; dancing a score and writing it down gives the same score, for gestures, steps and turns; checked by 33 fast-check properties, 200 runs each, and at seven fixed seeds |
 | Phrase search finds mirror images | In all nine dances, the first two bars are found, mirrored, at their own beat in the mirrored dance |
 | Tests | 154 core tests, 45 MCP server tests, 9 browser tests with axe-core (0 violations on every page), in CI on every push |

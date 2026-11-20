@@ -1,23 +1,25 @@
 {
- "measuredAt": "2026-11-20T17:51:59.228Z",
+ "measuredAt": "2026-11-20T18:12:23.375Z",
  "results": [
   {
    "video": "Modern dance: arms held high",
-   "symbols": 57,
-   "exactPercent": 80,
-   "nearPercent": 83,
+   "delegate": "GPU",
+   "symbols": 50,
+   "exactPercent": 90,
+   "nearPercent": 93,
    "checks": 70,
    "offsetSeconds": 0.9,
-   "readSeconds": 82
+   "readSeconds": 10
   },
   {
    "video": "Modern dance: expressive arms, pirouette",
-   "symbols": 52,
-   "exactPercent": 55,
-   "nearPercent": 71,
+   "delegate": "GPU",
+   "symbols": 54,
+   "exactPercent": 52,
+   "nearPercent": 66,
    "checks": 58,
    "offsetSeconds": 0.7,
-   "readSeconds": 56
+   "readSeconds": 4
   }
  ]
 }

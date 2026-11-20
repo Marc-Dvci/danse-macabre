@@ -23,7 +23,8 @@ test("measure: video against motion capture", async ({ page }) => {
     const near = Number(text.match(/neighbouring one in (\d+)%/)?.[1]);
     const checks = Number(text.match(/of (\d+) checks/)?.[1]);
     const offset = Number(text.match(/lined up by (-?[\d.]+) s/)?.[1]);
-    results.push({ video: name, symbols, exactPercent: exact, nearPercent: near, checks, offsetSeconds: offset, readSeconds: Math.round((Date.now() - started) / 1000) });
+    const delegate = await page.evaluate(() => (window as unknown as { __poseDelegate?: string }).__poseDelegate ?? "unknown");
+    results.push({ video: name, delegate, symbols, exactPercent: exact, nearPercent: near, checks, offsetSeconds: offset, readSeconds: Math.round((Date.now() - started) / 1000) });
     console.log(JSON.stringify(results[results.length - 1]));
   }
   const out = join(import.meta.dirname, "..", "..", "docs", "measure");
