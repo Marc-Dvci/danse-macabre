@@ -7,6 +7,6 @@ coverage/
 .vite/
 playwright-report/
 test-results/
-public/mediapipe/
 test-results/
 playwright-report/
+web/public/mediapipe/
