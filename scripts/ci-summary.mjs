@@ -25,7 +25,7 @@ if (e2e) out.push(`| Browser, with axe (\`web/e2e\`) | ${e2e.stats.expected} | $
 const core = suites[0][1];
 if (core) {
   const props = core.testResults.filter((f) => /\.prop\.test\.ts$/.test(f.name)).reduce((n, f) => n + f.assertionResults.length, 0);
-  out.push("", `Property tests (fast-check, 200 runs each, seed ${process.env.FC_SEED ?? "random"}): ${props}. Both vitest suites ran in random order.`);
+  out.push("", `Property tests (fast-check, 100 to 500 cases each, seed ${process.env.FC_SEED ?? "random"}): ${props}. Both vitest suites ran in random order.`);
 }
 
 for (const [name, dir] of [

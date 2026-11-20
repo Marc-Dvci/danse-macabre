@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- Source of docs/figures/architecture.png. Render: node docs/figures/render.mjs -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink: #1d1a17; --mute: #5e574f; --line: #b9b1a6; --blood: #b02a17; --wash: #fbf3f1; }
+      html, body { margin: 0; background: #fff; }
+      body { width: 860px; padding: 26px 22px 24px; box-sizing: border-box; font-family: "Source Sans 3", sans-serif; color: var(--ink); }
+      .row { display: grid; gap: 12px; }
+      .node { border: 1.5px solid var(--ink); padding: 9px 12px 10px; background: #fff; }
+      .node h3 { margin: 0 0 3px; font-size: 17px; font-weight: 700; }
+      .node p { margin: 0; font-size: 14.5px; line-height: 1.32; color: var(--mute); }
+      code { font-family: "Source Code Pro", monospace; font-size: 13px; color: var(--ink); }
+      .arrow { text-align: center; height: 24px; position: relative; }
+      .arrow::before { content: ""; position: absolute; left: 50%; top: 2px; bottom: 7px; border-left: 1.5px solid var(--ink); }
+      .arrow::after { content: ""; position: absolute; left: calc(50% - 5px); bottom: 1px; border: 5px solid transparent; border-top: 7px solid var(--ink); border-bottom: 0; }
+      .engine { border: 2px solid var(--blood); background: var(--wash); padding: 12px 14px 14px; }
+      .engine > h2 { margin: 0 0 2px; font-size: 18px; color: var(--blood); }
+      .engine > .sub { margin: 0 0 10px; font-size: 14.5px; color: var(--mute); }
+      .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .steps .node { border-color: #c9bfb4; }
+      .tag { display: inline-block; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; color: var(--blood); text-transform: uppercase; margin-bottom: 4px; }
+      .outs { grid-template-columns: repeat(4, 1fr); }
+      .split { grid-template-columns: 1fr 1fr; }
+      .kiro { border-style: dashed; }
+      .via { margin: 14px 0 10px; text-align: center; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--mute); border-top: 1.5px solid var(--line); padding-top: 10px; }
+      .boundary { margin: 14px 0 0; font-size: 14.5px; color: var(--ink); border-top: 1.5px solid var(--line); padding-top: 9px; }
+      .boundary b { color: var(--blood); }
+    </style>
+  </head>
+  <body>
+    <div class="row split">
+      <div class="node"><span class="tag">Input</span><h3>Motion capture</h3><p>Nine CMU dances, 15 joints in metres, 30 frames a second (<code>data/clips</code>)</p></div>
+      <div class="node"><span class="tag">Input, in the browser</span><h3>Video file or camera</h3><p>MediaPipe Pose Landmarker finds 33 points; the engine keeps 15. Frames never leave the device</p></div>
+    </div>
+    <div class="arrow"></div>
+    <div class="engine">
+      <h2>Notation engine, <code>packages/core</code></h2>
+      <p class="sub">TypeScript, deterministic. Built by Kiro from four specs; its laws checked by 33 fast-check properties</p>
+      <div class="steps">
+        <div class="node"><h3>Body frame</h3><p>Up, right and forward from the hips and shoulders, so "forward" turns with the dancer</p></div>
+        <div class="node"><h3>Direction and level</h3><p>Each limb falls in one of 26 cells, with hysteresis at the borders</p></div>
+        <div class="node"><h3>Moves</h3><p>Rest to rest, holds, steps, leg gestures and turns, on a half-count grid</p></div>
+        <div class="node"><h3>Score</h3><p>Labanotation symbols in columns; validated, mirrored, retimed</p></div>
+      </div>
+    </div>
+    <div class="arrow"></div>
+    <div class="row outs">
+      <div class="node"><span class="tag">Watch</span><h3>Skeleton</h3><p>Three.js plays only the score; the recording dances behind it as a ghost</p></div>
+      <div class="node"><span class="tag">Hear</span><h3>Spoken lesson</h3><p>One sentence per count; it parses back into the same symbols</p></div>
+      <div class="node"><span class="tag">Read</span><h3>Staff</h3><p>SVG, scrolling under a candle; click a symbol to change it</p></div>
+      <div class="node"><span class="tag">Find</span><h3>Phrase search</h3><p>The same symbols in the same columns, or their mirror image</p></div>
+    </div>
+    <p class="via">The same engine, as tools for agents</p>
+    <div class="row split">
+      <div class="node"><span class="tag">Agents</span><h3>MCP server, <code>packages/mcp</code></h3><p>Nine tools (notate, compose, validate, describe, mirror, retime, find, perform, render) and the clips as <code>clip://</code> resources. Paths stay in the workspace</p></div>
+      <div class="node kiro"><span class="tag">Kiro</span><h3>Kiro power and the choreographer agent</h3><p>Kiro composed the finale through the tools; a hook draws every saved score and writes its lesson</p></div>
+    </div>
+    <p class="boundary"><b>Boundary.</b> Every symbol, every replayed pose and every spoken word is computed by the engine. No language model runs in the app. An agent reaches the notation only through the MCP tools, and every score it writes is validated before it is saved.</p>
+  </body>
+</html>

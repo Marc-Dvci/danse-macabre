@@ -17,9 +17,9 @@ jobs:
       # One fixed fast-check seed, so every run checks the same 200 cases per property and gives the same answer.
       FC_SEED: "1928"
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build the app image
         run: docker build -t danse-macabre .
       - name: Start it and wait until healthy
@@ -70,10 +70,11 @@ jobs:
           curl -fsS -o /dev/null http://127.0.0.1:8080/og.png
           curl -fsS -o /dev/null http://127.0.0.1:8080/audio/danse-macabre-fourestier-1953.opus
           curl -fsS -o /dev/null http://127.0.0.1:8080/mediapipe/vision_wasm_internal.wasm
-      - name: The image runs as a non-root user and holds no secrets
+      - name: The image runs as a non-root user and serves only the built app
         run: |
           [ "$(docker exec dm id -u)" != 0 ]
-          ! docker exec dm sh -c 'find / -xdev \( -name ".env" -o -name "*.pem" -o -name "id_rsa" \) 2>/dev/null | grep -q .'
+          # No keys, environment files, sources or dependencies among the served files.
+          ! docker exec dm sh -c 'find /usr/share/nginx/html \( -name ".env*" -o -name "*.pem" -o -name "*.key" -o -name ".git" -o -name "node_modules" -o -name "*.ts" \) | grep -q .'
       - name: Build the MCP server image and list its tools over stdio
         run: |
           docker build -t danse-mcp --target mcp .

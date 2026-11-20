@@ -24,13 +24,21 @@ its file tools). The builder ran on Claude Haiku 5.5 in Kiro; the independent re
 | 06-fidelity | claude-haiku-5.5 | 5 | 0.94 | 12 | `sess_e6e73550-0213-4253-92af-0a130552456d` |
 | 07-turns-words | claude-haiku-5.5 | 10 | 5.63 | 16 | `sess_d65722db-5fe6-4842-9575-176ba6df4413` |
 | 08-review | qwen3-coder-next | 3 | 1.38 | 0 | `sess_59ebe71b-2364-4d08-bc5e-c4e20a1bf3d4` |
-| **Total** | | | **56.83** | 107 distinct | |
+| 09-choreographer, first take | claude-haiku-5.5 | 1 | 0.07 | 0 | `sess_80877fcc-f928-430b-a82a-fad981bee097` |
+| 09-choreographer, recorded | claude-haiku-5.5 | 1 | 0.05 | 1 | `sess_37c4b357-be5c-4dd7-8042-ee59a73ef0fe` |
+| **Total** | | | **56.95** | 108 distinct | |
 
-Files in this repository that Kiro wrote or edited (104):
+The choreographer ran in a terminal, through the dance MCP server, for the film: it composed a two-bar phrase with
+`compose_score`, checked it with `validate_score`, saved `examples/curtain-call.score.json` and read the lesson back with
+`describe_score`; the `render-saved-score` hook then drew `curtain-call.svg` and wrote `curtain-call-lesson.txt`. Its
+first take stopped at a tool approval, so the recorded take trusts the four dance tools by name. Its two rows are read
+from Kiro's own session log (`~/.kiro/sessions`), in the same units.
+
+Files in this repository that Kiro wrote or edited (105):
 
 - `.kiro/specs`: 10 files
-- `docs`: 1 files
-- `examples`: 1 files
+- `docs`: 1 file
+- `examples`: 2 files
 - `packages/core`: 67 files
 - `packages/mcp`: 22 files
 - `power`: 3 files
