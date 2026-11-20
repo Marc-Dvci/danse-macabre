@@ -259,6 +259,16 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
   }, [score, duration]);
 
   const current = lesson.findLast((l) => l.beat <= beat + 1e-6);
+  // The lesson list follows the dance: the line being danced stays in view.
+  const lessonList = useRef<HTMLOListElement>(null);
+  const currentIndex = current ? lesson.indexOf(current) : -1;
+  useEffect(() => {
+    const list = lessonList.current;
+    const li = currentIndex >= 0 ? (list?.children[currentIndex] as HTMLElement | undefined) : undefined;
+    if (!list || !li) return;
+    const top = li.offsetTop - list.clientHeight / 3;
+    list.scrollTo({ top: Math.max(0, top), behavior: playing ? "smooth" : "auto" });
+  }, [currentIndex, panel, playing]);
   const c = score ? countLabel(score, beat) : null;
   const info = all.find((x) => x.id === clipId) ?? CLIPS[0]!;
 
@@ -374,7 +384,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             />
           )}
           {panel === "lesson" && (
-            <ol className="lesson-list" style={{ overflowY: "auto", height: "100%", padding: "0 18px" }}>
+            <ol ref={lessonList} className="lesson-list" style={{ overflowY: "auto", height: "100%", padding: "0 18px", position: "relative" }}>
               {lesson.map((l, i) => (
                 <li key={i} aria-current={current === l}>
                   <span className="count">{l.label}</span>
@@ -424,9 +434,11 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             <input type="checkbox" checked={ensemble} onChange={(e) => setEnsemble(e.target.checked)} /> Ring of dancers
           </label>
         )}
-        <label className="toggle">
-          <input type="checkbox" checked={countBell} onChange={(e) => setCountBell(e.target.checked)} /> Count bell
-        </label>
+        {!scoreOnly && (
+          <label className="toggle">
+            <input type="checkbox" checked={countBell} onChange={(e) => setCountBell(e.target.checked)} /> Count bell
+          </label>
+        )}
         <label className="toggle">
           <input
             type="checkbox"

@@ -1,4 +1,4 @@
-// Sound: a small synthesised bell on each count, and the spoken lesson through the browser's speech engine.
+// Sound: a small bell on each count, made with Web Audio, and the spoken lesson through the browser's speech engine.
 
 let ctx: AudioContext | null = null;
 

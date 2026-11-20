@@ -16,8 +16,9 @@ interface Hit {
 
 export function Search({ onOpen }: { onOpen: (clipId: string, beat: number) => void }) {
   const [scores, setScores] = useState<Record<string, Score>>({});
-  const [source, setSource] = useState(CLIPS[0]!.id);
-  const [bar, setBar] = useState(1);
+  // The opening example: two arm moves from the Russian dance, found in three other dances, once as a mirror image.
+  const [source, setSource] = useState(CLIPS.some((c) => c.id === "russian-dance") ? "russian-dance" : CLIPS[0]!.id);
+  const [bar, setBar] = useState(CLIPS.some((c) => c.id === "russian-dance") ? 5 : 1);
   const [bars, setBars] = useState(1);
   const [part, setPart] = useState<"arms" | "all">("arms");
   const [mirror, setMirror] = useState(true);
