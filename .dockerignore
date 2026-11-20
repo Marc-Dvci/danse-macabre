@@ -1,0 +1,16 @@
+# Allowlist: the image gets only what it builds from.
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+!packages/
+!web/
+!data/
+!examples/
+**/node_modules
+**/coverage
+**/dist
+**/test-results
+**/playwright-report
+web/public/mediapipe

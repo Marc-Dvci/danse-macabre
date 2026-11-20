@@ -11,3 +11,4 @@ web/public/mediapipe/
 __pycache__/
 *.pyc
 .scratch/
+reports/

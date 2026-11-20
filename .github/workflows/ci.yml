@@ -10,7 +10,12 @@ permissions:
 
 jobs:
   test:
+    name: Wording, spelling, links, types, tests and coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # One fixed fast-check seed, so every run checks the same 200 cases per property and gives the same answer.
+      FC_SEED: "1928"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -19,15 +24,66 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Wording check
+      - name: Wording check (every word the app speaks comes from a symbol; no banned labels)
         run: node scripts/check-words.mjs
+      - name: Spelling
+        run: pipx run codespell==2.4.3
+      - name: Local links and anchors
+        run: node scripts/check-links.mjs
       - name: Typecheck
         run: pnpm -r typecheck
-      - name: Unit and property tests
-        run: pnpm -r test
+      - name: Notation engine tests (unit and property), random order, with coverage
+        run: pnpm --filter @danse/core exec vitest run --coverage --sequence.shuffle --reporter=default --reporter=json --outputFile="$GITHUB_WORKSPACE/reports/core.json"
+      - name: MCP server tests, random order, with coverage
+        run: pnpm --filter @danse/mcp exec vitest run --coverage --sequence.shuffle --reporter=default --reporter=json --outputFile="$GITHUB_WORKSPACE/reports/mcp.json"
       - name: Build the app
         run: pnpm --filter @danse/web build
       - name: Install Chromium
         run: pnpm --filter @danse/web exec playwright install --with-deps chromium
       - name: The app in a real browser, with axe
-        run: pnpm --filter @danse/web e2e
+        run: pnpm --filter @danse/web exec playwright test --grep-invert measure --reporter=list,json
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: ${{ github.workspace }}/reports/e2e.json
+      - name: Job summary
+        if: always()
+        run: node scripts/ci-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+
+  docker:
+    name: Docker images, started and called
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the app image
+        run: docker build -t danse-macabre .
+      - name: Start it and wait until healthy
+        run: |
+          docker run -d --name dm -p 127.0.0.1:8080:8080 danse-macabre
+          for i in $(seq 1 30); do
+            [ "$(docker inspect --format '{{.State.Health.Status}}' dm)" = healthy ] && break
+            sleep 2
+          done
+          docker inspect --format '{{.State.Health.Status}}' dm | grep -qx healthy
+      - name: The page, a dance and the music answer
+        run: |
+          curl -fsS http://127.0.0.1:8080/ | grep -q "<title>Danse Macabre"
+          curl -fsS -o /dev/null http://127.0.0.1:8080/og.png
+          curl -fsS -o /dev/null http://127.0.0.1:8080/audio/danse-macabre-fourestier-1953.opus
+          curl -fsS -o /dev/null http://127.0.0.1:8080/mediapipe/vision_wasm_internal.wasm
+      - name: The image runs as a non-root user and holds no secrets
+        run: |
+          [ "$(docker exec dm id -u)" != 0 ]
+          ! docker exec dm sh -c 'find / -xdev \( -name ".env" -o -name "*.pem" -o -name "id_rsa" \) 2>/dev/null | grep -q .'
+      - name: Build the MCP server image and list its tools over stdio
+        run: |
+          docker build -t danse-mcp --target mcp .
+          {
+            echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}'
+            echo '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+            echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+            echo '{"jsonrpc":"2.0","id":3,"method":"resources/list"}'
+            sleep 8
+          } | docker run -i --rm danse-mcp > mcp.out
+          grep -q '"compose_score"' mcp.out
+          grep -q 'clip://macarena' mcp.out
+          echo "MCP tools listed: $(grep -o '"name":"[a-z_]*_[a-z_]*"' mcp.out | sort -u | tr '\n' ' ')" >> "$GITHUB_STEP_SUMMARY"

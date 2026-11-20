@@ -1,0 +1,48 @@
+# The live site, checked every six hours in a real browser: it loads, writes the Macarena down, plays, and the finale's
+# music answers. It reads the site and writes nothing. After END_DATE the job ends at once and passes, so taking the
+# site down later never turns the badge red.
+name: Live site
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  LIVE_URL: https://marc-dvci.github.io/danse-macabre/
+  END_DATE: "2027-03-31"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Still within the judging period
+        id: period
+        run: |
+          if [ "$(date -u +%F)" \> "$END_DATE" ]; then
+            echo "Past $END_DATE: the live site is no longer checked."
+            echo "check=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "check=yes" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.period.outputs.check == 'yes'
+      - uses: pnpm/action-setup@v4
+        if: steps.period.outputs.check == 'yes'
+      - uses: actions/setup-node@v4
+        if: steps.period.outputs.check == 'yes'
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        if: steps.period.outputs.check == 'yes'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @danse/web exec playwright install --with-deps chromium
+      - name: The live site in a real browser
+        if: steps.period.outputs.check == 'yes'
+        run: pnpm --filter @danse/web exec playwright test -c playwright.live.config.ts

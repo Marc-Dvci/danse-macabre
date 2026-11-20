@@ -1,0 +1,10 @@
+{
+  "name": "Danse Macabre",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "postCreateCommand": "corepack enable && pnpm install --frozen-lockfile",
+  "postAttachCommand": "pnpm --filter @danse/web dev --host",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": { "label": "Danse Macabre", "onAutoForward": "openBrowser" }
+  }
+}

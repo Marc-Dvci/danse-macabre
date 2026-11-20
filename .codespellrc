@@ -1,0 +1,4 @@
+[codespell]
+skip = *.json,*.svg,*.webp,*.png,*.opus,*.webm,*.wasm,pnpm-lock.yaml,./node_modules,*/node_modules,./.git,./.scratch,*/dist,*/coverage,./reports,*/test-results,*/public/mediapipe
+check-hidden = true
+ignore-words-list = afterall

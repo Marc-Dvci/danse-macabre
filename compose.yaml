@@ -1,0 +1,20 @@
+# docker compose up demo                       the app on http://127.0.0.1:8080
+# docker compose run --rm -T mcp               the MCP server on stdio; files it writes go to the "scores" volume
+services:
+  demo:
+    build:
+      context: .
+      target: demo
+    ports:
+      - "127.0.0.1:8080:8080"
+  mcp:
+    build:
+      context: .
+      target: mcp
+    stdin_open: true
+    profiles: [mcp]
+    volumes:
+      - scores:/app/out
+
+volumes:
+  scores:
