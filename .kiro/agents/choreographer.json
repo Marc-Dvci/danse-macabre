@@ -2,14 +2,49 @@
   "name": "choreographer",
   "description": "Writes and reads dance through the danse-macabre MCP server: composes phrases, validates them, describes them as a spoken lesson. Reads files, writes only to examples/.",
   "prompt": "file://prompts/choreographer.md",
-  "tools": ["read", "write", "@danse-macabre"],
+  "tools": [
+    "read",
+    "write",
+    "@danse-macabre"
+  ],
   "includeMcpJson": true,
   "permissions": {
     "rules": [
-      { "capability": "fs_read", "match": ["**"], "exclude": ["**/.env", "**/.aws/**", "**/.ssh/**"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["examples/**"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["**"], "exclude": ["examples/**"], "effect": "deny" }
+      {
+        "capability": "fs_read",
+        "match": [
+          "**"
+        ],
+        "exclude": [
+          "**/.env",
+          "**/.aws/**",
+          "**/.ssh/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "examples/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**"
+        ],
+        "exclude": [
+          "examples/**"
+        ],
+        "effect": "deny"
+      }
     ]
   },
-  "excludedTools": ["delete_file", "createHook", "shell"]
+  "excludedTools": [
+    "delete_file",
+    "createHook",
+    "shell"
+  ],
+  "includePowers": false
 }
