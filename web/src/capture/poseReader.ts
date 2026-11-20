@@ -119,6 +119,8 @@ export function setFloor(frames: Frame[]): Frame[] {
 export interface ReadProgress {
   done: number;
   total: number;
+  /** Time of the frame just read, in seconds. */
+  t: number;
   image?: NormalizedLandmark[];
 }
 
@@ -147,7 +149,7 @@ export async function readVideo(
     const res = lm.detectForVideo(video, nextTimestamp(base + t * 1000));
     const world = res.worldLandmarks[0];
     if (world) frames.push(frameFromWorld(world, t));
-    onProgress({ done: i + 1, total, image: res.landmarks[0] });
+    onProgress({ done: i + 1, total, t, image: res.landmarks[0] });
   }
   return setFloor(smoothFrames(frames));
 }

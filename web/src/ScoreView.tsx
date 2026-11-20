@@ -5,6 +5,8 @@ import type { StaffLayout } from "./staff";
 interface Props {
   layout: StaffLayout;
   beat: number;
+  /** Counts per bar: the candle flares on every count, and harder on the first count of a bar. */
+  beatsPerBar?: number;
   beatHeight: number;
   selected: string | null;
   onSelect: (symbolId: string) => void;
@@ -14,7 +16,8 @@ interface Props {
 
 const PLAYHEAD_FROM_TOP = 0.62;
 
-export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height, width }: Props) {
+export function ScoreView({ layout, beat, beatsPerBar = 4, beatHeight, selected, onSelect, height, width }: Props) {
+  const count = Math.floor(beat + 1e-6);
   const SCALE = Math.min(2.4, Math.max(1.2, (width - 24) / layout.width));
   const flip = (y: number) => layout.height - y;
   const originY = layout.origin;
@@ -114,7 +117,10 @@ export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height
           );
         })}
       </svg>
-      <div className="playhead" style={{ top: height * PLAYHEAD_FROM_TOP }} aria-hidden="true" />
+      <div className="playhead" style={{ top: height * PLAYHEAD_FROM_TOP }} aria-hidden="true">
+        {/* Keyed by the count, so its flare restarts on every count, like the bell. */}
+        <span key={count} className={`flame${count % beatsPerBar === 0 ? " down" : ""}`} />
+      </div>
     </div>
   );
 }

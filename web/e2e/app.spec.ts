@@ -19,6 +19,15 @@ test("prologue: shown on a first visit, gone after Enter, and free of axe violat
   await expect(page.getByRole("dialog", { name: "Danse Macabre" })).toBeHidden();
 });
 
+test("prologue: covers the page from its first frame, before the woodcut and the words fade in", async ({ page }) => {
+  await page.goto("/", { waitUntil: "commit" });
+  const prologue = page.locator(".prologue");
+  await prologue.waitFor({ state: "attached" });
+  // The backdrop is opaque at once, so the page loading behind it never shows through.
+  expect(await prologue.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(13, 11, 10)");
+  await expect(prologue).toHaveClass(/\bin\b/);
+});
+
 test("watch: a dance loads, its score is written, and playback moves the count", async ({ page }) => {
   await page.goto("/#watch");
   const scoreSvg = page.locator("svg[aria-label^='Labanotation score']");
@@ -122,4 +131,46 @@ test("phone: the dance list shows and the stage controls do not overlap at 390 p
   }
   const width = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(width).toBeLessThanOrEqual(390);
+});
+
+test("transport: the controls stay still while the count label changes length", async ({ page }) => {
+  await page.goto("/?dance=salsa#watch");
+  const position = page.getByRole("slider", { name: "Position" });
+  const tempo = page.locator(".transport .field input[type='range']");
+  const before = [(await position.boundingBox())!.x, (await tempo.boundingBox())!.x];
+  await expect(page.locator(".clock")).toHaveText("Bar 1 · count 1");
+  // Twenty-two counts on: "Bar 6 · count 3", then half a count more by playing: "Bar 6 · count 3 and" and beyond.
+  for (let i = 0; i < 22; i++) await page.keyboard.press("ArrowRight");
+  await page.getByRole("button", { name: "Play" }).click();
+  await page.waitForTimeout(1500);
+  await page.getByRole("button", { name: "Pause" }).click();
+  await expect(page.locator(".clock")).not.toHaveText("Bar 1 · count 1");
+  const after = [(await position.boundingBox())!.x, (await tempo.boundingBox())!.x];
+  expect(after).toEqual(before);
+});
+
+test("candle: it flares on every count, harder on the first count of a bar", async ({ page }) => {
+  await page.goto("/?dance=macarena#watch");
+  const flame = page.locator(".playhead .flame");
+  await expect(flame).toHaveClass(/down/);
+  await page.keyboard.press("ArrowRight");
+  await expect(flame).not.toHaveClass(/down/);
+  for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".clock")).toHaveText("Bar 2 · count 1");
+  await expect(flame).toHaveClass(/down/);
+});
+
+test("a press on a control leaves a pale wisp that fades away", async ({ page }) => {
+  await page.goto("/#watch");
+  await page.getByRole("tab", { name: "Search" }).click();
+  await expect(page.locator(".wisp")).toHaveCount(1);
+  await expect(page.locator(".wisp")).toHaveCount(0, { timeout: 3000 });
+});
+
+test("reduced motion: a press leaves no wisp", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#watch");
+  await page.getByRole("tab", { name: "Search" }).click();
+  await expect(page.getByRole("heading", { name: "Find a phrase in every dance" })).toBeVisible();
+  await expect(page.locator(".wisp")).toHaveCount(0);
 });

@@ -4,6 +4,7 @@ import { About } from "./About";
 import { Capture } from "./Capture";
 import { Search } from "./Search";
 import { Prologue, prologueSeen } from "./Prologue";
+import { installClickWisps } from "./effects";
 
 type Tab = "watch" | "video" | "search" | "about";
 
@@ -27,6 +28,7 @@ export function App() {
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
+  useEffect(() => installClickWisps(), []);
   const params = new URLSearchParams(window.location.search);
   const [clip, setClip] = useState<string | undefined>(params.get("dance") ?? undefined);
   const [at, setAt] = useState<number | undefined>(params.has("at") ? Number(params.get("at")) : undefined);
@@ -58,27 +60,30 @@ export function App() {
         </nav>
       </header>
       <main style={{ minHeight: 0, display: "grid" }}>
-        {tab === "watch" && <Watch key={`${clip}-${at}`} initial={clip} startBeat={at} />}
-        {tab === "video" && (
-          <Capture
-            onOpen={(id) => {
-              setClip(id);
-              window.location.hash = "watch";
-              setTab("watch");
-            }}
-          />
-        )}
-        {tab === "search" && (
-          <Search
-            onOpen={(id, beat) => {
-              setClip(id);
-              setAt(beat);
-              window.location.hash = "watch";
-              setTab("watch");
-            }}
-          />
-        )}
-        {tab === "about" && <About />}
+        {/* Each screen rises out of a mist when it opens (styles.css, .scene). */}
+        <div className="scene" key={tab}>
+          {tab === "watch" && <Watch key={`${clip}-${at}`} initial={clip} startBeat={at} />}
+          {tab === "video" && (
+            <Capture
+              onOpen={(id) => {
+                setClip(id);
+                window.location.hash = "watch";
+                setTab("watch");
+              }}
+            />
+          )}
+          {tab === "search" && (
+            <Search
+              onOpen={(id, beat) => {
+                setClip(id);
+                setAt(beat);
+                window.location.hash = "watch";
+                setTab("watch");
+              }}
+            />
+          )}
+          {tab === "about" && <About />}
+        </div>
       </main>
     </div>
   );

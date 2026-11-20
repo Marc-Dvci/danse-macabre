@@ -164,11 +164,18 @@ export class Skeleton {
     return g;
   }
 
-  /** Columns or limbs to tint (e.g. the limb whose symbol is active in the score). */
-  setHighlight(limbs: Iterable<string>): void {
+  /**
+   * Bones to light, by name prefix: `ember` for the limbs whose symbols are being danced, `blood` for the limb of the
+   * symbol the reader selected. Blood wins where both apply.
+   */
+  setHighlight(ember: Iterable<string>, blood: Iterable<string> = []): void {
     this.highlight.clear();
-    for (const l of limbs) this.highlight.add(l);
+    this.selected.clear();
+    for (const l of ember) this.highlight.add(l);
+    for (const l of blood) this.selected.add(l);
   }
+
+  private readonly selected = new Set<string>();
 
   private place(name: string, a: THREE.Vector3, b: THREE.Vector3, offset?: THREE.Vector3): void {
     const bone = this.bones.get(name);
@@ -188,7 +195,7 @@ export class Skeleton {
     }
   }
 
-  update(p: Pose, accent?: THREE.Color): void {
+  update(p: Pose): void {
     const up = new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3()
       .subVectors(p["right-hip"], p["left-hip"])
@@ -265,18 +272,16 @@ export class Skeleton {
     );
     this.skull.setRotationFromMatrix(skullBasis);
 
-    const lit = accent ?? new THREE.Color("#c8321e");
     for (const [name, bone] of this.bones) {
-      const on = [...this.highlight].some((h) => name.startsWith(h));
-      (bone.mesh.material as THREE.MeshToonMaterial) = on ? this.accentMat(lit) : this.mat;
+      const blood = [...this.selected].some((h) => name.startsWith(h));
+      const ember = !blood && [...this.highlight].some((h) => name.startsWith(h));
+      bone.mesh.material = blood ? this.bloodMat : ember ? this.emberMat : this.mat;
     }
   }
 
-  private accentCache?: THREE.MeshToonMaterial;
-  private accentMat(c: THREE.Color): THREE.MeshToonMaterial {
-    if (!this.accentCache) this.accentCache = new THREE.MeshToonMaterial({ color: c, gradientMap: toonGradient() });
-    return this.accentCache;
-  }
+  /** A limb being danced glows like an ember; the limb of a selected symbol turns blood red. */
+  private readonly emberMat = new THREE.MeshToonMaterial({ color: "#f2b08f", gradientMap: toonGradient() });
+  private readonly bloodMat = new THREE.MeshToonMaterial({ color: "#d23a22", gradientMap: toonGradient() });
 }
 
 /** Read one frame of a clip (joint order given by `names`) into a Pose. */

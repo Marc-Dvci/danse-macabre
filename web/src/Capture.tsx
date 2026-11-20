@@ -65,8 +65,31 @@ export function Capture({ onOpen }: { onOpen: (id: string) => void }) {
   const abort = useRef<AbortController | null>(null);
   const cameraFrames = useRef<Frame[]>([]);
   const fileUrl = useRef<string | null>(null);
+  /** The pose found in each frame read, 30 a second, so the video can be replayed with its pose once read. */
+  const readPoses = useRef<Array<NormalizedLandmark[] | undefined>>([]);
 
   useEffect(() => () => abort.current?.abort(), []);
+
+  // Once a video is read, it plays again in a loop with the pose the model found drawn over the dancer.
+  useEffect(() => {
+    const v = video.current;
+    const poses = readPoses.current;
+    if (phase !== "done" || !v || v.srcObject || poses.length === 0) return;
+    let raf = 0;
+    v.loop = true;
+    v.currentTime = 0;
+    void v.play().catch(() => undefined);
+    const draw = () => {
+      if (overlay.current) drawLandmarks(overlay.current, poses[Math.min(poses.length - 1, Math.round(v.currentTime * 30))]);
+      raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(raf);
+      v.pause();
+      v.loop = false;
+    };
+  }, [phase]);
 
   async function finish(frames: Frame[], id: string, title: string, compareId: string | null) {
     if (frames.length < 10) {
@@ -105,11 +128,13 @@ export function Capture({ onOpen }: { onOpen: (id: string) => void }) {
       if (v.readyState < 1) await new Promise((r) => v.addEventListener("loadedmetadata", r, { once: true }));
       setPhase("reading");
       abort.current = new AbortController();
+      readPoses.current = [];
       const frames = await readVideo(
         v,
         30,
         (p) => {
           setProgress({ done: p.done, total: p.total });
+          readPoses.current.push(p.image);
           if (overlay.current) drawLandmarks(overlay.current, p.image);
         },
         abort.current.signal,

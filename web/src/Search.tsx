@@ -1,5 +1,5 @@
 // Search: cut a phrase out of one dance and find it, or its mirror image, in every dance.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { CLIPS, loadClip } from "./clips";
 import { cutPhrase, findInScore, notateClip, countLabel, type Score } from "./engine";
 import { centreClip } from "./pose";
@@ -118,9 +118,10 @@ export function Search({ onOpen }: { onOpen: (clipId: string, beat: number) => v
                   <strong>{hits.length}</strong> {hits.length === 1 ? "match" : "matches"} for a phrase of {phrase.symbols.length}{" "}
                   {phrase.symbols.length === 1 ? "symbol" : "symbols"}.
                 </p>
-                <ol className="hits">
+                <ol className="hits" key={hits.length + phrase.at}>
                   {hits.map((h, i) => (
-                    <li key={i}>
+                    // Each match surfaces after the one before (styles.css, .hits li).
+                    <li key={i} style={{ "--i": i } as CSSProperties}>
                       <button className="link" onClick={() => onOpen(h.clipId, h.beat)}>
                         {h.title}, {h.label}
                       </button>

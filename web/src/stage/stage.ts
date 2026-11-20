@@ -81,6 +81,10 @@ export class Stage {
   private readonly target = new THREE.Vector3(0, 0.95, 0);
   private facing = 0;
   private disposed = false;
+  private readonly key: THREE.SpotLight;
+  /** When the skeletons began to rise out of the floor (performance.now), or null once they stand. */
+  private risingSince: number | null = null;
+  private readonly calm = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
   constructor(private readonly host: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
@@ -92,6 +96,7 @@ export class Stage {
 
     this.scene.fog = new THREE.Fog("#0d0b0a", 6, 13);
     const key = new THREE.SpotLight("#ffd9a8", 38, 12, Math.PI / 5, 0.6, 1.4);
+    this.key = key;
     key.position.set(1.6, 4.2, 2.6);
     key.target.position.copy(this.target);
     this.scene.add(key, key.target);
@@ -127,13 +132,34 @@ export class Stage {
 
     new ResizeObserver(() => this.resize()).observe(host);
     this.resize();
-    const loop = () => {
+    const loop = (now: number) => {
       if (this.disposed) return;
       this.controls.update();
+      this.animate(now);
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(loop);
     };
-    loop();
+    requestAnimationFrame(loop);
+  }
+
+  /** The key light breathes like a candle, and rising skeletons climb out of the floor. */
+  private animate(now: number): void {
+    if (this.calm) return;
+    const t = now / 1000;
+    const flicker = 0.5 * Math.sin(t * 7.3) + 0.3 * Math.sin(t * 13.1 + 1.7) + 0.2 * Math.sin(t * 23.9 + 0.4);
+    this.key.intensity = 38 * (1 + 0.06 * flicker);
+    let y = 0;
+    if (this.risingSince !== null) {
+      const k = Math.min(1, (now - this.risingSince) / 750);
+      y = -0.9 * (1 - k) ** 3;
+      if (k >= 1) this.risingSince = null;
+    }
+    for (const sk of [this.skeleton, this.ghost, ...this.ensemble]) sk.group.position.y = y;
+  }
+
+  /** The skeletons rise out of the floor, as when a dance is chosen. */
+  rise(): void {
+    if (!this.calm) this.risingSince = performance.now();
   }
 
   /** Holbein's Dance of Death woodcuts as panels on a circular wall around the stage, like the painted Totentanz walls. */

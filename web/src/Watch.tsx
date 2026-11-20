@@ -1,5 +1,5 @@
 // Watch: pick a dance, see the recording as a ghost and the score danced by the skeleton, hear it on the count.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { CLIPS, CLIP_SOURCE, FEATURED, customClips, loadClip, onCustomClips, type Clip } from "./clips";
 import { ScoreView } from "./ScoreView";
 import { SymbolEditor } from "./SymbolEditor";
@@ -24,6 +24,17 @@ import {
 } from "./engine";
 
 type Show = "both" | "score" | "recording";
+
+/** The skeleton's bones (name prefixes) that dance each column of the staff. */
+const LEG = (side: string) => [`${side}-femur`, `${side}-tibia`, `${side}-fibula`, `${side}-foot`];
+const COLUMN_BONES: Record<string, string[]> = {
+  "left-arm": ["left-upper-arm", "left-radius", "left-ulna", "left-finger"],
+  "right-arm": ["right-upper-arm", "right-radius", "right-ulna", "right-finger"],
+  "left-leg": LEG("left"),
+  "right-leg": LEG("right"),
+  "left-support": LEG("left"),
+  "right-support": LEG("right"),
+};
 
 export function Watch({ initial, startBeat }: { initial?: string; startBeat?: number }) {
   const [clipId, setClipId] = useState(initial ?? CLIPS[0]!.id);
@@ -62,6 +73,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     loadClip(clipId).then((c) => {
       if (!live) return;
       setClip(c);
+      stage.current?.rise();
       if (startBeat !== undefined && clipId === initial) {
         const tempo = c.score?.tempo ?? 100;
         setTime((startBeat * 60) / tempo);
@@ -150,12 +162,19 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     } else {
       s.showEnsemble([]);
     }
+    // The limb whose symbol is being danced glows like an ember; the limb of a selected symbol turns red.
+    const at = score ? secondsToBeats(score, loopTime(time)) : 0;
+    const dancing =
+      score && show !== "recording"
+        ? score.symbols.filter((sym) => at >= sym.start && at < sym.start + sym.duration).flatMap((sym) => COLUMN_BONES[sym.column] ?? [])
+        : [];
+    s.skeleton.setHighlight(dancing, found && show !== "recording" ? (COLUMN_BONES[found.column] ?? []) : []);
     if (show !== "recording" && scorePose) s.show(scorePose);
     s.showBones(show !== "recording");
     s.showGhost(show !== "score" ? recPose : null);
     if (show === "recording" && recPose) s.show(recPose);
     s.showBones(show !== "recording");
-  }, [time, performed, recording, show, scoreOnly, ensemble, score, phrase]);
+  }, [time, performed, recording, show, scoreOnly, ensemble, score, phrase, found]);
 
   // Music for score-only dances, kept in step with the clock.
   useEffect(() => {
@@ -236,8 +255,9 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
     if (!playing) hush();
   }, [playing]);
 
-  // Keyboard: space plays or pauses, arrows step one count, M mirrors.
-  useEffect(() => {
+  // Keyboard: space plays or pauses, arrows step one count, M mirrors. Attached before the first paint, so a key
+  // pressed as soon as the dance appears is never lost.
+  useLayoutEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
       if (el.closest("input, select, textarea, [contenteditable]")) return;
@@ -247,8 +267,11 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
         e.preventDefault();
         setPlaying((p) => !p);
       } else if (e.key === "ArrowRight") {
+        // The arrows step through the counts here, so the browser must not scroll the page with them.
+        e.preventDefault();
         setTime((t) => Math.min(duration, (Math.floor(t / beatSec + 1e-6) + 1) * beatSec));
       } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
         setTime((t) => Math.max(0, (Math.ceil(t / beatSec - 1e-6) - 1) * beatSec));
       } else if (e.key === "m" || e.key === "M") {
         setMirrored((m) => !m);
@@ -292,6 +315,9 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
 
       <section className="stage-wrap" aria-label="Stage">
         <div className="stage" ref={stageHost}>
+          {/* Low fog drifting over the floor, and a veil of smoke that lifts each time a dance is chosen. */}
+          <div className="stage-fog" aria-hidden="true" />
+          <div className="stage-veil" key={clipId} aria-hidden="true" />
           <div className="views" role="group" aria-label="Camera">
             {(
               [
@@ -362,6 +388,7 @@ export function Watch({ initial, startBeat }: { initial?: string; startBeat?: nu
             <ScoreView
               layout={layout}
               beat={beat}
+              beatsPerBar={score.beatsPerBar}
               beatHeight={BEAT_HEIGHT}
               selected={selected}
               onSelect={(id) => setSelected(id.startsWith("start:") ? null : id)}
