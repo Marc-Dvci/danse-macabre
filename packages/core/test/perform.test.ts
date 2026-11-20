@@ -36,12 +36,11 @@ describe('performGestures', () => {
   });
 
   it('moves the limb at the midpoint of the symbol halfway along the arc', () => {
-    // At 2 s, u = 0.5, smoothstep(0.5) = 0.5. The arc from straight down to right runs 90 degrees, so the midpoint
-    // of the arc is at 45 degrees: (sin 45, -cos 45) in the x-y plane.
+    // The arc from straight down to right (-x) is 90 degrees, so its midpoint is at 45 degrees: (-sin 45, -cos 45).
     const mid = frames[60]!.joints['right-wrist'];
     const shoulder = frames[0]!.joints['right-shoulder'];
     const s = Math.SQRT1_2;
-    expect(mid.x - shoulder.x).toBeCloseTo(0.6 * s, 9);
+    expect(mid.x - shoulder.x).toBeCloseTo(-0.6 * s, 9);
     expect(mid.y - shoulder.y).toBeCloseTo(-0.6 * s, 9);
   });
 });

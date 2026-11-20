@@ -3,9 +3,9 @@ import { add, scale } from './vec';
 
 /** Segment lengths and joint offsets of the standard rig, in metres. */
 export type Rig = {
-  /** Distance from the pelvis centre to each hip joint along x. */
+  /** Distance from the pelvis centre to each hip joint along x. The right hip is at −x. */
   hipHalfWidth: number;
-  /** Distance from the neck to each shoulder joint along x. */
+  /** Distance from the neck to each shoulder joint along x. The right shoulder is at −x. */
   shoulderHalfWidth: number;
   /** Shoulder to wrist. */
   armLength: number;
@@ -57,17 +57,18 @@ export function limbEndJoint(column: ColumnId): JointName {
 }
 
 /**
- * Builds a full frame from the unit direction of each limb. Joints off the limbs are fixed. Elbows and knees sit at
- * the midpoint of their bones.
+ * Builds a full frame from the unit direction of each limb. The body faces +z, so its right side is at −x. Joints off
+ * the limbs are fixed. Elbows and knees sit at the midpoint of their bones.
  * @param t Time of the frame in seconds.
  * @param dirs Unit vector of each gesture column, from its base joint to its free end.
  * @param rig Segment lengths.
  */
 export function buildFrame(t: number, dirs: Record<'left-arm' | 'right-arm' | 'left-leg' | 'right-leg', Vec3>, rig: Rig): Frame {
-  const leftHip = add(PELVIS, { x: -rig.hipHalfWidth, y: 0, z: 0 });
-  const rightHip = add(PELVIS, { x: rig.hipHalfWidth, y: 0, z: 0 });
-  const leftShoulder = { x: -rig.shoulderHalfWidth, y: SHOULDER_HEIGHT, z: 0 };
-  const rightShoulder = { x: rig.shoulderHalfWidth, y: SHOULDER_HEIGHT, z: 0 };
+  // Right is −x (dancer facing +z), so the left joints are at +x.
+  const leftHip = add(PELVIS, { x: rig.hipHalfWidth, y: 0, z: 0 });
+  const rightHip = add(PELVIS, { x: -rig.hipHalfWidth, y: 0, z: 0 });
+  const leftShoulder = { x: rig.shoulderHalfWidth, y: SHOULDER_HEIGHT, z: 0 };
+  const rightShoulder = { x: -rig.shoulderHalfWidth, y: SHOULDER_HEIGHT, z: 0 };
   const leftWrist = add(leftShoulder, scale(dirs['left-arm'], rig.armLength));
   const rightWrist = add(rightShoulder, scale(dirs['right-arm'], rig.armLength));
   const leftAnkle = add(leftHip, scale(dirs['left-leg'], rig.legLength));

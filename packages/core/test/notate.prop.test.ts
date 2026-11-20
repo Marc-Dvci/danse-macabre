@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { notateGestures, performGestures, validateScore, type NotateOptions, type Score } from '../src/index';
-import { genArmSprintScore, genGestureScore, genRandomFrames } from './generators';
+import { genGestureScore, genRandomFrames } from './generators';
 
 const RUNS = { numRuns: 200 };
 
@@ -10,9 +10,9 @@ function notateOptions(s: Score): NotateOptions {
 }
 
 describe('generators produce valid scores (precondition of 7.5)', () => {
-  it('genGestureScore and genArmSprintScore pass validateScore', () => {
+  it('genGestureScore passes validateScore', () => {
     fc.assert(
-      fc.property(fc.oneof(genGestureScore, genArmSprintScore), (s) => {
+      fc.property(genGestureScore, (s) => {
         expect(validateScore(s)).toEqual({ ok: true });
       }),
       RUNS,

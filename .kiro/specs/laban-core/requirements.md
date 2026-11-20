@@ -43,7 +43,7 @@ notated the same way.
    a dancer facing +z has `right` = −x). Checked on real data: in frame 0 of `data/clips/macarena.json` the feet point
    along this `forward`, which is close to (−0.48, 0, −0.88).
 2. IF the horizontal component of that mean is shorter than 1 cm THEN THE SYSTEM SHALL reuse the previous frame's
-   axes, or world axes (+x right, +z forward) for the first frame.
+   axes, or world axes (right = −x, forward = +z) for the first frame.
 
 ## Requirement 3: direction quantisation
 
@@ -54,9 +54,10 @@ ambiguous.
    `e = asin(v·up / |v|)` and the azimuth `a = atan2(v·right, v·forward)` in degrees.
 2. THE SYSTEM SHALL map elevation to a band: `place high` when e ≥ 67.5; `high` when 22.5 ≤ e < 67.5; `middle` when
    −22.5 < e < 22.5; `low` when −67.5 < e ≤ −22.5; `place low` when e ≤ −67.5.
-3. THE SYSTEM SHALL map azimuth to the sector k = the integer with a ∈ [45k − 22.5, 45k + 22.5) (mod 360), where
-   k = 0, 1, …, 7 names `forward`, `right-forward`, `right`, `right-backward`, `backward`, `left-backward`, `left`,
-   `left-forward`.
+3. THE SYSTEM SHALL map azimuth to the sector k whose centre 45k (mod 360) is nearest, where k = 0, 1, …, 7 names
+   `forward`, `right-forward`, `right`, `right-backward`, `backward`, `left-backward`, `left`, `left-forward`. An
+   azimuth exactly on a boundary (±22.5, ±67.5, ±112.5, ±157.5) goes to the sector farther from forward, so the
+   rule is mirror-symmetric.
 4. THE SYSTEM SHALL export `cellCenter(cell, axes)` returning the unit vector at the centre of the cell: elevation 90
    for place high, 45 for high, 0 for middle, −45 for low, −90 for place low, and azimuth 45k.
 5. THE SYSTEM SHALL use the arm vector `wrist − shoulder` and the leg vector `ankle − hip`.
@@ -71,14 +72,17 @@ edit it.
    time zero at the first frame.
 2. THE SYSTEM SHALL set `startPosition` from the cells of the first frame.
 3. THE SYSTEM SHALL ignore a cell change that lasts less than `options.minHold` seconds (default 0.12 s).
-4. WHEN the quantised cell of a limb changes and the new cell holds for at least `minHold` THE SYSTEM SHALL write one
-   symbol for the new cell. The cell change is the trigger, so a slow move is notated as surely as a fast one. The
-   symbol's start is the frame of minimum smoothed angular speed between the end of the previous symbol in that
-   column (or the first frame) and the change; its end is the frame of minimum smoothed angular speed between the
-   change and the next cell change (or the last frame). Smoothed speed is a centred moving average over
-   `options.smoothing` seconds (default 0.2). When several frames share the minimum (a limb at rest), the start takes
-   the latest of them and the end the earliest: a frame counts as at the minimum when its speed is within
-   max(2 deg/s, 10%) of it.
+4. THE SYSTEM SHALL split each limb's motion into moves at its rests. A rest is a local minimum of the smoothed
+   angular speed (centred moving average over `options.smoothing` seconds, default 0.2) that is below a quarter of
+   the lower of its two neighbouring peaks, or below `options.restSpeed` (default 3 deg/s). The first and last frames
+   are rests. WHEN the cell the limb holds at the end of a move differs from the cell it held at the start of that
+   move, and the new cell then holds for at least `minHold`, THE SYSTEM SHALL write one symbol for the new cell from
+   the start rest to the end rest. Cells the limb only passes through during a move are not written, as in written
+   Labanotation, where a symbol gives the destination. A slow move is notated as surely as a fast one, because its
+   ends are still minima of its own speed.
+8. THE SYSTEM SHALL apply a hysteresis of `options.hysteresis` degrees (default 4): a limb resting near a cell
+   boundary keeps its previous cell unless its direction is more than that many degrees inside the new cell, so a
+   limb held on a boundary does not flicker between two cells.
 5. THE SYSTEM SHALL round each symbol's start and end to the nearest multiple of `grid` (in beats, at `tempo`), make
    its duration at least one `grid`, and start it no earlier than the end of the previous symbol in its column.
 6. WHILE a limb stays in one cell THE SYSTEM SHALL write no symbol for it.
@@ -134,7 +138,7 @@ at their speed.
 
 1. An example test SHALL load `data/clips/macarena.json` (CMU subject 143, trial 35; format: `{ fps, joints,
    frames: number[frame][joint][xyz] }`) and check the body frame of frame 0 against Requirement 2.1.
-2. A test SHALL notate the Macarena at 100 bpm and report, in the test output, the first eight arm symbols (column,
-   start, direction, level). The Macarena opens with the right arm and then the left arm stretched forward at
-   shoulder height, so the first two arm symbols are expected to be `right-arm forward middle` then
-   `left-arm forward middle`. If they are not, report what was found and why; do not tune constants to force it.
+2. A test SHALL notate the Macarena at 100 bpm and print the first eight arm symbols (column, start, direction,
+   level). The dance opens with both arms stretched forward at shoulder height, one after the other, so the first
+   symbol of each arm is expected to be `forward middle` within the first two beats. (In this take the dancer lifts
+   the left arm about 0.3 s before the right; the order is not asserted.) Do not tune constants to force a result.

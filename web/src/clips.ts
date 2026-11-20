@@ -48,3 +48,23 @@ export function loadClip(id: string): Promise<Clip> {
   cache.set(id, p);
   return p;
 }
+
+/** Dances read from a video in this session. They live in memory only. */
+const custom = new Map<string, Clip>();
+const listeners = new Set<() => void>();
+
+export function addCustomClip(info: ClipInfo, frames: Frame[]): void {
+  const fps = frames.length > 1 ? 1 / (frames[1]!.t - frames[0]!.t) : 30;
+  custom.set(info.id, { ...info, fps, joints: [], raw: [], frames });
+  cache.set(info.id, Promise.resolve(custom.get(info.id)!));
+  for (const l of listeners) l();
+}
+
+export function customClips(): ClipInfo[] {
+  return [...custom.values()];
+}
+
+export function onCustomClips(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}

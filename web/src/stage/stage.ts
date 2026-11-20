@@ -90,7 +90,7 @@ export class Stage {
     host.appendChild(this.renderer.domElement);
     this.renderer.domElement.setAttribute("aria-hidden", "true");
 
-    this.scene.fog = new THREE.Fog("#0d0b0a", 5, 12);
+    this.scene.fog = new THREE.Fog("#0d0b0a", 6, 13);
     const key = new THREE.SpotLight("#ffd9a8", 38, 12, Math.PI / 5, 0.6, 1.4);
     key.position.set(1.6, 4.2, 2.6);
     key.target.position.copy(this.target);
@@ -113,6 +113,7 @@ export class Stage {
     this.ring.position.y = 0.002;
     this.scene.add(this.ring);
 
+    this.addFrieze();
     this.scene.add(this.skeleton.group, this.ghost.group);
     this.ghost.group.visible = false;
 
@@ -133,6 +134,23 @@ export class Stage {
       requestAnimationFrame(loop);
     };
     loop();
+  }
+
+  /** Holbein's Dance of Death woodcuts as panels on a circular wall around the stage, like the painted Totentanz walls. */
+  private addFrieze(): void {
+    const names = ["the-trumpeters-of-death", "the-doctor", "the-duchess", "the-old-man", "the-ploughman", "the-preacher"];
+    const loader = new THREE.TextureLoader();
+    const radius = 4.6;
+    names.forEach((name, i) => {
+      const tex = loader.load(`${import.meta.env.BASE_URL}art/${name}.webp`);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.42, depthWrite: false });
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.75, 2.5), mat);
+      const a = (i / names.length) * Math.PI * 2 + Math.PI;
+      panel.position.set(Math.sin(a) * radius, 1.55, Math.cos(a) * radius);
+      panel.lookAt(0, 1.55, 0);
+      this.scene.add(panel);
+    });
   }
 
   setView(view: View): void {

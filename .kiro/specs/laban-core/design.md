@@ -9,12 +9,12 @@ Implements `requirements.md` in `packages/core/src`. Public API is exported from
 | `types.ts` | `Vec3`, `Frame`, `JointName`, `ColumnId`, `Direction`, `Level`, `Cell`, `Symbol`, `Score`, `BodyAxes`, `ValidationResult` | 1.1 |
 | `vec.ts` | Vector helpers: `add`, `sub`, `scale`, `dot`, `cross`, `length`, `normalize`, `angleDeg` | 2, 3 |
 | `score.ts` | `GESTURE_COLUMNS`, `COLUMN_ORDER`, `DIRECTIONS`, `LEVELS`, `validateScore`, `canonicalScore` | 1 |
-| `body-frame.ts` | `bodyFrame(frame, previous?)` | 2 |
+| `body-frame.ts` | `WORLD_AXES`, `bodyFrame(frame, previous?)` | 2 |
 | `quantize.ts` | `SECTOR_NAMES`, `GESTURE_CELLS` (26 cells), `quantizeGesture(v, axes)`, `cellCenter(cell, axes)` | 3 |
-| `rig.ts` | `Rig`, `standardRig()`, `restPose(rig)`, `limbBase(column)` | 5.1, 5.3 |
+| `rig.ts` | `Rig`, `standardRig()`, `buildFrame`, `limbBaseJoint(column)`, `limbEndJoint(column)` | 5.1, 5.3 |
 | `interpolate.ts` | `slerp(u0, u1, k)` with the antipodal case, `smoothstep(u)` | 5.2 |
 | `perform.ts` | `performGestures(score, options?)` | 5 |
-| `notate.ts` | `notateGestures(frames, options)` and its helpers (move detection, lift test, grid rounding) | 4 |
+| `notate.ts` | `notateGestures(frames, options)`: cell runs, hold filter, speed minima, lift filter, grid rounding | 4 |
 | `mirror.ts` | `mirrorScore`, `mirrorFrames`, `retime` | 6 |
 | `index.ts` | Public exports | 1.1 |
 
@@ -36,7 +36,7 @@ canonicalScore(score: Score): Score;
 standardRig(): Rig;
 performGestures(score: Score, options?: { fps?: number; rig?: Rig }): Frame[];
 notateGestures(frames: Frame[], options: NotateOptions): Score;
-  // NotateOptions = { tempo; beatsPerBar; grid; title; minHold?; stillSpeed?; liftHeight? }
+  // NotateOptions = { tempo; beatsPerBar; grid; title; minHold?; smoothing?; liftHeight? }
 mirrorScore(score: Score): Score;
 mirrorFrames(frames: Frame[]): Frame[];
 retime(score: Score, factor: number): Score;
@@ -44,87 +44,105 @@ retime(score: Score, factor: number): Score;
 
 ## Fixed conventions
 
-- Axes for quantisation: `up = (0,1,0)`, `right = +x`, `forward = +z` for the standard rig. Azimuth
-  `a = atan2(v·right, v·forward)`. Sector `k = floor((a + 22.5) / 45) mod 8`.
-- Elevation `e = asin(clamp(v·up/|v|, -1, 1))` in degrees. Bands follow Requirement 3.2 exactly. The bands are
-  total and disjoint because the middle band is open and its neighbours are closed on the shared edge.
-- Standard rig (metres): pelvis `(0, 0.95, 0)`; hips at `x = ±0.09`; shoulders at `x = ±0.18`, `y = 1.42`; neck
-  `(0, 1.45, 0)`; head `(0, 1.6, 0)`; arm length (shoulder to wrist) 0.6; leg length (hip to ankle) 0.9.
-  Right is `+x`. Elbow and knee are the midpoints of their bones (no bend model in this spec).
-- Ids: notation writes ids as `${column}-${n}`. `mirrorScore` swaps a leading `left-` / `right-` in ids, so the
-  mirrored score carries the same ids that `notateGestures` gives the mirrored frames (property 7.4).
-- `canonicalScore` orders columns by `COLUMN_ORDER = [left-support, left-leg, left-arm, right-support, right-leg,
-  right-arm]`, then by start, then by duration. It builds objects with a fixed key order, so equal scores serialise
-  to the same JSON.
-- Times: `beat = t * tempo / 60`. Frame times are seconds from the first frame in notation.
+- Axes are right-handed with y up (`.kiro/steering/tech.md`). A dancer facing +z has `right = −x`, so
+  `WORLD_AXES = { up: +y, right: −x, forward: +z }`.
+- `bodyFrame`: `right` = normalised horizontal mean of (right-hip − left-hip) and (right-shoulder − left-shoulder);
+  `forward = normalize(cross(up, right))`. Under 1 cm of horizontal width, it reuses `previous` or `WORLD_AXES`.
+- Standard rig (metres): pelvis `(0, 0.95, 0)`; left hip and left shoulder at `x = +`, right at `x = −`; shoulders at
+  `y = 1.42`; neck `(0, 1.45, 0)`; head `(0, 1.6, 0)`; arm (shoulder to wrist) 0.6; leg (hip to ankle) 0.9. Elbow and
+  knee are bone midpoints.
+- Quantisation: `a = atan2(v·right, v·forward)`, sector `k = floor((a + 22.5) / 45) mod 8`; elevation
+  `e = asin(v·up / |v|)`; bands per Requirement 3.2.
+- Ids: notation writes `${column}-${n}`. `mirrorScore` swaps a leading `left-` / `right-` in ids.
+- `canonicalScore` orders columns by `COLUMN_ORDER`, then start, then duration, with a fixed key order.
+- Beats: `beat = t * tempo / 60`. Frame times are seconds from the first frame in notation.
+
+## Notation (Requirement 4)
+
+For each gesture column:
+
+1. **Cells.** Quantise each frame's limb vector (wrist − shoulder or ankle − hip). A zero vector keeps the previous cell.
+2. **Runs and holds (4.3).** Group frames into runs of equal cells. A run's hold runs from its first frame to the first
+   frame of the next run (for the last run, to the last frame plus one frame interval). A run is a cell change when its
+   cell differs from the held cell and its hold is at least `minHold`. Short runs leave the held cell unchanged.
+3. **Speed (4.4).** Angular speed `s[k]` between frames `k−1` and `k` (`s[0] = s[1]`). Smoothed speed is the mean of
+   every `s[i]` with `|t_i − t_k| ≤ smoothing / 2`. Computed with prefix sums.
+4. **Boundaries (4.4).** For change `j` at frame `f_j`:
+   - `startIdx` = the latest frame in `[end_{j−1}, f_j]` at the smoothed minimum (end_{−1} = frame 0);
+   - `endIdx` = the earliest frame in `[f_j, f_{j+1}]` at the smoothed minimum (f_{j+1} = last frame for the final change).
+   A frame is at the minimum when its smoothed speed is at most `min + max(2 deg/s, 10% of min)`.
+5. **Lift (4.7, leg columns only).** Keep a leg change only when `ankle_own.y − ankle_other.y > liftHeight` in every
+   frame of `[startIdx, endIdx]`.
+6. **Grid (4.5).** `startK = round(t_start · tempo/60 / grid)`, clamped to the previous symbol's end. `endK` likewise.
+   `durK = max(1, endK − startK)`.
 
 ## Decisions (where the requirements leave room, or contradict each other)
 
-- **D1 Move boundaries (4.4 vs 5.2).** The ease in 5.2 has zero speed at both ends of a move, so a move whose
-  angular speed is above `stillSpeed` starts late and ends early. Notation finds the run of frames above `stillSpeed`
-  (the "moving" test of 4.4), then extends it outwards through frames above `REST_SPEED = 1 deg/s`. The symbol starts
-  at the last frame before the run and ends at the last frame of the extended run. The boundary error is at most one
-  frame of the 30 fps clock. This is derived from the sampling, not measured. The 5.2 playback and the 4.4 notation
-  are both kept as written.
-- **D2 Leg lift (4.7).** A leg symbol is written only if its ankle is above `min ankle y + liftHeight` at every frame
-  from the symbol's start to its end. The "lowest ankle" is taken over both feet and all frames of the clip.
-- **D3 Minimum hold (4.3).** A move whose destination dwell (time until the next move in that column, or until the end
-  of the clip) is shorter than `minHold` is dropped. A move that ends in the cell the limb already holds is dropped.
-- **D4 Zero limb vector.** Notation keeps the previous cell for a zero vector. `quantizeGesture` throws on zero.
+- **D1 (dropped).** The earlier move-boundary decision was replaced by Requirement 4.4 (speed minima).
+- **D2 (dropped).** The earlier lift decision was replaced by Requirement 4.7 (ankle height above the other ankle).
+- **D3 Minimum hold (4.3).** Applied to runs of raw cells, as in step 2 above. Covered by the example test
+  `notate.test.ts` ("ignores a cell that holds for less than minHold") and by a blip of one frame.
+- **D4 Zero limb vector.** Notation keeps the previous cell. `quantizeGesture` throws on zero.
 - **D5 Validation adds `grid > 0`.** Without it the multiple-of-grid test in 1.3 has no meaning.
-- **D6 Missing start cell.** `performGestures` treats a column with no `startPosition` entry as `place low` (arm
-  or leg hanging straight down).
+- **D6 Missing start cell.** `performGestures` treats a column with no `startPosition` entry as `place low`.
 - **D7 Support columns.** `performGestures` ignores symbols in support columns in this spec.
-- **D8 Rounding.** Start and end are rounded to integer grid counts. Start is clamped to the previous symbol's end,
-  and duration is `max(1, endK - startK)` grid units. Symbols therefore carry exact `k * grid` floats.
+- **D8 Rounding.** Start and end are rounded to integer grid counts. Symbols carry exact `k * grid` floats.
+- **D9 Generator start.** The first symbol of each column starts at 1 to 3 grid units, so a limb has a rest before
+  its first move. A move that starts at frame 0 has no rest before it, and 4.4 then has no minimum to find.
+- **D10 Leg cells in the generator (7.5).** A leg symbol is a leg gesture, so its foot is off the floor during the
+  symbol (4.7). The generator therefore draws leg cells (start cell and symbol cells) from `LIFTED_LEG_CELLS`: every
+  cell except the `low` band and `place low`. The arc between two such centres stays above the horizontal, because the
+  arc between two unit vectors with non-negative height has non-negative height. The ankle is then at least 0.9 m above
+  the stance ankle at `place low` (0.05 m), so 4.7 holds through the symbol.
+- **D11 Tie rule (4.4).** `max(2 deg/s, 10%)` as written. The tolerance is absolute near rest, so the chosen minimum
+  can sit about one smoothing half-width (0.1 s) from the true rest edge. That could make a round trip round to a
+  neighbouring grid unit at fast tempos. This session did not measure it. The round-trip failure seen here comes from
+  known limit 1.
+- **D12 Test data path.** `macarena.test.ts` imports the JSON clip. `tsconfig.json` sets `resolveJsonModule`, so the
+  package code and tests need no Node types.
+
+## Known limits (pinned by `known-limits.test.ts`, and found by the properties)
+
+1. **Moves that cross cells.** Requirement 4.4 writes a symbol for every cell change that holds for `minHold`. A
+   move from `place low` to `right middle` passes through `right low`, which holds for longer than 0.12 s at 60 bpm.
+   So the notation writes `right low` (1 beat) and then `right middle` at beat 2.5 for 0.5 beats, not beat 1 for
+   2 beats. The `right middle` boundary is a speed minimum inside a range with no rest, so it lands on the range's
+   edge. Requirement 7.5 fails for this reason, and the same counterexample appears at 60 bpm for a leg.
+2. **Boundaries of sectors.** Requirement 3.3 uses half-open sectors. A vector at exactly +22.5° is `right-forward`
+   and its mirror at −22.5° is `forward`. In `known-limits` this was not reproduced with a constructed vector: the
+   constructed vector gave the symmetric result, because floating-point rounding decides the boundary cases. Requirement
+   7.4 failed in two of the four runs of this session with different seeds (`mirror.prop.test.ts`). The first
+   counterexample reached frame 10 of a 180 bpm clip where the right-arm azimuth was 22.50 degrees in float. Other
+   counterexamples were not traced.
 
 ## Correctness properties (Requirement 7)
 
-Each property runs with `fc.assert(..., { numRuns: 200 })` or more. Generators are named as in `test/generators.ts`.
+Each property runs with `numRuns: 200` or 500. Generators are in `test/generators.ts`.
 
-| ID | Property | Checks | Generators | File |
+| ID | Property | Requirement | File | Status |
 |---|---|---|---|---|
-| P7.1 | For any non-zero `v` and any axes, the set of cells whose band interval contains `v` has exactly one member, `quantizeGesture(v)` is that member, and `quantizeGesture(cellCenter(c))` is `c` for each of the 26 cells | Req 3.1–3.4 | `arbNonZeroVector`, `arbAxes` | `quantize.prop.test.ts` |
-| P7.2 | Rotating `v`, `right`, `forward` by the same yaw about `up` gives the same cell | Req 3, 2 | `arbNonZeroVector`, `arbAxes`, `arbYaw` | `quantize.prop.test.ts` |
-| P7.3 | `mirrorScore(mirrorScore(s))` equals `s` | Req 6.1 | `genGestureScore` | `mirror.prop.test.ts` |
-| P7.4 | `canonicalScore(notateGestures(mirrorFrames(f)))` equals `canonicalScore(mirrorScore(notateGestures(f)))` for `f = performGestures(s)` | Req 4, 6.1, 6.2 | `genGestureScore` | `mirror.prop.test.ts` |
-| P7.5 | `canonicalScore(notateGestures(performGestures(s)))` has the same (column, start, duration, direction, level) list as `canonicalScore(s)` for `s` from `genGestureScore` | Req 4, 5 | `genGestureScore` | `roundtrip.prop.test.ts` |
-| P7.5d | Diagnostic (not 7.5): the same check on `genArmSprintScore`, where every move is fast enough for the speed rule of 4.4 | Req 4.4 | `genArmSprintScore` | `roundtrip.prop.test.ts` |
-| P7.6 | `performGestures(retime(s, 2))` at frame k equals `performGestures(s)` at frame 2k (times differ by a factor of 2) | Req 6.3, 5 | `genGestureScore` | `tempo.prop.test.ts` |
-| P7.7 | `validateScore(notateGestures(f, o)).ok` for `f` from `genGestureScore` performance and from `genRandomFrames` | Req 4, 1.3 | `genGestureScore`, `genRandomFrames` | `notate.prop.test.ts` |
+| P7.1 | Exactly one of 26 cells contains each non-zero vector; `cellCenter` quantises back | 3.1–3.4 | `quantize.prop.test.ts` | pass |
+| P7.2 | Yaw of vector and axes together gives the same cell | 3, 2 | `quantize.prop.test.ts` | pass |
+| P7.3 | `mirrorScore(mirrorScore(s)) = s` | 6.1 | `mirror.prop.test.ts` | pass |
+| P7.4 | `canonical(notate(mirrorFrames(f))) = canonical(mirrorScore(notate(f)))` | 4, 6 | `mirror.prop.test.ts` | fails intermittently (limit 2) |
+| P7.5 | Round trip of symbols for the 7.5 domain (`genGestureScore`) | 4, 5 | `roundtrip.prop.test.ts` | fails (limit 1) |
+| P7.6 | `performGestures(retime(s, 2))` at frame k equals `performGestures(s)` at 2k | 6.3, 5 | `tempo.prop.test.ts` | pass |
+| P7.7 | `validateScore(notate(f)).ok` for generated performances and random frames | 4, 1.3 | `notate.prop.test.ts` | pass |
+
+The diagnostic P7.5d (arm-only sprints) was removed. It tested the 60 deg/s rule of Requirement 4.4, which no longer
+exists. Requirement 8 tests are in `macarena.test.ts`.
 
 ### Generators
 
-- `arbNonZeroVector`: `Vec3` with components in [-1, 1], filtered to length > 1e-6.
-- `arbYaw`: degrees in [0, 360).
-- `arbAxes`: axes from a random yaw about `up`. Built with `bodyFrame` from a random horizontal direction.
-- `genGestureScore`: tempo in {60, 90, 120, 150, 180}, `grid = 0.5`, `beatsPerBar = 4`. For each of the four
-  gesture columns: a start cell from `GESTURE_CELLS`, then 0 to 4 symbols. Each symbol has duration `m * grid` with
-  `m` in {2, 3, 4, 6, 8}. Gaps to the previous end are `g * grid` with `g` in {1, 2, 3}. Each cell differs from the
-  one before it in the same column. Every symbol is valid by construction, and `validateScore` is asserted in the
-  generator's tests.
-- `genArmSprintScore` (diagnostic only): arms only, tempo in {120, 150, 180}, every duration 2 grid units, and the
-  gap rule as above.
-- `genRandomFrames`: 2 to 12 frames at increasing times, every joint a random vector in [-1, 1] m (not generated
-  as a gesture).
+- `arbNonZeroVector`, `arbYaw`, `yawVector`, `yawAxes`, `arbAxes` (from `WORLD_AXES`, so right is −x).
+- `genGestureScore` (7.5 domain): tempo integer 60 to 180; `grid = 0.5`; each arm column 0 to 4 symbols; the leg side
+  is left, right or none, with 0 to 3 leg symbols on that side only (D10); durations 2 to 8 grid units; gaps 1 to 3
+  grid units; each cell differs from the limb's previous cell; the other leg stays at `place low`.
+- `genRandomFrames`: 1 to 12 frames of random joints in [-1, 1] m.
 
-### Expected status
+## Requirement 8
 
-P7.5 fails. Two conflicts in the requirements cause the failures, and the code follows the requirements as written:
-
-1. **Speed rule (4.4 against 5.2).** The smallest move between adjacent cells, for example `forward high` to
-   `right-forward high`, is 31.4° (measured in `known-limits.test.ts`). A one-beat move of that size at 60 bpm peaks at
-   47.03 deg/s at 30 fps, under the 60 deg/s of 4.4, so notation writes nothing. This is the shrunk counterexample
-   from `roundtrip.prop.test.ts`: tempo 60, one right-arm symbol of 1 beat, `forward high` to `right-forward high`.
-2. **Lift rule (4.7).** 4.7 measures height above the lowest ankle of the clip. When every ankle of the clip stays at
-   the same height, the foot that moves is at the clip minimum and counts as on the floor. In the counterexample at
-   120 bpm, all four limbs start at `forward high`. The clip minimum is 1.586 m and the right ankle is at 1.611 m, a
-   margin of 0.024 m, below the 0.10 m lift margin. So no right-leg symbol is written. The shrunk counterexample of
-   the fast-tempo diagnostic is this kind of case. A foot 1.6 m above the ground is still treated as on the floor.
-   Measured in `known-limits.test.ts`.
-
-The diagnostic P7.5d (arms only, one-beat symbols at 120 to 180 bpm) is separate from P7.5 and is not a substitute
-for it. It removes both conflicts by construction and checks that notation and playback agree for fast arm moves.
-
-Requirement 4.7 needs an owner decision. Options: measure the lift against the floor (y = 0), or against the
-stance foot. Requirement 4.4 needs a speed rule that scales with the duration, or a displacement rule.
+- `macarena.test.ts` loads `data/clips/macarena.json` (CMU subject 143, trial 35).
+- 8.1 checks frame 0 forward against (−0.48, 0, −0.88) at one decimal place.
+- 8.2 notates at 100 bpm, logs the raw cell runs of both wrists for the first 4 s, and logs the first eight arm
+  symbols. It asserts the order the requirement expects. The assertion fails (see the report).

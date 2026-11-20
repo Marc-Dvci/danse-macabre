@@ -4,11 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "dev": "node scripts/copy-mediapipe.mjs && vite",
+    "build": "node scripts/copy-mediapipe.mjs && tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "assets": "node scripts/copy-mediapipe.mjs"
   },
   "dependencies": {
     "@danse/core": "workspace:*",

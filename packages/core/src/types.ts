@@ -1,4 +1,7 @@
-/** A point or direction in metres (x to the dancer's right when facing +z, y up, z forward). */
+/**
+ * A point or direction in metres. Axes are right-handed with y up. A dancer facing +z has their right side toward −x
+ * and their left side toward +x (the same convention as three.js and the CMU motion capture).
+ */
 export type Vec3 = { x: number; y: number; z: number };
 
 export type JointName =

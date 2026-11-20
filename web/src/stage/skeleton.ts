@@ -129,7 +129,7 @@ export class Skeleton {
       this.ribs.push(ring);
       this.group.add(ring);
     }
-    this.pelvisBowl = new THREE.Mesh(new THREE.TorusGeometry(1, 0.22, 8, 24, Math.PI * 1.25), this.mat);
+    this.pelvisBowl = new THREE.Mesh(new THREE.TorusGeometry(1, 0.2, 8, 24, Math.PI * 1.25), this.mat);
     this.group.add(this.pelvisBowl);
 
     this.skull = this.buildSkull();
@@ -252,7 +252,7 @@ export class Skeleton {
     this.pelvisBowl.setRotationFromMatrix(basis);
     this.pelvisBowl.rotateX(Math.PI / 2);
     this.pelvisBowl.rotateZ(Math.PI * 0.375);
-    this.pelvisBowl.scale.set(hipW * 0.75, hipW * 0.6, 0.35);
+    this.pelvisBowl.scale.set(hipW * 0.85, hipW * 0.6, hipW * 0.85);
 
     // Skull faces the body's front, tilted along the neck.
     const headPos = p.head.clone().lerp(p.neck, 0.15);

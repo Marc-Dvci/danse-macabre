@@ -13,14 +13,18 @@ const restFrame = (): Frame => performGestures({
 }, { fps: 30 })[0]!;
 
 describe('bodyFrame', () => {
-  it('gives world axes for the standard rig facing +z', () => {
+  it('gives world axes for the standard rig facing +z, with right at -x', () => {
     const axes = bodyFrame(restFrame());
-    expect(axes.right).toEqual({ x: 1, y: 0, z: 0 });
-    expect(axes.forward).toEqual({ x: 0, y: 0, z: 1 });
+    expect(axes.right.x).toBeCloseTo(-1, 12);
+    expect(axes.right.y).toBeCloseTo(0, 12);
+    expect(axes.right.z).toBeCloseTo(0, 12);
+    expect(axes.forward.x).toBeCloseTo(0, 12);
+    expect(axes.forward.y).toBeCloseTo(0, 12);
+    expect(axes.forward.z).toBeCloseTo(1, 12);
     expect(axes.up).toEqual({ x: 0, y: 1, z: 0 });
   });
 
-  it('returns orthonormal axes with forward = cross(right, up)', () => {
+  it('returns orthonormal axes with forward = cross(up, right)', () => {
     const frame = restFrame();
     const j = frame.joints;
     // Turn the hips and shoulders by 60 degrees about +y.
@@ -38,7 +42,7 @@ describe('bodyFrame', () => {
     expect(length(axes.right)).toBeCloseTo(1, 12);
     expect(length(axes.forward)).toBeCloseTo(1, 12);
     expect(dot(axes.right, axes.forward)).toBeCloseTo(0, 12);
-    const f = cross(axes.right, axes.up);
+    const f = cross(axes.up, axes.right);
     expect(axes.forward.x).toBeCloseTo(f.x, 12);
     expect(axes.forward.z).toBeCloseTo(f.z, 12);
   });
