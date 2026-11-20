@@ -1,0 +1,671 @@
+{
+ "version": 1,
+ "title": "Danse macabre: opening waltz, 16 bars",
+ "tempo": 193,
+ "beatsPerBar": 3,
+ "grid": 1,
+ "startPosition": {
+  "left-support": {
+   "direction": "place",
+   "level": "middle"
+  },
+  "left-arm": {
+   "direction": "place",
+   "level": "low"
+  },
+  "right-support": {
+   "direction": "place",
+   "level": "middle"
+  },
+  "right-arm": {
+   "direction": "place",
+   "level": "low"
+  }
+ },
+ "symbols": [
+  {
+   "id": "m1-left-support",
+   "column": "left-support",
+   "start": 0,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m3-left-support",
+   "column": "left-support",
+   "start": 2,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m5-left-support",
+   "column": "left-support",
+   "start": 4,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m7-left-support",
+   "column": "left-support",
+   "start": 6,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m9-left-support",
+   "column": "left-support",
+   "start": 8,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m11-left-support",
+   "column": "left-support",
+   "start": 10,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m13-left-support",
+   "column": "left-support",
+   "start": 12,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m15-left-support",
+   "column": "left-support",
+   "start": 14,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m17-left-support",
+   "column": "left-support",
+   "start": 16,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m19-left-support",
+   "column": "left-support",
+   "start": 18,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m21-left-support",
+   "column": "left-support",
+   "start": 20,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m23-left-support",
+   "column": "left-support",
+   "start": 22,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m25-left-support",
+   "column": "left-support",
+   "start": 24,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m27-left-support",
+   "column": "left-support",
+   "start": 26,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m29-left-support",
+   "column": "left-support",
+   "start": 28,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m31-left-support",
+   "column": "left-support",
+   "start": 30,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m33-left-support",
+   "column": "left-support",
+   "start": 32,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m35-left-support",
+   "column": "left-support",
+   "start": 34,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m37-left-support",
+   "column": "left-support",
+   "start": 36,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m39-left-support",
+   "column": "left-support",
+   "start": 38,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m41-left-support",
+   "column": "left-support",
+   "start": 40,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m43-left-support",
+   "column": "left-support",
+   "start": 42,
+   "duration": 1,
+   "direction": "forward",
+   "level": "middle"
+  },
+  {
+   "id": "m45-left-support",
+   "column": "left-support",
+   "start": 44,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m47-left-support",
+   "column": "left-support",
+   "start": 46,
+   "duration": 1,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m49-left-arm",
+   "column": "left-arm",
+   "start": 0,
+   "duration": 3,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "m51-left-arm",
+   "column": "left-arm",
+   "start": 3,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m53-left-arm",
+   "column": "left-arm",
+   "start": 6,
+   "duration": 3,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m55-left-arm",
+   "column": "left-arm",
+   "start": 9,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m57-left-arm",
+   "column": "left-arm",
+   "start": 12,
+   "duration": 3,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "m59-left-arm",
+   "column": "left-arm",
+   "start": 15,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m61-left-arm",
+   "column": "left-arm",
+   "start": 18,
+   "duration": 3,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m63-left-arm",
+   "column": "left-arm",
+   "start": 21,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m65-left-arm",
+   "column": "left-arm",
+   "start": 24,
+   "duration": 3,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "m67-left-arm",
+   "column": "left-arm",
+   "start": 27,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m69-left-arm",
+   "column": "left-arm",
+   "start": 30,
+   "duration": 3,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m71-left-arm",
+   "column": "left-arm",
+   "start": 33,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m73-left-arm",
+   "column": "left-arm",
+   "start": 36,
+   "duration": 3,
+   "direction": "left",
+   "level": "high"
+  },
+  {
+   "id": "m75-left-arm",
+   "column": "left-arm",
+   "start": 39,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m77-left-arm",
+   "column": "left-arm",
+   "start": 42,
+   "duration": 3,
+   "direction": "left",
+   "level": "middle"
+  },
+  {
+   "id": "m79-left-arm",
+   "column": "left-arm",
+   "start": 45,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m2-right-support",
+   "column": "right-support",
+   "start": 1,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m4-right-support",
+   "column": "right-support",
+   "start": 3,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m6-right-support",
+   "column": "right-support",
+   "start": 5,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m8-right-support",
+   "column": "right-support",
+   "start": 7,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m10-right-support",
+   "column": "right-support",
+   "start": 9,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m12-right-support",
+   "kind": "turn",
+   "column": "right-support",
+   "start": 11,
+   "duration": 1,
+   "rotation": "cw",
+   "amount": 0.5
+  },
+  {
+   "id": "m14-right-support",
+   "column": "right-support",
+   "start": 13,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m16-right-support",
+   "column": "right-support",
+   "start": 15,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m18-right-support",
+   "column": "right-support",
+   "start": 17,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m20-right-support",
+   "column": "right-support",
+   "start": 19,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m22-right-support",
+   "column": "right-support",
+   "start": 21,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m24-right-support",
+   "kind": "turn",
+   "column": "right-support",
+   "start": 23,
+   "duration": 1,
+   "rotation": "cw",
+   "amount": 0.5
+  },
+  {
+   "id": "m26-right-support",
+   "column": "right-support",
+   "start": 25,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m28-right-support",
+   "column": "right-support",
+   "start": 27,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m30-right-support",
+   "column": "right-support",
+   "start": 29,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m32-right-support",
+   "column": "right-support",
+   "start": 31,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m34-right-support",
+   "column": "right-support",
+   "start": 33,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m36-right-support",
+   "kind": "turn",
+   "column": "right-support",
+   "start": 35,
+   "duration": 1,
+   "rotation": "cw",
+   "amount": 0.5
+  },
+  {
+   "id": "m38-right-support",
+   "column": "right-support",
+   "start": 37,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m40-right-support",
+   "column": "right-support",
+   "start": 39,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m42-right-support",
+   "column": "right-support",
+   "start": 41,
+   "duration": 1,
+   "direction": "place",
+   "level": "middle"
+  },
+  {
+   "id": "m44-right-support",
+   "column": "right-support",
+   "start": 43,
+   "duration": 1,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m46-right-support",
+   "column": "right-support",
+   "start": 45,
+   "duration": 1,
+   "direction": "backward",
+   "level": "middle"
+  },
+  {
+   "id": "m48-right-support",
+   "kind": "turn",
+   "column": "right-support",
+   "start": 47,
+   "duration": 1,
+   "rotation": "cw",
+   "amount": 0.5
+  },
+  {
+   "id": "m50-right-arm",
+   "column": "right-arm",
+   "start": 0,
+   "duration": 3,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "m52-right-arm",
+   "column": "right-arm",
+   "start": 3,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m54-right-arm",
+   "column": "right-arm",
+   "start": 6,
+   "duration": 3,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m56-right-arm",
+   "column": "right-arm",
+   "start": 9,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m58-right-arm",
+   "column": "right-arm",
+   "start": 12,
+   "duration": 3,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "m60-right-arm",
+   "column": "right-arm",
+   "start": 15,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m62-right-arm",
+   "column": "right-arm",
+   "start": 18,
+   "duration": 3,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m64-right-arm",
+   "column": "right-arm",
+   "start": 21,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m66-right-arm",
+   "column": "right-arm",
+   "start": 24,
+   "duration": 3,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "m68-right-arm",
+   "column": "right-arm",
+   "start": 27,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m70-right-arm",
+   "column": "right-arm",
+   "start": 30,
+   "duration": 3,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m72-right-arm",
+   "column": "right-arm",
+   "start": 33,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m74-right-arm",
+   "column": "right-arm",
+   "start": 36,
+   "duration": 3,
+   "direction": "right",
+   "level": "high"
+  },
+  {
+   "id": "m76-right-arm",
+   "column": "right-arm",
+   "start": 39,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  },
+  {
+   "id": "m78-right-arm",
+   "column": "right-arm",
+   "start": 42,
+   "duration": 3,
+   "direction": "right",
+   "level": "middle"
+  },
+  {
+   "id": "m80-right-arm",
+   "column": "right-arm",
+   "start": 45,
+   "duration": 3,
+   "direction": "place",
+   "level": "high"
+  }
+ ]
+}

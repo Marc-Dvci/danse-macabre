@@ -1,0 +1,31 @@
+{
+  "name": "@danse/mcp",
+  "version": "0.1.0",
+  "description": "MCP server (stdio) that exposes the Danse Macabre notation engine to AI agents.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": {
+    "danse-mcp": "./src/bin.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "tsx src/bin.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@danse/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10"
+  }
+}
