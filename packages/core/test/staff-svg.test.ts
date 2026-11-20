@@ -58,3 +58,32 @@ describe('renderStaffSvg', () => {
     expect(Math.min(...ys)).toBe(height - 24);
   });
 });
+
+describe('renderStaffSvg: turn signs', () => {
+  it('draws each turn with its id and the amount label (1/4, 1/2, 3/4, 1)', () => {
+    const turns = canonicalScore({
+      version: 1,
+      title: 'turns',
+      tempo: 100,
+      beatsPerBar: 4,
+      grid: 0.5,
+      startPosition: {},
+      symbols: [
+        { id: 't1', kind: 'turn', column: 'right-support', start: 0, duration: 1, rotation: 'cw', amount: 0.25 },
+        { id: 't2', kind: 'turn', column: 'left-support', start: 1, duration: 1, rotation: 'ccw', amount: 0.5 },
+        { id: 't3', kind: 'turn', column: 'right-support', start: 2, duration: 1, rotation: 'cw', amount: 0.75 },
+        { id: 't4', kind: 'turn', column: 'left-support', start: 3, duration: 1, rotation: 'ccw', amount: 1 },
+      ],
+    });
+    const svg = renderStaffSvg(turns);
+    for (const [id, label] of [
+      ['t1', '1/4'],
+      ['t2', '1/2'],
+      ['t3', '3/4'],
+      ['t4', '1'],
+    ] as const) {
+      expect(svg).toContain(`<g data-symbol-id="${id}">`);
+      expect(svg).toContain(`>${label}</text>`);
+    }
+  });
+});

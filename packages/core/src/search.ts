@@ -80,7 +80,7 @@ function withoutOverlaps(beats: number[], extent: number): number[] {
  * are not compared. Matches of one phrase do not overlap: a match is dropped when it starts before the previous kept
  * match ends.
  * @param score The score to search. It is not modified.
- * @param phrase A phrase score. Only its symbols are used.
+ * @param phrase A phrase score. Only its direction symbols are used. Turn signs are ignored.
  * @param options `tolerance` (default 0.5 beats) and `mirror` (default false).
  * @returns Matches sorted by beat. Original matches come before mirrored matches at the same beat.
  */
@@ -91,7 +91,7 @@ export function findPhrase(score: Score, phrase: Score, options: FindPhraseOptio
 
   const out: PhraseMatch[] = [];
   for (const kind of kinds) {
-    const symbols = kind.phrase.symbols;
+    const symbols = directionSymbols(kind.phrase);
     if (symbols.length === 0) continue;
     const origin = Math.min(...symbols.map((s) => s.start));
     const extent = Math.max(...symbols.map((s) => s.start + s.duration)) - origin;

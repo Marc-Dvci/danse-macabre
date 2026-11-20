@@ -1,14 +1,7 @@
 // Property tests for the spoken lesson: Requirement 4.1 (round trip) and 4.2 (every word comes from a symbol).
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import {
-  describe as describeLesson,
-  directionSymbols,
-  parseLesson,
-  type ColumnId,
-  type LessonLine,
-  type Score,
-} from '../src/index';
+import { describe as describeLesson, parseLesson, type ColumnId, type LessonLine, type Score } from '../src/index';
 import { DIRECTION_WORDS, LESSON_COLUMN_ORDER } from '../src/lesson-words';
 import { runOptions } from './generators';
 import { genScore } from './lesson-generators';
@@ -25,18 +18,29 @@ function reading<T extends { start: number; column: string }>(symbols: readonly 
 }
 
 describe('Requirement 4.1: lesson round trip', () => {
-  it('parseLesson(describe(s)) equals the symbols of s (column, start, duration, direction, level, turn null)', () => {
+  it('parseLesson(describe(s)) equals the symbols of s (column, start, duration, direction, level, turn)', () => {
     fc.assert(
       fc.property(genScore, (score) => {
         const parsed = parseLesson(describeLesson(score));
-        const expected = reading(directionSymbols(score)).map((s) => ({
-          column: s.column,
-          start: s.start,
-          duration: s.duration,
-          direction: s.direction,
-          level: s.level,
-          turn: null,
-        }));
+        const expected = reading(score.symbols).map((s) =>
+          s.kind === 'turn'
+            ? {
+                column: s.column,
+                start: s.start,
+                duration: s.duration,
+                direction: null,
+                level: null,
+                turn: { rotation: s.rotation, amount: s.amount },
+              }
+            : {
+                column: s.column,
+                start: s.start,
+                duration: s.duration,
+                direction: s.direction,
+                level: s.level,
+                turn: null,
+              },
+        );
         expect(parsed).toEqual(expected);
       }),
       runOptions(RUNS),
@@ -46,7 +50,19 @@ describe('Requirement 4.1: lesson round trip', () => {
 
 // Words that name a direction, side, body part or level, as they appear in lesson text.
 const TOKEN_RE = /\b(left|right|arms?|legs?|foot|forward|backward|high|middle|low)\b/g;
+// Turn words: the rotation and the amount. `counter-clockwise` is listed first so it is not read as `clockwise`.
+const TURN_TOKEN_RE = /\b(counter-clockwise|clockwise|a quarter|three quarters|a half|a full turn)\b/g;
 const NUMBER_RE = /\b\d+(?:\.\d+)?\b/g;
+
+/** Turn words that a turn symbol with this rotation may contribute. */
+const TURN_WORDS_OF_ROTATION: Record<'cw' | 'ccw', string[]> = { cw: ['clockwise'], ccw: ['counter-clockwise'] };
+/** Turn words that a turn symbol with this amount may contribute. */
+const TURN_WORDS_OF_AMOUNT: Record<number, string[]> = {
+  0.25: ['a quarter'],
+  0.5: ['a half'],
+  0.75: ['three quarters'],
+  1: ['a full turn'],
+};
 
 /** Tokens a score element may contribute to a line. Keys are the ids used in `symbolIds`. */
 function allowedFor(score: Score, id: string): { tokens: Set<string>; numbers: Set<string> } {
@@ -75,8 +91,14 @@ function allowedFor(score: Score, id: string): { tokens: Set<string>; numbers: S
     if (cell) addCell(column, cell.direction, cell.level);
     return { tokens, numbers };
   }
-  const s = directionSymbols(score).find((x) => x.id === id);
-  if (s) {
+  const s = score.symbols.find((x) => x.id === id);
+  if (s?.kind === 'turn') {
+    tokens.add(s.column.startsWith('left') ? 'left' : 'right');
+    tokens.add('foot');
+    TURN_WORDS_OF_ROTATION[s.rotation].forEach((w) => tokens.add(w));
+    TURN_WORDS_OF_AMOUNT[s.amount]!.forEach((w) => tokens.add(w));
+    numbers.add(String(s.duration));
+  } else if (s) {
     addCell(s.column, s.direction, s.level);
     numbers.add(String(s.duration));
   }
@@ -84,7 +106,7 @@ function allowedFor(score: Score, id: string): { tokens: Set<string>; numbers: S
 }
 
 describe('Requirement 4.2: every word comes from a symbol', () => {
-  it('every direction, side, body part, level and count in a line belongs to the symbols in its symbolIds', () => {
+  it('every direction, side, body part, level, turn word and count in a line belongs to the symbols in its symbolIds', () => {
     fc.assert(
       fc.property(genScore, (score) => {
         for (const line of describeLesson(score)) {
@@ -114,6 +136,9 @@ function checkLine(score: Score, line: LessonLine): void {
   for (const m of line.text.matchAll(TOKEN_RE)) {
     const word = m[1]!.replace(/^arms$/, 'arm').replace(/^legs$/, 'leg');
     if (!tokens.has(word)) throw new Error(`word without a symbol "${word}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
+  }
+  for (const m of line.text.matchAll(TURN_TOKEN_RE)) {
+    if (!tokens.has(m[1]!)) throw new Error(`turn word without a symbol "${m[1]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);
   }
   for (const m of line.text.matchAll(NUMBER_RE)) {
     if (!numbers.has(m[0])) throw new Error(`number without a symbol "${m[0]}" in "${line.text}" (symbolIds ${line.symbolIds.join(',')})`);

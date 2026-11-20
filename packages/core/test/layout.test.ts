@@ -147,3 +147,58 @@ describe('layoutStaff: errors and options', () => {
     expect(g).toMatchObject({ h: 10, w: 8 });
   });
 });
+
+describe('layoutStaff: turn glyphs (Requirement 3.4)', () => {
+  const turnScore = (symbols: Score['symbols']): Score =>
+    canonicalScore({ version: 1, title: 'turns', tempo: 100, beatsPerBar: 2, grid: 0.5, startPosition: {}, symbols });
+
+  it('gives a turn glyph kind, rotation and amount, and no level', () => {
+    const s = turnScore([{ id: 't', kind: 'turn', column: 'right-support', start: 0, duration: 1, rotation: 'cw', amount: 0.75 }]);
+    expect(glyphOf(s, 't')).toMatchObject({
+      symbolId: 't',
+      kind: 'turn',
+      column: 'right-support',
+      x: 64,
+      w: 16,
+      h: 24,
+      level: null,
+      rotation: 'cw',
+      amount: 0.75,
+    });
+  });
+
+  it('slants a clockwise turn right and a counter-clockwise turn left, on the right side', () => {
+    const cw = turnScore([{ id: 't', kind: 'turn', column: 'right-support', start: 0, duration: 1, rotation: 'cw', amount: 0.25 }]);
+    const ccw = turnScore([{ id: 't', kind: 'turn', column: 'right-support', start: 0, duration: 1, rotation: 'ccw', amount: 0.25 }]);
+    // Column x 64 to 80, beat 0 at y 24, duration 1 beat so the top is at y 48. The slant is a quarter of the width (4).
+    expect(glyphOf(cw, 't').polygon).toEqual<Point[]>([
+      { x: 64, y: 24 },
+      { x: 76, y: 24 },
+      { x: 80, y: 48 },
+      { x: 68, y: 48 },
+    ]);
+    expect(glyphOf(ccw, 't').polygon).toEqual<Point[]>([
+      { x: 68, y: 24 },
+      { x: 80, y: 24 },
+      { x: 76, y: 48 },
+      { x: 64, y: 48 },
+    ]);
+  });
+
+  it('on the left side, a counter-clockwise turn still slants left', () => {
+    const ccw = turnScore([{ id: 't', kind: 'turn', column: 'left-support', start: 0, duration: 1, rotation: 'ccw', amount: 1 }]);
+    // Left support: x 48 to 64. Reflection of the clockwise shape on the right side, about x 64.
+    expect(glyphOf(ccw, 't').polygon).toEqual<Point[]>([
+      { x: 64, y: 24 },
+      { x: 52, y: 24 },
+      { x: 48, y: 48 },
+      { x: 60, y: 48 },
+    ]);
+  });
+
+  it('gives a turn glyph the height of its duration', () => {
+    const s = turnScore([{ id: 't', kind: 'turn', column: 'left-support', start: 0.5, duration: 1.5, rotation: 'cw', amount: 0.5 }]);
+    expect(glyphOf(s, 't').h).toBeCloseTo(1.5 * 24, 9);
+    expect(glyphOf(s, 't').y).toBeCloseTo((0.5 + 1) * 24, 9);
+  });
+});

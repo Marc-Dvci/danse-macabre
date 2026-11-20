@@ -22,5 +22,9 @@ Write each property test before the code it checks.
       `packages/core/scripts/write-macarena-examples.ts`. (Task 3 of the user request)
 - [x] 14. `pnpm --filter @danse/core test` and `typecheck` pass. Record counts.
 
-Open items, not in the tasks above (see design.md, "Scope limits"): turn symbols (Requirements 1.6 turn part and 3.4),
-which need the `supports-and-turns` spec.
+- [x] 15. Turns in the lesson: `lesson-words.ts` (`turnPhrase`), `lesson.ts`, `lesson-parse.ts`. Requirements 1.3, 1.6.
+- [x] 16. Start line wording and middle-level steps without level words (requirement 1.5). `lesson.test.ts` updated.
+- [x] 17. Turn glyphs: `layout-shapes.ts` (`turnPolygon`), `layout.ts`, `staff-svg.ts` (amount label). Requirement 3.4.
+      Tests in `layout.test.ts` and `staff-svg.test.ts`. Properties 4.1, 4.2, 4.5 run on generated turns.
+- [x] 18. Examples regenerated: `packages/core/scripts/write-macarena-examples.ts`, and
+      `packages/core/scripts/write-finale-examples.ts` (reads `examples/danse-macabre.score.json`, does not recompose).

@@ -22,7 +22,7 @@ describeLesson('describe: beat lines', () => {
   it('writes the start, the metre, then one line per beat with a symbol', () => {
     const lines = describe(base);
     expect(lines.map((l) => l.text)).toEqual([
-      'Start standing.',
+      'Start position not written.',
       '4 counts per bar, 96 counts per minute.',
       'Bar 1, count 1: step forward on the left foot, knees bent, over 2 counts.',
       'Count 3: right arm moves forward, high, over 2 counts.',
@@ -53,7 +53,7 @@ describeLesson('describe: beat lines', () => {
     });
     const line = describe(score)[2]!;
     expect(line.text).toBe(
-      'Bar 1, count 1: step in place on the right foot, standing normally, over 1 count; ' +
+      'Bar 1, count 1: step in place on the right foot, over 1 count; ' +
         'left arm moves down by your side, over 1 count; right arm moves straight up, over 1 count.',
     );
     expect(line.symbolIds).toEqual(['c', 'b', 'a']);
@@ -71,7 +71,7 @@ describeLesson('describe: starting position', () => {
       ...base,
       startPosition: { 'left-arm': { direction: 'place', level: 'low' }, 'right-arm': { direction: 'place', level: 'low' } },
     });
-    expect(describe(score)[0]!.text).toBe('Start standing, arms down by your sides.');
+    expect(describe(score)[0]!.text).toBe('Start with arms down by your sides.');
     expect(describe(score)[0]!.symbolIds).toEqual(['start:left-arm', 'start:right-arm']);
   });
 
@@ -80,7 +80,86 @@ describeLesson('describe: starting position', () => {
       ...base,
       startPosition: { 'right-arm': { direction: 'forward', level: 'middle' } },
     });
-    expect(describe(score)[0]!.text).toBe('Start standing, right arm moves forward, middle.');
+    expect(describe(score)[0]!.text).toBe('Start with right arm moves forward, middle.');
+  });
+
+  it('says standing on both feet when both supports are middle and both legs are low', () => {
+    const score: Score = canonicalScore({
+      ...base,
+      startPosition: {
+        'left-support': { direction: 'place', level: 'middle' },
+        'right-support': { direction: 'place', level: 'middle' },
+        'left-leg': { direction: 'place', level: 'low' },
+        'right-leg': { direction: 'place', level: 'low' },
+      },
+    });
+    const start = describe(score)[0]!;
+    expect(start.text).toBe('Start standing on both feet.');
+    expect(start.symbolIds).toEqual(['start:left-support', 'start:right-support', 'start:left-leg', 'start:right-leg']);
+  });
+
+  it('adds arms down after standing on both feet', () => {
+    const score: Score = canonicalScore({
+      ...base,
+      startPosition: {
+        'left-support': { direction: 'place', level: 'middle' },
+        'right-support': { direction: 'place', level: 'middle' },
+        'left-leg': { direction: 'place', level: 'low' },
+        'right-leg': { direction: 'place', level: 'low' },
+        'left-arm': { direction: 'place', level: 'low' },
+        'right-arm': { direction: 'place', level: 'low' },
+      },
+    });
+    expect(describe(score)[0]!.text).toBe('Start standing on both feet, arms down by your sides.');
+  });
+
+  it('names a support at middle level as a plain step', () => {
+    const score: Score = canonicalScore({
+      ...base,
+      startPosition: { 'left-support': { direction: 'forward', level: 'middle' } },
+    });
+    expect(describe(score)[0]!.text).toBe('Start with step forward on the left foot.');
+  });
+});
+
+describeLesson('describe: turns', () => {
+  it('writes each amount and rotation with the foot the turn is on', () => {
+    const turn = (id: string, column: 'left-support' | 'right-support', start: number, rotation: 'cw' | 'ccw', amount: 0.25 | 0.5 | 0.75 | 1) =>
+      ({ id, kind: 'turn' as const, column, start, duration: 1, rotation, amount });
+    const score: Score = canonicalScore({
+      ...base,
+      symbols: [
+        turn('t1', 'right-support', 0, 'cw', 0.25),
+        turn('t2', 'left-support', 1, 'ccw', 0.5),
+        turn('t3', 'right-support', 2, 'cw', 0.75),
+        turn('t4', 'left-support', 3, 'ccw', 1),
+      ],
+    });
+    expect(describe(score).slice(2).map((l) => l.text)).toEqual([
+      'Bar 1, count 1: turn a quarter clockwise on the right foot, over 1 count.',
+      'Count 2: turn a half counter-clockwise on the left foot, over 1 count.',
+      'Count 3: turn three quarters clockwise on the right foot, over 1 count.',
+      'Count 4: turn a full turn counter-clockwise on the left foot, over 1 count.',
+    ]);
+  });
+
+  it('parseLesson reads turns back with a null direction and level', () => {
+    expect(parseLesson(describe(canonicalScore({
+      ...base,
+      symbols: [{ id: 't', kind: 'turn', column: 'left-support', start: 0, duration: 2, rotation: 'ccw', amount: 0.75 }],
+    })))).toEqual([
+      { column: 'left-support', start: 0, duration: 2, direction: null, level: null, turn: { rotation: 'ccw', amount: 0.75 } },
+    ]);
+  });
+
+  it('parseLesson reads a step with no level words as middle level', () => {
+    const lines = [
+      { beat: null, count: null, bar: null, text: '4 counts per bar, 96 counts per minute.', symbolIds: [] },
+      { beat: 0, count: 1, bar: 1, text: 'Bar 1, count 1: step in place on the left foot, over 1 count.', symbolIds: [] },
+    ];
+    expect(parseLesson(lines)).toEqual([
+      { column: 'left-support', start: 0, duration: 1, direction: 'place', level: 'middle', turn: null },
+    ]);
   });
 });
 

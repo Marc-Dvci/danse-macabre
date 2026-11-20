@@ -1,6 +1,6 @@
-import { glyphPolygon, type Point } from './layout-shapes';
+import { glyphPolygon, turnPolygon, type Point } from './layout-shapes';
 import { isTurnSymbol } from './symbol';
-import type { ColumnId, Direction, Level, Score } from './types';
+import type { ColumnId, Direction, Level, Score, TurnSymbol } from './types';
 
 export type StaffOptions = {
   /** Staff units per beat. Default 24. */
@@ -25,16 +25,25 @@ export type StaffCount = { beat: number; x: number; y: number; label: string };
 /**
  * One glyph. Glyphs for symbols use the symbol id. Glyphs for the starting position use `start:<column>`, so each symbol
  * has exactly one glyph with its own id.
+ *
+ * `kind` tells the two forms apart. A `direction` glyph has `level` and null turn fields. A `turn` glyph has `rotation`
+ * and `amount` and a null `level`.
  */
 export type StaffGlyph = {
   symbolId: string;
+  kind: 'direction' | 'turn';
   column: ColumnId;
   x: number;
   y: number;
   w: number;
   h: number;
   polygon: Point[];
-  level: Level;
+  /** Level of a direction glyph. Null for a turn glyph. */
+  level: Level | null;
+  /** Rotation of a turn glyph, seen from above. Null for a direction glyph. */
+  rotation: TurnSymbol['rotation'] | null;
+  /** Amount of a turn glyph, as a fraction of a full turn. Null for a direction glyph. */
+  amount: TurnSymbol['amount'] | null;
 };
 
 export type StaffLayout = {
@@ -50,11 +59,11 @@ export type StaffLayout = {
 /**
  * Lays out a score as a Labanotation staff in staff units (Requirement 3). Time runs upward. The starting position sits
  * in the zone below the double bar line at beat 0. Columns run outward from the centre line: support, leg, torso (empty),
- * arm.
+ * arm. Turn signs in support columns get turn glyphs.
  * @param score A valid score.
  * @param options `beatHeight` (default 24) and `columnWidth` (default 16).
- * @returns Columns, staff lines, bar lines, counts and glyphs. Turn glyphs are not drawn: the score has no turns yet.
- * @throws RangeError when a size is not positive, or a symbol's column is unknown.
+ * @returns Columns, staff lines, bar lines, counts and glyphs, one glyph per symbol plus one per start cell.
+ * @throws RangeError when a size is not positive, a symbol's column is unknown, or a symbol has a bad start or duration.
  */
 export function layoutStaff(score: Score, options: StaffOptions = {}): StaffLayout {
   const bh = options.beatHeight ?? 24;
@@ -95,22 +104,64 @@ export function layoutStaff(score: Score, options: StaffOptions = {}): StaffLayo
     counts.push({ beat, x: 2 * w, y: y(beat), label: String((beat % bpb) + 1) });
   }
 
-  const glyphs: StaffGlyph[] = [];
-  const glyphFor = (symbolId: string, column: ColumnId, direction: Direction, level: Level, y0: number, h: number) => {
+  /** Box of a glyph in its column, and the column's side. */
+  const boxFor = (column: ColumnId, y0: number, h: number) => {
     const x = columnX.get(column);
     if (x === undefined) throw new RangeError(`layoutStaff: unknown column "${column}"`);
     const side = column.startsWith('left') ? 'left' : 'right';
-    const box = { x0: x, x1: x + w, y0, y1: y0 + h };
-    return { symbolId, column, x, y: y0, w, h, polygon: glyphPolygon(direction, side, box, centreX), level };
+    return { x, side, box: { x0: x, x1: x + w, y0, y1: y0 + h } } as const;
   };
 
+  const glyphs: StaffGlyph[] = [];
   for (const [column, cell] of Object.entries(score.startPosition) as [ColumnId, NonNullable<Score['startPosition'][ColumnId]>][]) {
-    glyphs.push(glyphFor(`start:${column}`, column, cell.direction, cell.level, 0, bh));
+    const { x, side, box } = boxFor(column, 0, bh);
+    glyphs.push({
+      symbolId: `start:${column}`,
+      kind: 'direction',
+      column,
+      x,
+      y: 0,
+      w,
+      h: bh,
+      polygon: glyphPolygon(cell.direction, side, box, centreX),
+      level: cell.level,
+      rotation: null,
+      amount: null,
+    });
   }
   for (const s of score.symbols) {
-    if (isTurnSymbol(s)) continue; // Turn signs have no staff glyph yet (supports-and-turns D25).
     if (s.start < 0 || s.duration <= 0) throw new RangeError(`layoutStaff: symbol "${s.id}" has a bad start or duration`);
-    glyphs.push(glyphFor(s.id, s.column, s.direction, s.level, y(s.start), s.duration * bh));
+    const { x, side, box } = boxFor(s.column, y(s.start), s.duration * bh);
+    const h = s.duration * bh;
+    if (isTurnSymbol(s)) {
+      glyphs.push({
+        symbolId: s.id,
+        kind: 'turn',
+        column: s.column,
+        x,
+        y: y(s.start),
+        w,
+        h,
+        polygon: turnPolygon(s.rotation, side, box, centreX),
+        level: null,
+        rotation: s.rotation,
+        amount: s.amount,
+      });
+    } else {
+      glyphs.push({
+        symbolId: s.id,
+        kind: 'direction',
+        column: s.column,
+        x,
+        y: y(s.start),
+        w,
+        h,
+        polygon: glyphPolygon(s.direction, side, box, centreX),
+        level: s.level,
+        rotation: null,
+        amount: null,
+      });
+    }
   }
 
   return { width, height, columns, lines, bars: barLines, counts, glyphs };

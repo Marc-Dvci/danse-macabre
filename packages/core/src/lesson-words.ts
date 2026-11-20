@@ -1,4 +1,4 @@
-import type { Cell, ColumnId, Direction, DirectionSymbol, Level } from './types';
+import type { Cell, ColumnId, Direction, Level, Symbol, TurnSymbol } from './types';
 
 /** Words for each direction. `place` has no direction word; see `gesturePhrase` and `supportPhrase`. */
 export const DIRECTION_WORDS: Record<Exclude<Direction, 'place'>, string> = {
@@ -14,12 +14,24 @@ export const DIRECTION_WORDS: Record<Exclude<Direction, 'place'>, string> = {
 
 export const LEVEL_WORDS: Record<Level, string> = { high: 'high', middle: 'middle', low: 'low' };
 
-/** Support level in words: the knees and the balls of the feet, as in the lesson text. */
-export const SUPPORT_LEVEL_WORDS: Record<Level, string> = {
+/**
+ * Support level in words. A support at middle level is a normal step, so it has no level words (requirement 1.5).
+ */
+export const SUPPORT_LEVEL_WORDS: Record<'low' | 'high', string> = {
   low: 'knees bent',
-  middle: 'standing normally',
   high: 'on the balls of your feet',
 };
+
+/** Amount of a turn in words. */
+export const TURN_AMOUNT_WORDS: Record<TurnSymbol['amount'], string> = {
+  0.25: 'a quarter',
+  0.5: 'a half',
+  0.75: 'three quarters',
+  1: 'a full turn',
+};
+
+/** Rotation of a turn in words, seen from above. */
+export const TURN_ROTATION_WORDS: Record<TurnSymbol['rotation'], string> = { cw: 'clockwise', ccw: 'counter-clockwise' };
 
 /** Order of symbols that start on the same beat: supports, legs, then arms; left before right. */
 export const LESSON_COLUMN_ORDER: readonly ColumnId[] = [
@@ -52,11 +64,12 @@ function gesturePhrase(column: ColumnId, cell: Cell): string {
   return `${part} ${verb} ${DIRECTION_WORDS[cell.direction]}, ${LEVEL_WORDS[cell.level]}`;
 }
 
-/** Phrase for a support cell (a step onto one foot). */
+/** Phrase for a support cell (a step onto one foot). Middle level has no level words. */
 function supportPhrase(column: ColumnId, cell: Cell): string {
   const side = column.startsWith('left') ? 'left' : 'right';
   const move = cell.direction === 'place' ? 'in place' : DIRECTION_WORDS[cell.direction];
-  return `step ${move} on the ${side} foot, ${SUPPORT_LEVEL_WORDS[cell.level]}`;
+  const level = cell.level === 'middle' ? '' : `, ${SUPPORT_LEVEL_WORDS[cell.level]}`;
+  return `step ${move} on the ${side} foot${level}`;
 }
 
 /**
@@ -69,6 +82,15 @@ export function cellPhrase(column: ColumnId, cell: Cell): string {
   return column.endsWith('support') ? supportPhrase(column, cell) : gesturePhrase(column, cell);
 }
 
+/**
+ * Phrase for a turn sign, without the duration: `turn a quarter clockwise on the right foot`.
+ * @param symbol Turn symbol. Its column gives the foot.
+ */
+export function turnPhrase(symbol: TurnSymbol): string {
+  const side = symbol.column.startsWith('left') ? 'left' : 'right';
+  return `turn ${TURN_AMOUNT_WORDS[symbol.amount]} ${TURN_ROTATION_WORDS[symbol.rotation]} on the ${side} foot`;
+}
+
 /** Duration in words: `over 1 count`, `over 2 counts`, `over 0.5 counts`. */
 export function durationPhrase(beats: number): string {
   return `over ${beats} ${beats === 1 ? 'count' : 'counts'}`;
@@ -76,8 +98,12 @@ export function durationPhrase(beats: number): string {
 
 /**
  * Phrase for a symbol with its duration, for example `right arm moves forward, high, over 2 counts`.
- * @param symbol Symbol to describe.
+ * @param symbol Direction or turn symbol to describe.
  */
-export function symbolPhrase(symbol: DirectionSymbol): string {
-  return `${cellPhrase(symbol.column, { direction: symbol.direction, level: symbol.level })}, ${durationPhrase(symbol.duration)}`;
+export function symbolPhrase(symbol: Symbol): string {
+  const body =
+    symbol.kind === 'turn'
+      ? turnPhrase(symbol)
+      : cellPhrase(symbol.column, { direction: symbol.direction, level: symbol.level });
+  return `${body}, ${durationPhrase(symbol.duration)}`;
 }

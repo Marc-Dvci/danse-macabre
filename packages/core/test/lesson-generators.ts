@@ -21,12 +21,17 @@ export const SUPPORT_CELLS: Cell[] = DIRECTIONS.flatMap((direction) =>
   LEVELS.map((level) => ({ direction, level })),
 );
 
-type Segment = { gap: number; units: number; pick: number };
+/** Turn amounts a generated turn can take. */
+const TURN_AMOUNTS = [0.25, 0.5, 0.75, 1] as const;
+
+type Segment = { gap: number; units: number; pick: number; turn: number };
 
 const arbSegment = fc.record({
   gap: fc.integer({ min: 0, max: 4 }),
   units: fc.integer({ min: 1, max: 6 }),
   pick: fc.nat(),
+  // In a support column, 1 in 5 segments is a turn sign (turn is 0). Other columns ignore this field.
+  turn: fc.integer({ min: 0, max: 4 }),
 });
 
 const arbCell = (cells: readonly Cell[]): fc.Arbitrary<Cell> =>
@@ -38,15 +43,23 @@ function columnSymbols(column: ColumnId, cells: readonly Cell[], segments: Segme
   let cursor = 0;
   segments.forEach((seg, i) => {
     const start = cursor + seg.gap;
-    const cell = cells[seg.pick % cells.length]!;
-    out.push({
-      id: `${column}-${i}`,
-      column,
-      start: start * HALF_BEAT,
-      duration: seg.units * HALF_BEAT,
-      direction: cell.direction,
-      level: cell.level,
-    });
+    const id = `${column}-${i}`;
+    const at = start * HALF_BEAT;
+    const duration = seg.units * HALF_BEAT;
+    if (column.endsWith('support') && seg.turn === 0) {
+      out.push({
+        id,
+        kind: 'turn',
+        column: column as 'left-support' | 'right-support',
+        start: at,
+        duration,
+        rotation: seg.pick % 2 === 0 ? 'cw' : 'ccw',
+        amount: TURN_AMOUNTS[Math.floor(seg.pick / 2) % TURN_AMOUNTS.length]!,
+      });
+    } else {
+      const cell = cells[seg.pick % cells.length]!;
+      out.push({ id, column, start: at, duration, direction: cell.direction, level: cell.level });
+    }
     cursor = start + seg.units;
   });
   return out;
@@ -54,7 +67,8 @@ function columnSymbols(column: ColumnId, cells: readonly Cell[], segments: Segme
 
 /**
  * Generator of valid scores. Tempo 60 to 180 bpm, beats per bar 2, 3 or 4, grid half a beat. Each of the six columns
- * holds up to six non-overlapping symbols. Gesture columns use `GESTURE_CELLS`; support columns use `SUPPORT_CELLS`.
+ * holds up to six non-overlapping symbols. Gesture columns use `GESTURE_CELLS`. Support columns use `SUPPORT_CELLS` for
+ * steps and, for about one symbol in five, turn signs (clockwise or counter-clockwise, amount 1/4 to 1).
  * Each column's start cell is optional. The output passes `validateScore` and is canonical.
  */
 export const genScore: fc.Arbitrary<Score> = fc

@@ -5,9 +5,9 @@ Public API is exported from `src/index.ts` only. Conventions: `.kiro/steering/no
 
 ## Scope limits in this design
 
-- **Turns are not implemented.** The current `Symbol` type (`types.ts`) has no turn field. The turn symbol belongs to
-  `supports-and-turns`, which is not built. `parseLesson` therefore returns `turn: null` for every symbol, `describe`
-  says nothing about turns, and `layoutStaff` draws no turn glyphs. Requirements 1.6 (turn part) and 3.4 stay open.
+- **Turns** are implemented. `describe` writes a turn sign as `turn <amount> <clockwise|counter-clockwise> on the <side>
+  foot`, and `parseLesson` reads it back into `turn: { rotation, amount }` with `direction` and `level` null. Turns are
+  not part of phrase search (D7).
 - **Half-beat starts.** The lesson writes "and" for half beats only. `describe` throws a `RangeError` when a symbol
   starts off the half-beat grid. Durations may be any positive multiple of the grid.
 - **Support steps** are written by `describe` and `layoutStaff` from `Symbol` data. The notator for supports is not
@@ -22,7 +22,7 @@ Public API is exported from `src/index.ts` only. Conventions: `.kiro/steering/no
 | `lesson-parse.ts` | `LessonSymbol`, `parseLesson(lines)` | 1.6 |
 | `search.ts` | `PhraseMatch`, `FindPhraseOptions`, `findPhrase(score, phrase, options?)` | 2.1, 2.2, 2.3 |
 | `layout.ts` | `StaffOptions`, `StaffLayout`, `StaffGlyph`, `layoutStaff(score, options?)` | 3.1, 3.2, 3.5 |
-| `layout-shapes.ts` | `glyphPolygon(direction, side, box, cx)`, `turn glyphs: none` | 3.3 |
+| `layout-shapes.ts` | `glyphPolygon(direction, side, box, cx)`, `turnPolygon(rotation, side, box, cx)` | 3.3, 3.4 |
 | `staff-svg.ts` | `renderStaffSvg(score, options?)` | 3.6 |
 
 Tests: `packages/core/test/lesson.test.ts`, `lesson.prop.test.ts`, `search.test.ts`, `search.prop.test.ts`,
@@ -49,8 +49,11 @@ Gesture symbols (arm, leg):
   legs. Level words: `high`, `middle`, `low`.
 
 Support symbols: `step in place on the <side> foot, <level words>` for `place`, and
-`step <direction words> on the <side> foot, <level words>` otherwise. Support level words: low `knees bent`, middle
-`standing normally`, high `on the balls of your feet`.
+`step <direction words> on the <side> foot, <level words>` otherwise. Support level words: low `knees bent`, high
+`on the balls of your feet`. A middle-level step has no level words (requirement 1.5): `step forward on the left foot`.
+
+Turn symbols: `turn <amount> <rotation> on the <side> foot`. Amount words: `a quarter`, `a half`, `three quarters`,
+`a full turn`. Rotation words: `clockwise`, `counter-clockwise`.
 
 Every symbol phrase has `, over <duration> count` appended (`counts` unless the duration is exactly 1).
 
@@ -58,9 +61,10 @@ Every symbol phrase has `, over <duration> count` appended (`counts` unless the 
 
 Output of `describe(score)` is `LessonLine[]`, in this order:
 
-1. Start line: `beat: null, count: null, bar: null, symbolIds: ['start:<column>', ...]`. Text begins `Start standing`.
-   If both arms are `place low`, the text reads `Start standing, arms down by your sides.`. Other start cells follow
-   as `<startPhrase>` clauses. A score with no start position reads `Start standing.`.
+1. Start line: `beat: null, count: null, bar: null, symbolIds: ['start:<column>', ...]`. Text begins `Start standing on both feet`
+   when both supports are `place middle` and both legs are `place low`, otherwise `Start with`. Both arms `place low`
+   read `arms down by your sides`. Other start cells follow as `<startPhrase>` clauses. A score with no start position
+   reads `Start position not written.`.
 2. Metre line: `beat: null, ..., symbolIds: ['score']`. Text `<beatsPerBar> counts per bar, <tempo> counts per minute.`
 3. One line per start beat, in time order. `beat` is the start in beats, `count` the count within the bar (1-based),
    `bar` the 1-based bar. `symbolIds` lists the symbols that start on that beat, in fixed order: left-support,
@@ -137,7 +141,7 @@ dot, `low` is solid. Each glyph is a `<g data-symbol-id="...">`. Text is XML-esc
 
 | # | Property | Requirement | Test file |
 |---|---|---|---|
-| P1 | `parseLesson(describe(s))` equals the symbols of `s` (column, start, duration, direction, level; turn null), sorted by start then column | 4.1 | `lesson.prop.test.ts` |
+| P1 | `parseLesson(describe(s))` equals the symbols of `s` (column, start, duration, direction, level; turn as `{ rotation, amount }` or null), sorted by start then column | 4.1 | `lesson.prop.test.ts` |
 | P2 | Every direction, side, body part, count and level word in each line belongs to the symbols in that line's `symbolIds` (start lines: to `startPosition`; metre line: to the score) | 4.2 | `lesson.prop.test.ts` |
 | P3 | A phrase cut from a generated score (all symbols with start in `[b, b+L)`, shifted by `-b`) is found at `b` | 4.3 | `search.prop.test.ts` |
 | P4 | `mirrorScore(cut)` is found at `b` with `mirrored: true` when searched with `mirror: true` | 4.4 | `search.prop.test.ts` |
@@ -146,7 +150,13 @@ dot, `low` is solid. Each glyph is a `<g data-symbol-id="...">`. Text is XML-esc
 
 ## Decisions
 
-- D1. `turn` is always `null` until `supports-and-turns` adds a turn field. Requirement 1.6 and 3.4 are open.
+- D1. Superseded. Turns are in the score model (`supports-and-turns`), so `parseLesson` returns `direction` and `level`
+  null and `turn` set for a turn sign. Requirements 1.6 and 3.4 are implemented.
+- D7. Phrase search matches direction symbols only. Turn signs in a phrase or in the score are ignored, and a phrase's
+  origin and overlap extent come from its direction symbols. P3 and P4 skip cuts with no direction symbol. Found when
+  the generator began to produce turns: `findPhrase` used turn symbols in the extent and dropped a valid match.
+- D8. An empty start position reads `Start position not written.`. The first version wrote `Start standing.`, which
+  says the dancer stands when the score says nothing about the start.
 - D2. The start position is described by lines whose `symbolIds` use `start:<column>`. Requirement 4.2 is checked
   against `startPosition` for those lines.
 - D3. The `options` argument of `describe` has no fields in v1. The function takes `(score)`.

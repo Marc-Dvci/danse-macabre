@@ -1,25 +1,26 @@
 import type { LessonLine } from './lesson';
-import { DIRECTION_WORDS, LEVEL_WORDS, SUPPORT_LEVEL_WORDS } from './lesson-words';
-import type { ColumnId, Direction, Level } from './types';
+import { DIRECTION_WORDS, LEVEL_WORDS, SUPPORT_LEVEL_WORDS, TURN_AMOUNT_WORDS, TURN_ROTATION_WORDS } from './lesson-words';
+import type { ColumnId, Direction, Level, TurnSymbol } from './types';
 
 /**
- * A symbol recovered from lesson text. `turn` is always null: the current score model has no turn symbols
- * (see `design.md` in `lesson-search-layout`).
+ * A symbol recovered from lesson text. A direction symbol has `direction` and `level` and `turn: null`. A turn symbol
+ * has `direction` and `level` null and `turn` set. The text has no symbol ids, so none are returned.
  */
 export type LessonSymbol = {
   column: ColumnId;
   start: number;
   duration: number;
-  direction: Direction;
-  level: Level;
-  turn: null;
+  direction: Direction | null;
+  level: Level | null;
+  turn: { rotation: TurnSymbol['rotation']; amount: TurnSymbol['amount'] } | null;
 };
 
 const METRE_RE = /^(\d+) counts per bar, \S+ counts per minute\.$/;
 const BEAT_RE = /^(?:Bar (\d+), )?[Cc]ount (\d+)( and)?: (.+)\.$/;
 const DURATION_RE = /, over (\d+(?:\.\d+)?) counts?$/;
-const SUPPORT_RE = /^step (.+) on the (left|right) foot, (knees bent|standing normally|on the balls of your feet)$/;
+const SUPPORT_RE = /^step (.+) on the (left|right) foot(?:, (knees bent|on the balls of your feet))?$/;
 const GESTURE_RE = /^(left|right) (arm|leg) (?:moves|lifts) (.+)$/;
+const TURN_RE = /^turn (a quarter|a half|three quarters|a full turn) (clockwise|counter-clockwise) on the (left|right) foot$/;
 
 const DIRECTION_FROM_WORD = new Map<string, Direction>(
   (Object.entries(DIRECTION_WORDS) as [Direction, string][]).map(([d, w]) => [w, d]),
@@ -27,6 +28,12 @@ const DIRECTION_FROM_WORD = new Map<string, Direction>(
 const LEVEL_FROM_WORD = new Map<string, Level>((Object.entries(LEVEL_WORDS) as [Level, string][]).map(([l, w]) => [w, l]));
 const SUPPORT_LEVEL_FROM_WORD = new Map<string, Level>(
   (Object.entries(SUPPORT_LEVEL_WORDS) as [Level, string][]).map(([l, w]) => [w, l]),
+);
+const AMOUNT_FROM_WORD = new Map<string, TurnSymbol['amount']>(
+  (Object.entries(TURN_AMOUNT_WORDS) as [string, string][]).map(([a, w]) => [w, Number(a) as TurnSymbol['amount']]),
+);
+const ROTATION_FROM_WORD = new Map<string, TurnSymbol['rotation']>(
+  (Object.entries(TURN_ROTATION_WORDS) as [TurnSymbol['rotation'], string][]).map(([r, w]) => [w, r]),
 );
 
 function fail(message: string): never {
@@ -39,30 +46,43 @@ function directionFromWord(word: string, phrase: string): Direction {
   return d;
 }
 
-/** Reads one phrase (no duration) into column, direction and level. */
-function parsePhrase(phrase: string): { column: ColumnId; direction: Direction; level: Level } {
+type Parsed = Omit<LessonSymbol, 'start' | 'duration'>;
+
+/** Reads one phrase (no duration) into a column and either a direction and level or a turn. */
+function parsePhrase(phrase: string): Parsed {
+  const turn = TURN_RE.exec(phrase);
+  if (turn) {
+    return {
+      column: `${turn[3]}-support` as ColumnId,
+      direction: null,
+      level: null,
+      turn: { amount: AMOUNT_FROM_WORD.get(turn[1]!)!, rotation: ROTATION_FROM_WORD.get(turn[2]!)! },
+    };
+  }
+
   const support = SUPPORT_RE.exec(phrase);
   if (support) {
     const column = `${support[2]}-support` as ColumnId;
-    const level = SUPPORT_LEVEL_FROM_WORD.get(support[3]!)!;
+    // A step with no level words is a normal step: middle level (requirement 1.5).
+    const level = support[3] === undefined ? 'middle' : SUPPORT_LEVEL_FROM_WORD.get(support[3])!;
     const move = support[1]!;
     const direction = move === 'in place' ? 'place' : directionFromWord(move, phrase);
-    return { column, direction, level };
+    return { column, direction, level, turn: null };
   }
 
   const gesture = GESTURE_RE.exec(phrase);
   if (gesture) {
     const column = `${gesture[1]}-${gesture[2]}` as ColumnId;
     const rest = gesture[3]!;
-    if (rest === 'straight up') return { column, direction: 'place', level: 'high' };
-    if (rest === 'down by your side' && gesture[2] === 'arm') return { column, direction: 'place', level: 'low' };
-    if (rest === 'straight down' && gesture[2] === 'leg') return { column, direction: 'place', level: 'low' };
+    if (rest === 'straight up') return { column, direction: 'place', level: 'high', turn: null };
+    if (rest === 'down by your side' && gesture[2] === 'arm') return { column, direction: 'place', level: 'low', turn: null };
+    if (rest === 'straight down' && gesture[2] === 'leg') return { column, direction: 'place', level: 'low', turn: null };
     const comma = rest.lastIndexOf(', ');
     if (comma < 0) fail(`no level in "${phrase}"`);
     const direction = directionFromWord(rest.slice(0, comma), phrase);
     const level = LEVEL_FROM_WORD.get(rest.slice(comma + 2));
     if (level === undefined) fail(`unknown level in "${phrase}"`);
-    return { column, direction, level };
+    return { column, direction, level, turn: null };
   }
 
   return fail(`unknown phrase "${phrase}"`);
@@ -101,8 +121,7 @@ export function parseLesson(lines: readonly LessonLine[]): LessonSymbol[] {
       const dur = DURATION_RE.exec(segment);
       if (!dur) fail(`no duration in "${segment}"`);
       const phrase = segment.slice(0, dur.index);
-      const cell = parsePhrase(phrase);
-      out.push({ ...cell, start, duration: Number(dur[1]), turn: null });
+      out.push({ ...parsePhrase(phrase), start, duration: Number(dur[1]) });
     }
   }
   return out;

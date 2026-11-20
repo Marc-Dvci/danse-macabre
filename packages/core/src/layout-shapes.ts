@@ -56,3 +56,35 @@ export function glyphPolygon(direction: Direction, side: 'left' | 'right', box: 
   const mirrored: Box = { x0: 2 * centreX - box.x1, x1: 2 * centreX - box.x0, y0: box.y0, y1: box.y1 };
   return rightShape(swapSide(direction), mirrored).map((q) => ({ x: 2 * centreX - q.x, y: q.y }));
 }
+
+/** Horizontal slant of a turn parallelogram, as a fraction of the column width. */
+const TURN_SLANT = 0.25;
+
+/**
+ * Outline of a turn glyph on the right side (Requirement 3.4). A counter-clockwise turn is a parallelogram whose top edge
+ * is shifted left, and a clockwise turn one whose top edge is shifted right. Both edges keep their length.
+ */
+function rightTurnShape(rotation: 'cw' | 'ccw', box: Box): Point[] {
+  const { x0, x1, y0, y1 } = box;
+  const s = (x1 - x0) * TURN_SLANT;
+  const p = (x: number, y: number): Point => ({ x, y });
+  if (rotation === 'ccw') return [p(x0 + s, y0), p(x1, y0), p(x1 - s, y1), p(x0, y1)];
+  return [p(x0, y0), p(x1 - s, y0), p(x1, y1), p(x0 + s, y1)];
+}
+
+/**
+ * Outline of a turn glyph in staff units, y up. The slant depends only on the rotation, so a counter-clockwise turn
+ * slants left on either side. Left-side glyphs are built like direction glyphs: the mirror of the swapped rotation on the
+ * right side, reflected back, so a mirrored score gives reflected glyphs.
+ * @param rotation `cw` or `ccw`, seen from above.
+ * @param side `right` or `left`, the side of the centre line the column is on.
+ * @param box Position of the glyph in staff units.
+ * @param centreX x of the centre line.
+ * @returns Polygon vertices in order.
+ */
+export function turnPolygon(rotation: 'cw' | 'ccw', side: 'left' | 'right', box: Box, centreX: number): Point[] {
+  if (side === 'right') return rightTurnShape(rotation, box);
+  const mirrored: Box = { x0: 2 * centreX - box.x1, x1: 2 * centreX - box.x0, y0: box.y0, y1: box.y1 };
+  const swapped = rotation === 'cw' ? 'ccw' : 'cw';
+  return rightTurnShape(swapped, mirrored).map((q) => ({ x: 2 * centreX - q.x, y: q.y }));
+}

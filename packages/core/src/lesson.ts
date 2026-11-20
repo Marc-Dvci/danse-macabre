@@ -1,6 +1,5 @@
 import { cellPhrase, LESSON_COLUMN_ORDER, symbolPhrase } from './lesson-words';
-import { directionSymbols } from './symbol';
-import type { Cell, ColumnId, DirectionSymbol, Score } from './types';
+import type { ColumnId, Direction, Level, Score, Symbol } from './types';
 
 /**
  * One line of the spoken lesson. Beat lines have `beat`, `count` and `bar`. The start and metre lines have them set to
@@ -15,26 +14,49 @@ export type LessonLine = {
   symbolIds: string[];
 };
 
+/** Start cells that make up the standing position, in the order they are named. */
+const STANDING_COLUMNS: readonly ColumnId[] = ['left-support', 'right-support', 'left-leg', 'right-leg'];
+const ARM_COLUMNS: readonly ColumnId[] = ['left-arm', 'right-arm'];
+
+/**
+ * Start line (requirement 1.5). Both supports at `place middle` and both legs at `place low` read as standing on both
+ * feet. Both arms at `place low` read as arms down by the sides. Other start cells are named as symbols are.
+ */
 function startLine(score: Score): LessonLine {
   const sp = score.startPosition;
-  const armsDown = (['left-arm', 'right-arm'] as const).every((c) => {
-    const cell = sp[c];
-    return cell !== undefined && cell.direction === 'place' && cell.level === 'low';
-  });
-  const clauses: string[] = [];
+  const is = (column: ColumnId, direction: Direction, level: Level): boolean => {
+    const cell = sp[column];
+    return cell !== undefined && cell.direction === direction && cell.level === level;
+  };
+  const standing =
+    is('left-support', 'place', 'middle') &&
+    is('right-support', 'place', 'middle') &&
+    is('left-leg', 'place', 'low') &&
+    is('right-leg', 'place', 'low');
+  const armsDown = ARM_COLUMNS.every((c) => is(c, 'place', 'low'));
+
+  const items: string[] = [];
   const ids: string[] = [];
+  if (standing) {
+    items.push('standing on both feet');
+    ids.push(...STANDING_COLUMNS.map((c) => `start:${c}`));
+  }
   if (armsDown) {
-    clauses.push('arms down by your sides');
-    ids.push('start:left-arm', 'start:right-arm');
+    items.push('arms down by your sides');
+    ids.push(...ARM_COLUMNS.map((c) => `start:${c}`));
   }
   for (const column of LESSON_COLUMN_ORDER) {
-    const cell: Cell | undefined = sp[column];
-    if (!cell || (armsDown && column.endsWith('-arm'))) continue;
-    clauses.push(cellPhrase(column, cell));
+    const cell = sp[column];
+    if (!cell) continue;
+    if (standing && STANDING_COLUMNS.includes(column)) continue;
+    if (armsDown && ARM_COLUMNS.includes(column)) continue;
+    items.push(cellPhrase(column, cell));
     ids.push(`start:${column}`);
   }
-  const text = clauses.length > 0 ? `Start standing, ${clauses.join(', ')}.` : 'Start standing.';
-  return { beat: null, count: null, bar: null, text, symbolIds: ids };
+
+  if (items.length === 0) return { beat: null, count: null, bar: null, text: 'Start position not written.', symbolIds: ids };
+  const lead = standing ? 'Start' : 'Start with';
+  return { beat: null, count: null, bar: null, text: `${lead} ${items.join(', ')}.`, symbolIds: ids };
 }
 
 function metreLine(score: Score): LessonLine {
@@ -54,7 +76,8 @@ function columnRank(column: ColumnId): number {
 /**
  * Writes the score as a spoken lesson. Lines are: the starting position, the metre and tempo, then one line per beat at
  * which a symbol starts, in time order. A beat line names the bar when the bar changes, numbers the count within the
- * bar from 1, writes `and` for a half beat, and joins the symbols that start on that beat with `; `.
+ * bar from 1, writes `and` for a half beat, and joins the symbols that start on that beat with `; `. Direction and turn
+ * symbols are both written.
  * @param score A valid score. Half-beat starts only.
  * @returns Lesson lines in reading order.
  * @throws RangeError when `beatsPerBar` is not a positive integer or a symbol starts off the half-beat grid.
@@ -65,10 +88,10 @@ export function describe(score: Score): LessonLine[] {
 
   const lines: LessonLine[] = [startLine(score), metreLine(score)];
 
-  const sorted = directionSymbols(score).sort(
+  const sorted = [...score.symbols].sort(
     (a, b) => a.start - b.start || columnRank(a.column) - columnRank(b.column) || (a.id < b.id ? -1 : 1),
   );
-  const groups: { beat: number; symbols: DirectionSymbol[] }[] = [];
+  const groups: { beat: number; symbols: Symbol[] }[] = [];
   for (const s of sorted) {
     if (!Number.isInteger(s.start * 2)) {
       throw new RangeError(`describe: symbol "${s.id}" starts at ${s.start}, which is not on a half beat`);

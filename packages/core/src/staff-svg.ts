@@ -1,5 +1,5 @@
 import { layoutStaff, type StaffOptions } from './layout';
-import type { Score } from './types';
+import type { Score, TurnSymbol } from './types';
 
 function num(n: number): string {
   return String(Number(n.toFixed(3)));
@@ -7,6 +7,12 @@ function num(n: number): string {
 
 function escapeXml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/** Label written in a turn glyph: the amount as a fraction of a turn (requirement 3.4). */
+function turnLabel(amount: TurnSymbol['amount']): string {
+  const labels: Record<TurnSymbol['amount'], string> = { 0.25: '1/4', 0.5: '1/2', 0.75: '3/4', 1: '1' };
+  return labels[amount];
 }
 
 /**
@@ -51,8 +57,19 @@ export function renderStaffSvg(score: Score, options: StaffOptions = {}): string
 
   for (const g of layout.glyphs) {
     const points = g.polygon.map((p) => `${num(p.x)},${fy(p.y)}`).join(' ');
-    const fill = g.level === 'high' ? 'url(#hatch)' : g.level === 'middle' ? '#fff' : '#000';
     out.push(`<g data-symbol-id="${escapeXml(g.symbolId)}">`);
+    if (g.kind === 'turn') {
+      // Turn signs are white, with the amount written in the middle (1/4, 1/2, 3/4, 1).
+      out.push(`<polygon points="${points}" fill="#fff" stroke="#000" stroke-width="1"/>`);
+      const cx = g.x + g.w / 2;
+      const cy = g.y + g.h / 2;
+      out.push(
+        `<text x="${num(cx)}" y="${fy(cy - 3)}" font-family="sans-serif" font-size="8" text-anchor="middle">${escapeXml(turnLabel(g.amount!))}</text>`,
+      );
+      out.push('</g>');
+      continue;
+    }
+    const fill = g.level === 'high' ? 'url(#hatch)' : g.level === 'low' ? '#000' : '#fff';
     out.push(`<polygon points="${points}" fill="${fill}" stroke="#000" stroke-width="1"/>`);
     if (g.level === 'middle') {
       const xs = g.polygon.map((p) => p.x);
