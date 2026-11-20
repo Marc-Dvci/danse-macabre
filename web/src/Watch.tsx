@@ -22,7 +22,7 @@ import {
 
 type Show = "both" | "score" | "recording";
 
-export function Watch({ initial }: { initial?: string }) {
+export function Watch({ initial, startBeat }: { initial?: string; startBeat?: number }) {
   const [clipId, setClipId] = useState(initial ?? CLIPS[0]!.id);
   const [ensemble, setEnsemble] = useState(true);
   const music = useRef<HTMLAudioElement | null>(null);
@@ -54,7 +54,14 @@ export function Watch({ initial }: { initial?: string }) {
     setTime(0);
     setEdits({});
     setSelected(null);
-    loadClip(clipId).then((c) => live && setClip(c));
+    loadClip(clipId).then((c) => {
+      if (!live) return;
+      setClip(c);
+      if (startBeat !== undefined && clipId === initial) {
+        const tempo = c.score?.tempo ?? 100;
+        setTime((startBeat * 60) / tempo);
+      }
+    });
     return () => {
       live = false;
     };
@@ -321,7 +328,7 @@ export function Watch({ initial }: { initial?: string }) {
               beat={beat}
               beatHeight={BEAT_HEIGHT}
               selected={selected}
-              onSelect={(id) => setSelected(id.startsWith("start-") ? null : id)}
+              onSelect={(id) => setSelected(id.startsWith("start:") ? null : id)}
               height={scoreHeight}
               width={scoreWidth}
             />

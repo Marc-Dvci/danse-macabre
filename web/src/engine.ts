@@ -1,5 +1,7 @@
 // The web app's single entry into @danse/core. Every score, lesson line and pose shown comes through here.
 import {
+  describe,
+  findPhrase,
   mirrorFrames,
   mirrorScore,
   notateGestures,
@@ -53,40 +55,42 @@ export function countLabel(score: Score, beat: number): { bar: number; count: nu
 }
 
 export interface LessonLine {
+  /** Beat of the line; -1 for the starting position and the tempo line. */
   beat: number;
   label: string;
   text: string;
   symbolIds: string[];
 }
 
-const PART: Record<string, string> = {
-  "left-arm": "left arm",
-  "right-arm": "right arm",
-  "left-leg": "left leg",
-  "right-leg": "right leg",
-  "left-support": "left foot",
-  "right-support": "right foot",
-};
-
-/** Interim wording, replaced by the core's describe() once that spec is built. */
+/** The spoken lesson from the core: one line per beat on which something starts, every word from a symbol. */
 export function describeScore(score: Score): LessonLine[] {
-  const byBeat = new Map<number, LabanSymbol[]>();
-  for (const s of score.symbols) byBeat.set(s.start, [...(byBeat.get(s.start) ?? []), s]);
-  const lines: LessonLine[] = [
-    { beat: -1, label: "Start", text: `${score.beatsPerBar} counts per bar, ${score.tempo} counts per minute.`, symbolIds: [] },
-  ];
-  for (const beat of [...byBeat.keys()].sort((a, b) => a - b)) {
-    const syms = byBeat.get(beat)!;
-    const c = countLabel(score, beat);
-    const label = `${c.count === 1 && !c.and ? `Bar ${c.bar}, ` : ""}${c.count}${c.and ? " and" : ""}`;
-    const text = syms
-      .map((s) => {
-        const dir = s.direction === "place" ? (s.level === "high" ? "straight up" : s.level === "low" ? "down" : "in place") : s.direction.replace("-", " ");
-        const lvl = s.direction === "place" ? "" : `, ${s.level}`;
-        return `${PART[s.column] ?? s.column} ${s.column.endsWith("support") ? "steps" : "moves"} ${dir}${lvl}`;
-      })
-      .join("; ");
-    lines.push({ beat, label, text, symbolIds: syms.map((s) => s.id) });
-  }
-  return lines;
+  return describe(score).map((l) => {
+    if (l.beat === null) return { beat: -1, label: l.symbolIds[0] === "score" ? "Tempo" : "Start", text: l.text, symbolIds: l.symbolIds };
+    const cut = l.text.indexOf(": ");
+    return {
+      beat: l.beat,
+      label: cut > 0 ? l.text.slice(0, cut) : `Count ${l.count}`,
+      text: cut > 0 ? l.text.slice(cut + 2) : l.text,
+      symbolIds: l.symbolIds,
+    };
+  });
+}
+
+/** Symbols starting within [from, from + length) beats, shifted to start at 0: a phrase to search for. */
+export function cutPhrase(score: Score, from: number, length: number, part: "arms" | "all"): Score & { at: number } {
+  const keep = (c: string) => (part === "arms" ? c.endsWith("arm") : true);
+  const picked = score.symbols.filter((s) => keep(s.column) && s.start >= from && s.start < from + length);
+  // The phrase starts at its first symbol, so a match's beat is where that first symbol starts.
+  const at = picked.length ? Math.min(...picked.map((s) => s.start)) : from;
+  return {
+    ...score,
+    title: `${score.title}, from beat ${at}`,
+    startPosition: {},
+    symbols: picked.map((s) => ({ ...s, start: s.start - at })),
+    at,
+  };
+}
+
+export function findInScore(score: Score, phrase: Score, mirrorToo: boolean): Array<{ beat: number; mirrored: boolean }> {
+  return findPhrase(score, phrase, { mirror: mirrorToo });
 }

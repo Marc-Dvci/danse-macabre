@@ -28,7 +28,7 @@ test("watch: every dance in the list writes a score", async ({ page }) => {
 
 test("watch: editing a symbol changes the lesson line", async ({ page }) => {
   await page.goto("/#watch");
-  const glyph = page.locator("g[data-symbol-id]:not([data-symbol-id^='start-'])").first();
+  const glyph = page.locator("g[data-symbol-id]:not([data-symbol-id^='start:'])").first();
   await glyph.click({ force: true });
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("group", { name: "Level" }).getByRole("button", { name: "low" }).click();
@@ -52,3 +52,12 @@ for (const hash of ["#watch", "#video", "#about"]) {
     expect(found).toEqual([]);
   });
 }
+
+test("search: a phrase cut from the Macarena is found elsewhere in it, not at its own place", async ({ page }) => {
+  await page.goto("/#search");
+  await page.getByRole("button", { name: /Search \d+ dances/ }).click();
+  const status = page.locator(".status");
+  await expect(status).toContainText(/\d+ match/);
+  await expect(page.locator(".hits li").first()).toBeVisible();
+  await expect(page.locator(".hits")).not.toContainText("Macarena, bar 1, count 2");
+});

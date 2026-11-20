@@ -71,7 +71,7 @@ export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height
               />
             )}
             {b.label && (
-              <text x={layout.left - 9} y={flip(b.y) + 3} fontSize={7} fill="#c8321e" textAnchor="end" fontFamily="IM Fell English SC">
+              <text x={layout.right + 4} y={flip(b.y) - 3} fontSize={7} fill="#e2553f" textAnchor="start" fontFamily="IM Fell English SC">
                 {b.label}
               </text>
             )}

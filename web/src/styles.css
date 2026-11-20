@@ -620,3 +620,106 @@ input[type="range"] {
   outline: 2px solid var(--blood-2);
   outline-offset: 3px;
 }
+
+/* Search */
+.search-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 20px;
+  max-width: 420px;
+}
+
+.form .field {
+  justify-content: space-between;
+}
+
+.form select,
+.form input[type="number"] {
+  background: var(--ink-2);
+  border: 1px solid rgba(236, 230, 214, 0.25);
+  padding: 6px 8px;
+  min-width: 180px;
+}
+
+.hits {
+  padding-left: 22px;
+}
+
+.hits li {
+  margin: 6px 0;
+}
+
+.link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--bone);
+  text-decoration: underline;
+  text-decoration-color: var(--blood);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.badge {
+  margin-left: 10px;
+  font-size: 12px;
+  border: 1px solid var(--blood);
+  padding: 1px 6px;
+  color: var(--bone-2);
+}
+
+.phrase-score {
+  position: relative;
+  height: 520px;
+  border-left: var(--rule);
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .search-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Legend */
+.legend-grid {
+  display: flex;
+  gap: 34px;
+  flex-wrap: wrap;
+  margin: 18px 0 8px;
+}
+
+.legend-grid figure {
+  margin: 0;
+}
+
+.compass {
+  display: grid;
+  grid-template-columns: repeat(3, 34px);
+  gap: 6px;
+}
+
+.glyph-cell {
+  display: grid;
+  place-items: center;
+}
+
+.legend-grid figcaption {
+  font-family: var(--fell);
+  font-style: italic;
+  color: var(--bone-2);
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.prose ul {
+  padding-left: 20px;
+}

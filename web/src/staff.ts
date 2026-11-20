@@ -1,4 +1,6 @@
-// Staff geometry for ScoreView, in staff units with y up (time runs upward).
+// Staff geometry for ScoreView, in staff units with y up (time runs upward). The layout itself comes from
+// @danse/core's layoutStaff; this file adapts it for the view and keeps the glyph shapes for the legend.
+import { layoutStaff as coreLayout } from "@danse/core";
 import type { Score, LabanSymbol } from "./engine";
 
 export interface Glyph {
@@ -29,20 +31,9 @@ export interface StaffLayout {
 }
 
 export const BEAT_HEIGHT = 24;
-const COL = 16;
-const START_HEIGHT = 18;
-
-// Column slots outward from the centre line: 1 support, 2 leg gesture, 3 torso (empty), 4 arm.
-const SLOT: Record<string, number> = { support: 0, leg: 1, arm: 3 };
-
-function columnX(column: string): { x: number; side: "left" | "right" } {
-  const [side, part] = column.split("-") as ["left" | "right", string];
-  const slot = SLOT[part] ?? 0;
-  return { x: side === "right" ? slot * COL : -(slot + 1) * COL, side };
-}
 
 /** Direction shape in a unit box (x 0..1 inner to outer for the right side, y 0..1 bottom to top). */
-function unitShape(direction: string): Array<[number, number]> {
+export function unitShape(direction: string): Array<[number, number]> {
   const third = 1 / 3;
   switch (direction) {
     case "place":
@@ -68,53 +59,49 @@ function unitShape(direction: string): Array<[number, number]> {
   }
 }
 
-const SIDE_DEPENDENT = new Set(["forward", "backward"]);
 
 function describeSymbol(s: LabanSymbol): string {
-  const part = s.column.replace("-", " ").replace("support", "step").replace("leg", "leg").replace("arm", "arm");
+  const part = s.column.replace("-", " ").replace("support", "foot, step");
   const dir = s.direction === "place" ? "place" : s.direction.replace("-", " ");
-  return `${part}: ${dir} ${s.level}, ${s.duration} counts from count ${s.start + 1}`;
+  return `${part}: ${dir} ${s.level}, ${s.duration} ${s.duration === 1 ? "count" : "counts"}`;
 }
 
+/** The score's staff, from the core layout, in the shape ScoreView draws. */
 export function layoutStaff(score: Score): StaffLayout {
-  const lastBeat = Math.max(score.beatsPerBar * 2, ...score.symbols.map((s) => s.start + s.duration)) + 1;
-  const origin = START_HEIGHT + 6;
-  const height = origin + lastBeat * BEAT_HEIGHT + 12;
-  const half = 4 * COL + 18;
-  const width = half * 2;
-  const cx = half;
-  const left = cx - 2 * COL;
-  const right = cx + 2 * COL;
-  const lines = [
-    { x1: cx - 2 * COL, y1: 0, x2: cx - 2 * COL, y2: height },
-    { x1: cx, y1: 0, x2: cx, y2: height },
-    { x1: cx + 2 * COL, y1: 0, x2: cx + 2 * COL, y2: height },
-  ];
-  const bars: StaffLayout["bars"] = [{ y: origin, double: true, label: "1" }];
-  for (let b = score.beatsPerBar, n = 2; b < lastBeat; b += score.beatsPerBar, n++) {
-    bars.push({ y: origin + b * BEAT_HEIGHT, label: String(n) });
-  }
-  const counts: StaffLayout["counts"] = [];
-  for (let b = 0; b < lastBeat; b++) counts.push({ y: origin + b * BEAT_HEIGHT, label: String((b % score.beatsPerBar) + 1) });
-
-  const glyphs: Glyph[] = [];
-  const place = (id: string, column: string, start: number, dur: number, direction: string, level: Glyph["level"], label: string, yBase: number, hOverride?: number) => {
-    const { x: colX, side } = columnX(column);
-    const pad = 2;
-    const x = cx + colX + pad;
-    const w = COL - 2 * pad;
-    const y = yBase + start * BEAT_HEIGHT + 1;
-    const h = hOverride ?? dur * BEAT_HEIGHT - 2;
-    const mirrored = side === "left" && SIDE_DEPENDENT.has(direction);
-    const polygon = unitShape(direction).map(([ux, uy]) => {
-      const fx = side === "right" ? ux : 1 - ux;
-      return [x + (mirrored || side === "right" ? fx : ux) * w, y + uy * h] as [number, number];
-    });
-    glyphs.push({ symbolId: id, column, kind: "direction", x, y, w, h, polygon, level, label });
+  const core = coreLayout(score, { beatHeight: BEAT_HEIGHT });
+  const bySymbol = new Map(score.symbols.map((s) => [s.id, s]));
+  const xs = core.lines.map((l) => l.x);
+  const left = Math.min(...xs);
+  const right = Math.max(...xs);
+  return {
+    width: core.width,
+    height: core.height,
+    origin: BEAT_HEIGHT,
+    left,
+    right,
+    lines: core.lines.map((l) => ({ x1: l.x, x2: l.x, y1: l.y1, y2: l.y2 })),
+    bars: core.bars.map((b, i) => ({ y: b.y, double: b.double, label: i < core.bars.length - 1 ? String(i + 1) : undefined })),
+    counts: core.counts.map((c) => ({ y: c.y, label: c.label })),
+    glyphs: core.glyphs.map((g) => {
+      const sym = bySymbol.get(g.symbolId);
+      return {
+        symbolId: g.symbolId,
+        column: g.column,
+        kind: "direction" as const,
+        x: g.x,
+        y: g.y,
+        w: g.w,
+        h: g.h,
+        // View only: inset each glyph inside its column so neighbouring symbols do not touch.
+        polygon: g.polygon.map((p) => {
+          const cx = g.x + g.w / 2;
+          const top = g.y + g.h;
+          const y = Math.min(Math.max(p.y, g.y + 1.2), top - 1.2);
+          return [cx + (p.x - cx) * 0.78, y] as [number, number];
+        }),
+        level: g.level,
+        label: sym ? describeSymbol(sym) : `starting position, ${g.column.replace("-", " ")}`,
+      };
+    }),
   };
-  for (const [column, cell] of Object.entries(score.startPosition)) {
-    if (cell) place(`start-${column}`, column, 0, 0, cell.direction, cell.level, `start: ${column} ${cell.direction} ${cell.level}`, 3, START_HEIGHT - 4);
-  }
-  for (const s of score.symbols) place(s.id, s.column, s.start, s.duration, s.direction, s.level, describeSymbol(s), origin);
-  return { width, height, origin, left, right, lines, bars, counts, glyphs };
 }

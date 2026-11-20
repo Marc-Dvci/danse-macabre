@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Watch } from "./Watch";
 import { About } from "./About";
 import { Capture } from "./Capture";
+import { Search } from "./Search";
 
-type Tab = "watch" | "video" | "about";
+type Tab = "watch" | "video" | "search" | "about";
 
 const TABS: Array<[Tab, string]> = [
   ["watch", "Watch"],
   ["video", "From video"],
+  ["search", "Search"],
   ["about", "About"],
 ];
 
@@ -23,7 +25,9 @@ export function App() {
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
-  const [clip, setClip] = useState<string | undefined>(new URLSearchParams(window.location.search).get("dance") ?? undefined);
+  const params = new URLSearchParams(window.location.search);
+  const [clip, setClip] = useState<string | undefined>(params.get("dance") ?? undefined);
+  const [at, setAt] = useState<number | undefined>(params.has("at") ? Number(params.get("at")) : undefined);
 
   return (
     <div className="app">
@@ -51,11 +55,21 @@ export function App() {
         </nav>
       </header>
       <main style={{ minHeight: 0, display: "grid" }}>
-        {tab === "watch" && <Watch key={clip} initial={clip} />}
+        {tab === "watch" && <Watch key={`${clip}-${at}`} initial={clip} startBeat={at} />}
         {tab === "video" && (
           <Capture
             onOpen={(id) => {
               setClip(id);
+              window.location.hash = "watch";
+              setTab("watch");
+            }}
+          />
+        )}
+        {tab === "search" && (
+          <Search
+            onOpen={(id, beat) => {
+              setClip(id);
+              setAt(beat);
               window.location.hash = "watch";
               setTab("watch");
             }}
