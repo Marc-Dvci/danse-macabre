@@ -1,7 +1,19 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "labanotation",
   "version": "0.1.0",
   "description": "Write, check, perform and describe dance in Labanotation: compose a phrase move by move, validate it, play it on a 3D skeleton, and read it as a spoken lesson.",
-  "author": "Danse Macabre",
-  "keywords": ["dance", "choreography", "labanotation", "notation", "movement"]
+  "author": {
+    "name": "Marc Donovici"
+  },
+  "keywords": [
+    "dance",
+    "choreography",
+    "labanotation",
+    "notation",
+    "movement"
+  ],
+  "homepage": "https://marc-dvci.github.io/danse-macabre/",
+  "repository": "https://github.com/Marc-Dvci/danse-macabre",
+  "license": "Apache-2.0"
 }

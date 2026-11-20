@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "danse-macabre": {
+      "command": "npx",
+      "args": ["tsx", "packages/mcp/src/bin.ts"],
+      "env": { "DANSE_WORKSPACE": "." },
+      "disabled": false
+    }
+  }
+}

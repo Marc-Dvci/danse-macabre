@@ -1,8 +1,12 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "danse-macabre": {
       "command": "npx",
-      "args": ["tsx", "packages/mcp/src/bin.ts"]
+      "args": [
+        "tsx",
+        "packages/mcp/src/bin.ts"
+      ]
     }
   }
 }
