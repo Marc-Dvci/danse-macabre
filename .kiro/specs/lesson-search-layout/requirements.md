@@ -21,8 +21,11 @@ dance without seeing it.
    "straight up"; place low reads "down by your side"; a step in place reads "step in place".
 4. THE SYSTEM SHALL join symbols that start on the same beat in a fixed order (supports, legs, arms, left before
    right) with "; ".
-5. THE SYSTEM SHALL start the lesson with the starting position ("Start standing, arms down by your sides") and the
-   tempo and metre ("4 counts per bar, 96 counts per minute").
+5. THE SYSTEM SHALL start the lesson with the starting position and the tempo and metre ("4 counts per bar, 96 counts
+   per minute"). The start line describes a body as a dancer would: both supports in `place middle` and both legs
+   `place low` read "Start standing on both feet"; arms `place low` read "arms down by your sides"; only other start
+   cells are named (for example "right arm forward, middle"). A support at middle level is a normal step and needs no
+   level words: "step forward on the left foot", not "…, standing normally".
 6. WHEN `parseLesson(lines)` is called THE SYSTEM SHALL recover the symbols (column, start, duration, direction,
    level, turn) from the text alone.
 
