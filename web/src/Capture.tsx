@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { addCustomClip, loadClip } from "./clips";
 import { notateClip, type Frame, type Score } from "./engine";
 import { centreClip } from "./pose";
-import { getLandmarker, frameFromWorld, readVideo, setFloor } from "./capture/poseReader";
+import { getLandmarker, frameFromWorld, nextTimestamp, readVideo, setFloor, smoothFrames } from "./capture/poseReader";
 import { alignTakes, armAgreement, type Agreement } from "./compare";
 import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
 
@@ -139,7 +139,7 @@ export function Capture({ onOpen }: { onOpen: (id: string) => void }) {
       const loop = () => {
         if (!v.srcObject) return;
         const now = performance.now();
-        const res = lm.detectForVideo(v, now);
+        const res = lm.detectForVideo(v, nextTimestamp(now));
         if (overlay.current) drawLandmarks(overlay.current, res.landmarks[0]);
         const world = res.worldLandmarks[0];
         if (world) cameraFrames.current.push(frameFromWorld(world, (now - t0) / 1000));
@@ -156,7 +156,7 @@ export function Capture({ onOpen }: { onOpen: (id: string) => void }) {
     const stream = v?.srcObject as MediaStream | null;
     stream?.getTracks().forEach((t) => t.stop());
     if (v) v.srcObject = null;
-    await finish(setFloor(cameraFrames.current), "camera", "Camera take", null);
+    await finish(setFloor(smoothFrames(cameraFrames.current)), "camera", "Camera take", null);
   }
 
   return (

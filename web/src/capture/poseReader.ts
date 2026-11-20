@@ -8,6 +8,13 @@ const MODEL =
 
 let landmarker: Promise<PoseLandmarker> | null = null;
 
+// MediaPipe's video mode needs timestamps that only ever increase, across every video and camera session.
+let lastTimestamp = 0;
+export function nextTimestamp(wantedMs: number): number {
+  lastTimestamp = Math.max(lastTimestamp + 1, Math.round(wantedMs));
+  return lastTimestamp;
+}
+
 export function getLandmarker(): Promise<PoseLandmarker> {
   landmarker ??= (async () => {
     const fileset = await FilesetResolver.forVisionTasks(WASM);
@@ -61,6 +68,34 @@ export function frameFromWorld(world: Landmark[], t: number): Frame {
   return { t, joints };
 }
 
+/**
+ * Centred moving average of every joint over `window` frames. Pose estimates from video jitter from frame to frame;
+ * motion capture does not. Smoothing over about 0.17 s at 30 fps keeps real movement and removes the jitter that would
+ * otherwise read as tiny pauses.
+ */
+export function smoothFrames(frames: Frame[], window = 5): Frame[] {
+  const half = Math.floor(window / 2);
+  return frames.map((f, i) => {
+    const from = Math.max(0, i - half);
+    const to = Math.min(frames.length - 1, i + half);
+    const joints = {} as Frame["joints"];
+    for (const name of Object.keys(f.joints) as Array<keyof Frame["joints"]>) {
+      let x = 0;
+      let y = 0;
+      let z = 0;
+      for (let k = from; k <= to; k++) {
+        const v = frames[k]!.joints[name];
+        x += v.x;
+        y += v.y;
+        z += v.z;
+      }
+      const n = to - from + 1;
+      joints[name] = { x: x / n, y: y / n, z: z / n };
+    }
+    return { t: f.t, joints };
+  });
+}
+
 /** Put the lowest ankle of the take 8 cm above the floor, as the motion-capture import does. */
 export function setFloor(frames: Frame[]): Frame[] {
   let low = Infinity;
@@ -91,6 +126,7 @@ export async function readVideo(
 ): Promise<Frame[]> {
   const lm = await getLandmarker();
   const total = Math.floor(video.duration * fps);
+  const base = lastTimestamp + 1;
   const frames: Frame[] = [];
   for (let i = 0; i < total; i++) {
     if (signal?.aborted) break;
@@ -103,10 +139,10 @@ export async function readVideo(
       video.addEventListener("seeked", done);
       video.currentTime = t;
     });
-    const res = lm.detectForVideo(video, Math.round(t * 1000) + 1);
+    const res = lm.detectForVideo(video, nextTimestamp(base + t * 1000));
     const world = res.worldLandmarks[0];
     if (world) frames.push(frameFromWorld(world, t));
     onProgress({ done: i + 1, total, image: res.landmarks[0] });
   }
-  return setFloor(frames);
+  return setFloor(smoothFrames(frames));
 }

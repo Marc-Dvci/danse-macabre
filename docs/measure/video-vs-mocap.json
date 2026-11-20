@@ -1,0 +1,23 @@
+{
+ "measuredAt": "2026-11-20T17:51:59.228Z",
+ "results": [
+  {
+   "video": "Modern dance: arms held high",
+   "symbols": 57,
+   "exactPercent": 80,
+   "nearPercent": 83,
+   "checks": 70,
+   "offsetSeconds": 0.9,
+   "readSeconds": 82
+  },
+  {
+   "video": "Modern dance: expressive arms, pirouette",
+   "symbols": 52,
+   "exactPercent": 55,
+   "nearPercent": 71,
+   "checks": 58,
+   "offsetSeconds": 0.7,
+   "readSeconds": 56
+  }
+ ]
+}
