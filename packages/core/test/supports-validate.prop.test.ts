@@ -32,7 +32,7 @@ describe('P8.5: validity', () => {
 });
 
 describe('P8.7: leg gestures only while their foot is off the floor (Requirement 1.5)', () => {
-  it('no leg symbol of notate(perform(s)) covers a frame where its foot is in contact', () => {
+  it('every leg symbol of notate(perform(s)) arrives with its foot off the floor', () => {
     fc.assert(
       fc.property(genStepTurnScore, (s) => {
         const frames = perform(s);
@@ -43,12 +43,12 @@ describe('P8.7: leg gestures only while their foot is off the floor (Requirement
           if (sym.kind === 'turn') continue;
           if (sym.column !== 'left-leg' && sym.column !== 'right-leg') continue;
           const onFloor = sym.column === 'left-leg' ? contacts.left : contacts.right;
-          const from = sym.start * secondsPerBeat;
+          // Requirement 1.5 (revised): the foot is off the floor at the last frame of the window, where the leg arrives.
           const to = (sym.start + sym.duration) * secondsPerBeat;
-          for (let k = 0; k < frames.length; k++) {
-            const rel = frames[k]!.t - frames[0]!.t;
-            if (rel >= from && rel < to) expect(onFloor[k]).toBe(false);
-          }
+          let arrival = -1;
+          for (let k = 0; k < frames.length; k++) if (frames[k]!.t - frames[0]!.t < to) arrival = k;
+          expect(arrival).toBeGreaterThanOrEqual(0);
+          expect(onFloor[arrival]).toBe(false);
         }
       }),
       RUNS,

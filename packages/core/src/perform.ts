@@ -166,10 +166,28 @@ export function perform(score: Score, options: PerformOptions = {}): Frame[] {
     'left-leg': [] as [number, number][],
     'right-leg': [] as [number, number][],
   };
-  for (const s of score.symbols) {
-    if (s.column === 'left-leg' || s.column === 'right-leg') {
-      legWindows[s.column].push([s.start * beatSeconds, (s.start + s.duration) * beatSeconds]);
+  // A blank means no change: a leg gesture holds from its symbol until the next symbol of that leg or the next step of
+  // that foot, which puts the foot back under the weight.
+  for (const leg of ['left-leg', 'right-leg'] as const) {
+    const support = leg === 'left-leg' ? 'left-support' : 'right-support';
+    const events = score.symbols.filter((s) => s.column === leg || s.column === support).map((s) => s.start);
+    for (const s of score.symbols) {
+      if (s.column !== leg) continue;
+      const next = Math.min(Infinity, ...events.filter((b) => b > s.start));
+      legWindows[leg].push([s.start * beatSeconds, next * beatSeconds]);
     }
+  }
+  // A leg whose start cell is a gesture (anything but place low) holds it from the start until its first leg symbol
+  // or the first step of its foot, whichever comes first.
+  for (const leg of ['left-leg', 'right-leg'] as const) {
+    const cell = score.startPosition[leg];
+    if (!cell || (cell.direction === 'place' && cell.level === 'low')) continue;
+    const support = leg === 'left-leg' ? 'left-support' : 'right-support';
+    let until = Infinity;
+    for (const s of score.symbols) {
+      if (s.column === leg || s.column === support) until = Math.min(until, s.start * beatSeconds);
+    }
+    if (until > 0) legWindows[leg].push([0, until]);
   }
 
   let endBeat = 0;

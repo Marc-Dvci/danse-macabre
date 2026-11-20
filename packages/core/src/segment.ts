@@ -53,7 +53,7 @@ export function smooth(speeds: number[], times: number[], window: number): numbe
  * @param restSpeed Absolute rest threshold in deg/s.
  * @returns Sorted, unique frame indices.
  */
-export function restFrames(smoothed: number[], restSpeed: number): number[] {
+export function restFrames(smoothed: number[], restSpeed: number, depth = 0.25): number[] {
   const n = smoothed.length;
   if (n === 0) return [];
   if (n === 1) return [0];
@@ -83,7 +83,7 @@ export function restFrames(smoothed: number[], restSpeed: number): number[] {
     let rightPeak = 0;
     for (let k = m; k <= to; k++) rightPeak = Math.max(rightPeak, smoothed[k]!);
     const s = smoothed[m]!;
-    if (s < restSpeed || s < 0.25 * Math.min(leftPeak, rightPeak)) rests.add(m);
+    if (s < restSpeed || s < depth * Math.min(leftPeak, rightPeak)) rests.add(m);
   });
   return [...rests].sort((a, b) => a - b);
 }

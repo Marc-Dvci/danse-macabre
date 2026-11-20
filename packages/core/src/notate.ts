@@ -25,6 +25,12 @@ export type NotateOptions = {
   hysteresis?: number;
   /** Height of an ankle above the other ankle for the foot to count as off the floor, in metres (Requirement 4.7). Default 0.10. */
   liftHeight?: number;
+  /**
+   * A speed minimum is a rest when it is below this fraction of the lower of its two neighbouring peaks (Requirement
+   * 4.4, rule a). Default 0.9: any dip at least 10% below both neighbouring peaks. Chosen on the nine CMU dances by
+   * replay fidelity (docs/measure/fidelity.md): 0.25 left continuous dancing almost unwritten.
+   */
+  restDepth?: number;
   /** Shortest hold in seconds that counts as a rest (Requirement 4.4, rule b). Default 0.35. */
   dwellTime?: number;
   /** Largest angle in degrees from the start of a hold that still counts as holding (Requirement 4.4, rule b). Default 8. */
@@ -40,7 +46,7 @@ type Move = { start: number; end: number; cell: Cell };
  * settles in a new cell gets one symbol for that cell (Requirement 4.4). Leg symbols are written only while the foot is
  * off the floor (Requirement 4.7). See design.md, decisions D1 to D13.
  * @param frames Frames in time order, with all joints. At least one frame.
- * @param options Tempo, grid, title and thresholds. Defaults: minHold 0.12 s, smoothing 0.2 s, restSpeed 3 deg/s,
+ * @param options Tempo, grid, title and thresholds. Defaults: minHold 0.12 s, smoothing 0.1 s, restSpeed 3 deg/s, restDepth 0.9,
  *   hysteresis 4 deg, liftHeight 0.10 m.
  * @returns A canonical score that passes `validateScore`.
  * @throws RangeError when `frames` is empty.
@@ -48,7 +54,7 @@ type Move = { start: number; end: number; cell: Cell };
 export function notateGestures(frames: Frame[], options: NotateOptions): Score {
   if (frames.length === 0) throw new RangeError('notateGestures: no frames');
   const minHold = options.minHold ?? 0.12;
-  const smoothing = options.smoothing ?? 0.2;
+  const smoothing = options.smoothing ?? 0.1;
   const restSpeed = options.restSpeed ?? 3;
   const hysteresis = options.hysteresis ?? 4;
   const liftHeight = options.liftHeight ?? 0.1;
@@ -74,12 +80,19 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
 
     // Requirement 4.8 then 4.3: the cell each frame holds.
     const cells = heldCells(hysteresisCells(vectors, axes, hysteresis), times, minHold, endTime);
-    startPosition[column] = cells[0]!;
+    // A leg's start cell is a gesture: written only when that foot is off the floor (Requirement 4.7) at the first frame.
+    if (column.endsWith('-leg')) {
+      const other = end === 'left-ankle' ? 'right-ankle' : 'left-ankle';
+      const j0 = frames[0]!.joints;
+      if (j0[end].y - j0[other].y > liftHeight) startPosition[column] = cells[0]!;
+    } else {
+      startPosition[column] = cells[0]!;
+    }
 
     // Requirement 4.4: rests from the smoothed speed and from holds, moves between consecutive rests, edges from the
     // raw speed.
     const raw = angularSpeeds(vectors, times);
-    const speedRests = restFrames(smooth(raw, times, smoothing), restSpeed);
+    const speedRests = restFrames(smooth(raw, times, smoothing), restSpeed, options.restDepth ?? 0.9);
     const rests = [
       ...new Set([...speedRests, ...holdFrames(vectors, times, raw, speedRests, dwellTime, dwellAngle)]),
     ].sort((a, b) => a - b);
@@ -98,16 +111,13 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
       moves.push({ start: edges.start, end: edges.end, cell: settled });
     }
 
-    // Requirement 4.7: a leg symbol is written only while its ankle is more than liftHeight above the other ankle in
-    // every frame of the move.
+    // Requirement 4.7 (fidelity Requirement 2.1): a leg symbol is written only when its ankle is more than liftHeight above
+    // the other ankle at the end of the move, the frame where the leg arrives. The rising part of the move is not checked.
     const kept = column.endsWith('-leg')
       ? moves.filter((m) => {
           const other = end === 'left-ankle' ? 'right-ankle' : 'left-ankle';
-          for (let k = m.start; k <= m.end; k++) {
-            const j = frames[k]!.joints;
-            if (!(j[end].y - j[other].y > liftHeight)) return false;
-          }
-          return true;
+          const j = frames[m.end]!.joints;
+          return j[end].y - j[other].y > liftHeight;
         })
       : moves;
 
@@ -145,8 +155,8 @@ export type NotateAllOptions = NotateOptions & SupportOptions;
 
 /**
  * Writes one score from frames: gesture symbols for the arms and legs (`notateGestures`) and support and turn symbols
- * for the feet (`notateSupports`). A leg gesture is kept only when its foot is off the floor on every frame of the
- * symbol's time window (supports-and-turns Requirement 1.5). The window is half open, `[start, start + duration)`.
+ * for the feet (`notateSupports`). A leg gesture is kept only when its foot is off the floor at the last frame of the
+ * symbol's time window, where the leg arrives (supports-and-turns Requirement 1.5, as revised).
  * @param frames Frames in time order, with all joints. At least one frame.
  * @param options Gesture and support options. Tempo and grid are used by both parts.
  * @returns A canonical score that passes `validateScore`.
@@ -159,16 +169,15 @@ export function notate(frames: Frame[], options: NotateAllOptions): Score {
   const t0 = frames[0]!.t;
   const secondsPerBeat = 60 / options.tempo;
 
+  // A leg gesture is kept when its foot is off the floor where the leg arrives: the last frame of the symbol's window.
+  // A kick starts from the floor, so the frames where it leaves do not count against it (owner's revision of 1.5).
   const kept = gestures.symbols.filter((s) => {
     if (s.column !== 'left-leg' && s.column !== 'right-leg') return true;
     const onFloor = s.column === 'left-leg' ? contacts.left : contacts.right;
-    const from = s.start * secondsPerBeat;
     const to = (s.start + s.duration) * secondsPerBeat;
-    for (let k = 0; k < frames.length; k++) {
-      const rel = frames[k]!.t - t0;
-      if (rel >= from && rel < to && onFloor[k]) return false;
-    }
-    return true;
+    let arrival = -1;
+    for (let k = 0; k < frames.length; k++) if (frames[k]!.t - t0 < to) arrival = k;
+    return arrival >= 0 && !onFloor[arrival];
   });
 
   return canonicalScore({ ...gestures, symbols: [...kept, ...supports] });
