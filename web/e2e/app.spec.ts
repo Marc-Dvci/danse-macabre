@@ -10,7 +10,9 @@ test("prologue: shown on a first visit, gone after Enter, and free of axe violat
   await page.goto("/");
   const dialog = page.getByRole("dialog", { name: "Danse Macabre" });
   await expect(dialog).toBeVisible();
-  await page.waitForTimeout(1600); // let the fade-in finish, so contrast is measured at full opacity
+  // Contrast is measured once the woodcut and the words have fully faded in (the fade waits for the web fonts).
+  await expect(page.locator(".prologue-text")).toHaveCSS("opacity", "1", { timeout: 15_000 });
+  await expect(page.locator(".prologue > img")).toHaveCSS("opacity", "1");
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.map((v) => v.id)).toEqual([]);
   await page.getByRole("button", { name: "Enter the dance" }).click();
