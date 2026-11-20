@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        background: #0d0b0a;
+        color: #ece6d6;
+        overflow: hidden;
+      }
+      .card {
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        height: 100%;
+      }
+      .card img {
+        height: 630px;
+        width: 420px;
+        object-fit: cover;
+        object-position: 50% 30%;
+      }
+      .text {
+        padding: 70px 64px 0 64px;
+        position: relative;
+      }
+      h1 {
+        font-family: "IM Fell English SC", serif;
+        font-weight: 400;
+        font-size: 104px;
+        line-height: 0.95;
+        margin: 0;
+        letter-spacing: 0.02em;
+      }
+      .sub {
+        font-family: "IM Fell English", serif;
+        font-size: 40px;
+        margin: 26px 0 0;
+        color: #ece6d6;
+      }
+      .tag {
+        font-family: "IM Fell English", serif;
+        font-style: italic;
+        font-size: 26px;
+        color: #b8afa0;
+        margin-top: 18px;
+      }
+      .rule {
+        width: 120px;
+        height: 3px;
+        background: #c8321e;
+        margin: 34px 0 0;
+      }
+      svg {
+        position: absolute;
+        right: 56px;
+        bottom: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img src="../public/art/the-trumpeters-of-death.webp" alt="" />
+      <div class="text">
+        <h1>Danse<br />Macabre</h1>
+        <div class="rule"></div>
+        <p class="sub">Dance, written down and read aloud.</p>
+        <p class="tag">Labanotation, 1928, brought back to life</p>
+        <svg width="190" height="150" viewBox="0 0 190 150" fill="none" stroke="#ece6d6" stroke-width="2.5">
+          <line x1="95" y1="0" x2="95" y2="150" stroke-opacity="0.6" />
+          <line x1="35" y1="0" x2="35" y2="150" stroke-opacity="0.4" />
+          <line x1="155" y1="0" x2="155" y2="150" stroke-opacity="0.4" />
+          <polygon points="100,10 122,10 122,58 100,58" fill="#ece6d6" />
+          <polygon points="100,70 111,70 111,84 122,84 122,128 100,128" />
+          <circle cx="111" cy="106" r="3.5" fill="#ece6d6" />
+          <polygon points="68,16 90,6 90,60 68,60" />
+          <line x1="70" y1="58" x2="88" y2="10" />
+          <line x1="70" y1="44" x2="88" y2="22" />
+          <polygon points="90,72 68,96 90,120" fill="#c8321e" stroke="#c8321e" />
+        </svg>
+      </div>
+    </div>
+  </body>
+</html>
