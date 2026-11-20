@@ -9,12 +9,13 @@ interface Props {
   selected: string | null;
   onSelect: (symbolId: string) => void;
   height: number;
+  width: number;
 }
 
 const PLAYHEAD_FROM_TOP = 0.62;
-const SCALE = 2.2;
 
-export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height }: Props) {
+export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height, width }: Props) {
+  const SCALE = Math.min(2.4, Math.max(1.2, (width - 24) / layout.width));
   const flip = (y: number) => layout.height - y;
   const originY = layout.origin;
   const playY = flip(originY + beat * beatHeight);
@@ -101,6 +102,7 @@ export function ScoreView({ layout, beat, beatHeight, selected, onSelect, height
                 stroke={color}
                 strokeWidth={0.8}
                 strokeLinejoin="round"
+                pointerEvents="all"
               />
               {g.level === "middle" && <circle cx={cx} cy={cy} r={1.3} fill={color} />}
               {g.kind === "turn" && g.amount && (

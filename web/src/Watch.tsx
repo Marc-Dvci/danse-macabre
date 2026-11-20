@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CLIPS, CLIP_SOURCE, customClips, loadClip, onCustomClips, type Clip } from "./clips";
 import { ScoreView } from "./ScoreView";
+import { SymbolEditor } from "./SymbolEditor";
 import { BEAT_HEIGHT, layoutStaff } from "./staff";
 import { Stage, type View } from "./stage/stage";
 import { centreClip, lastTime, sample } from "./pose";
@@ -34,6 +35,9 @@ export function Watch({ initial }: { initial?: string }) {
   const [countBell, setCountBell] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [scoreHeight, setScoreHeight] = useState(600);
+  const [scoreWidth, setScoreWidth] = useState(330);
+  const [panel, setPanel] = useState<"score" | "lesson">("score");
+  const [edits, setEdits] = useState<Record<string, { direction: string; level: string }>>({});
   const [extra, setExtra] = useState(customClips);
   useEffect(() => onCustomClips(() => setExtra(customClips())), []);
   const all = [...CLIPS, ...extra];
@@ -46,6 +50,8 @@ export function Watch({ initial }: { initial?: string }) {
     let live = true;
     setPlaying(false);
     setTime(0);
+    setEdits({});
+    setSelected(null);
     loadClip(clipId).then((c) => live && setClip(c));
     return () => {
       live = false;
@@ -58,11 +64,25 @@ export function Watch({ initial }: { initial?: string }) {
     return mirrored ? mirrorClip(centred) : centred;
   }, [clip, mirrored]);
 
-  const score: Score | null = useMemo(() => {
+  const notated: Score | null = useMemo(() => {
     if (!clip) return null;
     const s = notateClip(centreClip(clip.frames), clip.title);
     return mirrored ? mirror(s) : s;
   }, [clip, mirrored]);
+
+  // The reader's edits, applied on top of the written score.
+  const score: Score | null = useMemo(() => {
+    if (!notated) return null;
+    if (Object.keys(edits).length === 0) return notated;
+    return {
+      ...notated,
+      symbols: notated.symbols.map((s) => {
+        const e = edits[s.id];
+        return e ? { ...s, direction: e.direction as typeof s.direction, level: e.level as typeof s.level } : s;
+      }),
+    };
+  }, [notated, edits]);
+  const selectedSymbol = score?.symbols.find((s) => s.id === selected) ?? null;
 
   const performed = useMemo(() => (score ? performScore(score) : []), [score]);
   const lesson: LessonLine[] = useMemo(() => (score ? describeScore(score) : []), [score]);
@@ -79,7 +99,11 @@ export function Watch({ initial }: { initial?: string }) {
 
   useEffect(() => {
     if (!scoreBox.current) return;
-    const ro = new ResizeObserver(([e]) => e && setScoreHeight(e.contentRect.height));
+    const ro = new ResizeObserver(([e]) => {
+      if (!e) return;
+      setScoreHeight(e.contentRect.height);
+      setScoreWidth(e.contentRect.width);
+    });
     ro.observe(scoreBox.current);
     return () => ro.disconnect();
   }, []);
@@ -140,6 +164,28 @@ export function Watch({ initial }: { initial?: string }) {
   useEffect(() => {
     if (!playing) hush();
   }, [playing]);
+
+  // Keyboard: space plays or pauses, arrows step one count, M mirrors.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement;
+      if (el.closest("input, select, textarea, [contenteditable]")) return;
+      if (!score) return;
+      const beatSec = 60 / score.tempo;
+      if (e.key === " ") {
+        e.preventDefault();
+        setPlaying((p) => !p);
+      } else if (e.key === "ArrowRight") {
+        setTime((t) => Math.min(duration, (Math.floor(t / beatSec + 1e-6) + 1) * beatSec));
+      } else if (e.key === "ArrowLeft") {
+        setTime((t) => Math.max(0, (Math.ceil(t / beatSec - 1e-6) - 1) * beatSec));
+      } else if (e.key === "m" || e.key === "M") {
+        setMirrored((m) => !m);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [score, duration]);
 
   const current = lesson.findLast((l) => l.beat <= beat + 1e-6);
   const c = score ? countLabel(score, beat) : null;
@@ -208,21 +254,53 @@ export function Watch({ initial }: { initial?: string }) {
 
       <aside className="score-panel" aria-label="Score">
         <header>
-          <h2 style={{ margin: 0 }}>Score</h2>
+          <div className="tabs" role="tablist" aria-label="Score or lesson">
+            <button role="tab" aria-selected={panel === "score"} onClick={() => setPanel("score")}>
+              Score
+            </button>
+            <button role="tab" aria-selected={panel === "lesson"} onClick={() => setPanel("lesson")}>
+              Lesson
+            </button>
+          </div>
           <span style={{ fontSize: 13, color: "var(--bone-3)" }}>
-            {score ? `${score.symbols.length} symbols · ${score.tempo} counts/min` : ""}
+            {score ? `${score.symbols.length} symbols · ${score.tempo}/min` : ""}
           </span>
         </header>
-        <div ref={scoreBox} style={{ minHeight: 0, position: "relative" }}>
-          {layout && score && (
+        <div ref={scoreBox} style={{ minHeight: 0, position: "relative", overflow: "hidden" }}>
+          {panel === "score" && layout && score && (
             <ScoreView
               layout={layout}
               beat={beat}
               beatHeight={BEAT_HEIGHT}
               selected={selected}
-              onSelect={setSelected}
+              onSelect={(id) => setSelected(id.startsWith("start-") ? null : id)}
               height={scoreHeight}
+              width={scoreWidth}
             />
+          )}
+          {panel === "score" && selectedSymbol && (
+            <SymbolEditor
+              symbol={selectedSymbol}
+              edited={selectedSymbol.id in edits}
+              onChange={(direction, level) => setEdits((e) => ({ ...e, [selectedSymbol.id]: { direction, level } }))}
+              onReset={() =>
+                setEdits((e) => {
+                  const { [selectedSymbol.id]: _, ...rest } = e;
+                  return rest;
+                })
+              }
+              onClose={() => setSelected(null)}
+            />
+          )}
+          {panel === "lesson" && (
+            <ol className="lesson-list" style={{ overflowY: "auto", height: "100%", padding: "0 18px" }}>
+              {lesson.map((l, i) => (
+                <li key={i} aria-current={current === l}>
+                  <span className="count">{l.label}</span>
+                  {l.text}
+                </li>
+              ))}
+            </ol>
           )}
         </div>
       </aside>

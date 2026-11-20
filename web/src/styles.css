@@ -541,3 +541,72 @@ input[type="range"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* Symbol editor */
+.editor {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(13, 11, 10, 0.94);
+  border-top: 1px solid var(--blood);
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.editor-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 14px;
+}
+
+.editor-head strong {
+  font-family: var(--fell);
+  font-size: 18px;
+  text-transform: capitalize;
+}
+
+.editor-head span {
+  color: var(--bone-3);
+  flex: 1;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 40px);
+  gap: 6px;
+}
+
+.glyph-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid rgba(236, 230, 214, 0.2);
+  color: var(--bone-2);
+  cursor: pointer;
+}
+
+.glyph-btn[aria-pressed="true"] {
+  border-color: var(--blood);
+  color: var(--bone);
+}
+
+.glyph-btn:disabled,
+.chip:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.editor-levels {
+  display: flex;
+  gap: 6px;
+}
+
+.score-panel .tabs button {
+  font-size: 18px;
+  padding: 4px 10px;
+}
