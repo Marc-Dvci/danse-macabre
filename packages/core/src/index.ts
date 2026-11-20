@@ -39,3 +39,4 @@ export {
 } from './layout';
 export type { Point } from './layout-shapes';
 export { renderStaffSvg } from './staff-svg';
+export { replayFidelity, type FidelityOptions, type FidelityResult } from './fidelity';

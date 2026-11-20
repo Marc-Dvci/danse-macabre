@@ -40,6 +40,19 @@ describe('notateGestures', () => {
     expect(legs.some((s) => s.direction === 'place' && s.level === 'low')).toBe(false);
   });
 
+  it('writes a leg symbol when the foot leaves the floor and is in the air at the end of the move (Requirement 2.1)', () => {
+    // The left leg starts on the floor (place low) and moves to forward high, a kick. The rising part is near the floor,
+    // so the old rule (every frame of the move lifted) dropped the symbol. The end of the move is in the air, so the
+    // symbol is written.
+    const input = score(
+      [{ id: 'l0', column: 'left-leg', start: 1, duration: 2, direction: 'forward', level: 'high' }],
+      { 'left-leg': { direction: 'place', level: 'low' } },
+    );
+    const out = notateGestures(performGestures(input), options);
+    const legs = directionSymbols(out).filter((s) => s.column === 'left-leg');
+    expect(legs.map((s) => [s.direction, s.level])).toEqual([['forward', 'high']]);
+  });
+
   it('ignores a cell that holds for less than minHold and keeps the held cell (Requirement 4.3)', () => {
     // The right wrist is at forward high for 3 s. For one frame (1/30 s, under 0.12 s) it is at right middle.
     const base = performGestures(
