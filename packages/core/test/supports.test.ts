@@ -17,6 +17,7 @@ import {
 import { footContacts, standingHeight } from '../src/contact';
 import { buildFrame, standardRig } from '../src/rig';
 import { bodyAxesFromYaw, horizontalVector } from '../src/support-axes';
+import macarenaClip from '../../../data/clips/macarena.json';
 
 const base: Score = {
   version: 1,
@@ -81,14 +82,14 @@ describe('Glossary: contact', () => {
     expect(c.right).toEqual([true, true, true]);
   });
 
-  it('standing height falls back to the rig height when no frame has both feet down', () => {
-    const frames = [pose(0, 0.3, 0), pose(1 / 30, 0.3, 0)];
+  it('standing height comes from the body: floor, thigh, shin and pelvis above the hips', () => {
+    const frames = perform({ ...base, symbols: [] });
     expect(standingHeight(frames, footContacts(frames))).toBeCloseTo(0.95, 9);
   });
 
-  it('standing height is the median over both-foot frames, so a clip that ends high sets a high standing height', () => {
-    // Two place-high steps at 60 bpm: the lead-in is at the middle height and the end is at the high height. The
-    // median of the two-foot frames sits at the high height, which is the value the Glossary definition gives.
+  it('standing height does not move when the dance stays high (D31)', () => {
+    // Two place-high steps at 60 bpm: the lead-in is at the middle height and the end is at the high height. Measured
+    // from the body's own proportions, the standing height stays at the rig's 0.95 m, so both steps read high.
     const s: Score = {
       ...base,
       symbols: [
@@ -97,9 +98,21 @@ describe('Glossary: contact', () => {
       ],
     };
     const frames = perform(s);
+    expect(standingHeight(frames, footContacts(frames))).toBeCloseTo(0.95, 9);
+  });
+
+  it('standing height of a real clip is close to its standing pelvis height', () => {
+    const clip = macarenaClip as unknown as { fps: number; joints: string[]; frames: number[][][] };
+    const frames = clip.frames.map((row, i) => {
+      const joints = {} as Record<string, { x: number; y: number; z: number }>;
+      clip.joints.forEach((name, k) => (joints[name] = { x: row[k]![0]!, y: row[k]![1]!, z: row[k]![2]! }));
+      return { t: i / clip.fps, joints } as unknown as Parameters<typeof footContacts>[0][number];
+    });
     const h = standingHeight(frames, footContacts(frames));
-    console.log(`standing height of a clip ending high: ${h.toFixed(4)} m (rig 0.95 m, high 0.9975 m)`);
-    expect(h).toBeCloseTo(0.9975, 4);
+    // The Macarena is danced standing: its first frame's pelvis should read as the middle level.
+    const first = frames[0]!.joints.pelvis.y;
+    expect(first / h).toBeGreaterThan(0.93);
+    expect(first / h).toBeLessThan(1.03);
   });
 });
 

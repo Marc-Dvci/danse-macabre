@@ -58,20 +58,37 @@ function median(values: number[]): number {
   return sorted.length % 2 === 1 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
 }
 
+/** The q-th quantile (0 to 1) of a list of numbers, by the nearest rank. The list is not modified. */
+function percentile(values: number[], q: number): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.min(sorted.length - 1, Math.max(0, Math.floor(q * (sorted.length - 1))))]!;
+}
+
 /** Pelvis height of the rig at standing, in metres. Used when no frame has both feet in contact (D22). */
 export const RIG_STANDING_PELVIS = 0.95;
 
 /**
- * Standing height (supports-and-turns, Glossary): the median pelvis height over the frames where both feet are in
- * contact. When there are none, the rig's standing pelvis height is returned (D22).
- * @param frames Frames with a pelvis joint.
- * @param contacts Result of `footContacts` for the same frames.
+ * Standing height (supports-and-turns, Glossary, revised by the owner, D31): the pelvis height of this body standing
+ * straight on the floor, from its own proportions: the lowest ankle of the clip, plus the thigh and shin lengths, plus
+ * the median height of the pelvis above the hip joints. It does not depend on how the dance spends its
+ * time, so a dance done mostly on the toes or mostly in plié is measured against the same standing height.
+ * @param frames Frames with pelvis, hips, knees and ankles.
+ * @param contacts Result of `footContacts` for the same frames (its `minY` is the floor reference).
  */
 export function standingHeight(frames: Frame[], contacts: Contacts): number {
-  const heights: number[] = [];
-  for (let k = 0; k < frames.length; k++) {
-    if (contacts.left[k] && contacts.right[k]) heights.push(frames[k]!.joints.pelvis.y);
+  if (frames.length === 0) return RIG_STANDING_PELVIS;
+  const thigh: number[] = [];
+  const shin: number[] = [];
+  const pelvisAboveHips: number[] = [];
+  for (const f of frames) {
+    const j = f.joints;
+    for (const side of ['left', 'right'] as const) {
+      thigh.push(length(sub(j[`${side}-knee`], j[`${side}-hip`])));
+      shin.push(length(sub(j[`${side}-ankle`], j[`${side}-knee`])));
+    }
+    pelvisAboveHips.push(j.pelvis.y - (j['left-hip'].y + j['right-hip'].y) / 2);
   }
-  const m = median(heights);
-  return Number.isNaN(m) ? RIG_STANDING_PELVIS : m;
+  // The shortest thigh and shin seen (5th percentile) are the bones' own lengths: a bent knee keeps them, and only a
+  // stretched leg in playback can make them look longer.
+  return contacts.minY + percentile(thigh, 0.05) + percentile(shin, 0.05) + median(pelvisAboveHips);
 }

@@ -1,7 +1,7 @@
 import { bodyFrame } from './body-frame';
 import { footContacts, standingHeight, type ContactOptions } from './contact';
 import { quantizeGesture } from './quantize';
-import { yawDegOf } from './support-axes';
+import { bodyAxesFromYaw, yawDegOf } from './support-axes';
 import type { BodyAxes, ColumnId, Direction, Frame, Level, Symbol } from './types';
 import { length } from './vec';
 
@@ -26,7 +26,9 @@ type Pending = {
   column: ColumnId;
   startSec: number;
   endSec: number;
-  symbol: { kind: 'step'; direction: Direction; level: Level } | { kind: 'turn'; rotation: 'cw' | 'ccw'; amount: number };
+  symbol:
+    | { kind: 'step'; direction: Direction; level: Level; displacement: { x: number; y: number; z: number } | null }
+    | { kind: 'turn'; rotation: 'cw' | 'ccw'; amount: number };
 };
 
 /** Wraps an angle in degrees into (−180, 180]. */
@@ -80,12 +82,16 @@ export function notateSupports(frames: Frame[], options: SupportNotateOptions): 
       while (b < n && !c[b]) b++;
       if (b >= n) break;
 
-      // Requirement 1.3: horizontal displacement of the pelvis, in the body axes at the leave frame.
-      const pa = frames[a]!.joints.pelvis;
+      // Requirement 1.3: horizontal displacement of the pelvis, in the body axes of the last frame on the floor (a − 1).
+      // The foot leaves between frames a − 1 and a; during a fast turn the body can rotate 25 degrees in one frame, so
+      // the facing is read where the step starts, not one frame into it (D32).
+      const pa = frames[a - 1]!.joints.pelvis;
       const pb = frames[b]!.joints.pelvis;
       const d = { x: pb.x - pa.x, y: 0, z: pb.z - pa.z };
       const size = length(d);
-      const direction: Direction = size < stepPlace || size === 0 ? 'place' : quantizeGesture(d, axes[a]!).direction;
+      const direction: Direction = size < stepPlace || size === 0 ? 'place' : quantizeGesture(d, axes[a - 1]!).direction;
+      // The direction is measured again below, in the facing at the step's notated start (D32).
+      const displacement = direction === 'place' ? null : d;
 
       // Requirement 1.4: level from the pelvis height at landing.
       const h = frames[b]!.joints.pelvis.y;
@@ -95,7 +101,7 @@ export function notateSupports(frames: Frame[], options: SupportNotateOptions): 
         column,
         startSec: times[a]!,
         endSec: times[b]!,
-        symbol: { kind: 'step', direction, level },
+        symbol: { kind: 'step', direction, level, displacement },
       });
     }
   }
@@ -147,6 +153,20 @@ export function notateSupports(frames: Frame[], options: SupportNotateOptions): 
     byColumn.set(p.column, list);
   }
 
+  // Continuous yaw per frame (unwrapped), so the facing can be read between frames at a step's notated start.
+  const yaws: number[] = [];
+  for (const ax of axes) {
+    const y = yawDegOf(ax);
+    yaws.push(yaws.length === 0 ? y : yaws[yaws.length - 1]! + wrap(y - yaws[yaws.length - 1]!));
+  }
+  const fps = n > 1 ? (n - 1) / (times[n - 1]! - times[0]!) : 30;
+  const yawAtSec = (sec: number): number => {
+    const x = Math.min(Math.max(sec * fps, 0), n - 1);
+    const i = Math.floor(x);
+    const j = Math.min(i + 1, n - 1);
+    return yaws[i]! + (yaws[j]! - yaws[i]!) * (x - i);
+  };
+
   const out: Symbol[] = [];
   for (const column of ['left-support', 'right-support'] as const) {
     const list = (byColumn.get(column) ?? []).sort((x, y) => x.startSec - y.startSec);
@@ -170,7 +190,12 @@ export function notateSupports(frames: Frame[], options: SupportNotateOptions): 
           amount: p.symbol.amount as 0.25 | 0.5 | 0.75 | 1,
         });
       } else {
-        out.push({ id, column, start, duration, direction: p.symbol.direction, level: p.symbol.level });
+        // D32: playback moves a step in the facing at the symbol's start, so the notation reads the direction in the
+        // facing at the rounded start time, interpolated between frames. During a fast turn the facing changes by up
+        // to 30 degrees between two frames.
+        const disp = p.symbol.displacement;
+        const direction = disp ? quantizeGesture(disp, bodyAxesFromYaw(yawAtSec(start / beatsPerSecond))).direction : p.symbol.direction;
+        out.push({ id, column, start, duration, direction, level: p.symbol.level });
       }
     });
   }

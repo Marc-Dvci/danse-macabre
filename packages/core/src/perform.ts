@@ -1,6 +1,6 @@
 import { WORLD_AXES } from './body-frame';
 import { bodyAt, planBody, type BodyState } from './perform-body';
-import { buildFrame, standardRig, type Rig } from './rig';
+import { buildFrame, PELVIS, standardRig, type Rig } from './rig';
 import { GESTURE_COLUMNS } from './score';
 import { buildTrack, sampleTrack, type Track } from './track';
 import { normalize, add, scale, dot } from './vec';
@@ -67,6 +67,37 @@ function inWindows(windows: [number, number][], t: number): boolean {
   return windows.some(([a, b]) => a <= t && t < b);
 }
 
+/**
+ * Thigh and shin, each half of the standing leg (hip at the rig's standing pelvis height, ankle on the floor), so a
+ * straight leg reaches the floor exactly at the middle level.
+ */
+export const THIGH = PELVIS.y / 2;
+export const SHIN = PELVIS.y / 2;
+
+/**
+ * Knee and ankle of one leg. When the ankle is closer to the hip than a straight leg, the knee bends forward (in the
+ * body's forward direction) with fixed thigh and shin lengths, as in a plié. When it is farther (a high level, or a
+ * long step), the leg is straight and the foot stays where it is.
+ */
+export function legJoints(hip: Vec3, ankle: Vec3, forward: Vec3): { knee: Vec3; ankle: Vec3 } {
+  const reach = THIGH + SHIN;
+  const v = { x: ankle.x - hip.x, y: ankle.y - hip.y, z: ankle.z - hip.z };
+  const d = Math.hypot(v.x, v.y, v.z);
+  if (d < 1e-9) return { knee: add(hip, { x: 0, y: -THIGH, z: 0 }), ankle };
+  const unit = scale(v, 1 / d);
+  // A straight leg: the knee is halfway down it. The foot keeps its place on the floor, so a planted foot never leaves
+  // contact because the pelvis has moved away from it.
+  if (d >= reach) return { knee: add(hip, scale(unit, d / 2)), ankle };
+  // Equal segments: the knee sits above the midpoint, pushed forward by the bend height.
+  const h = Math.sqrt(Math.max(0, THIGH * THIGH - (d / 2) * (d / 2)));
+  const along = dot(forward, unit);
+  let bend = { x: forward.x - unit.x * along, y: forward.y - unit.y * along, z: forward.z - unit.z * along };
+  const bl = Math.hypot(bend.x, bend.y, bend.z);
+  bend = bl > 1e-9 ? scale(bend, 1 / bl) : { x: 0, y: 0, z: 0 };
+  const midpoint = add(hip, scale(unit, d / 2));
+  return { knee: add(midpoint, scale(bend, h)), ankle };
+}
+
 /** Builds the joints of one frame from the body state and the limb directions (world coordinates). */
 function buildBodyFrame(t: number, state: BodyState, arm: Record<'left-arm' | 'right-arm', Vec3>, rig: Rig): Frame {
   const { axes, pelvis } = state;
@@ -82,15 +113,17 @@ function buildBodyFrame(t: number, state: BodyState, arm: Record<'left-arm' | 'r
   const rightShoulder = offset(shoulderCentre, R, rig.shoulderHalfWidth);
   const leftWrist = add(leftShoulder, scale(arm['left-arm'], rig.armLength));
   const rightWrist = add(rightShoulder, scale(arm['right-arm'], rig.armLength));
-  const leftAnkle = state.ankles.left;
-  const rightAnkle = state.ankles.right;
+  const leftLeg = legJoints(leftHip, state.ankles.left, axes.forward);
+  const rightLeg = legJoints(rightHip, state.ankles.right, axes.forward);
+  const leftAnkle = leftLeg.ankle;
+  const rightAnkle = rightLeg.ankle;
 
   const joints: Record<JointName, Vec3> = {
     pelvis,
     'left-hip': leftHip,
     'right-hip': rightHip,
-    'left-knee': mid(leftHip, leftAnkle),
-    'right-knee': mid(rightHip, rightAnkle),
+    'left-knee': leftLeg.knee,
+    'right-knee': rightLeg.knee,
     'left-ankle': leftAnkle,
     'right-ankle': rightAnkle,
     'left-shoulder': leftShoulder,
