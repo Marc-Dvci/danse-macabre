@@ -111,7 +111,12 @@ export function Watch({ initial }: { initial?: string }) {
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => stage.current?.setView(view), [view]);
+  useEffect(() => {
+    const s = stage.current;
+    if (!s) return;
+    s.wide = scoreOnly && ensemble;
+    s.setView(view);
+  }, [view, scoreOnly, ensemble]);
 
   // Draw the current time.
   useEffect(() => {
