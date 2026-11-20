@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "notate-new-clip",
+      "description": "When a dance clip is saved in data/clips, write it down: its score, its staff as SVG and its spoken lesson go to examples/.",
+      "trigger": "PostFileSave",
+      "matcher": "data[/\\\\]clips[/\\\\][^/\\\\]+\\.json$",
+      "action": { "type": "command", "command": "pnpm exec tsx scripts/notate-clip.ts" },
+      "timeout": 120
+    }
+  ]
+}

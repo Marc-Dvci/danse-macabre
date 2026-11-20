@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { validateScore, type Direction, type Score, type Symbol } from '../src/index';
+import {
+  validateScore,
+  type ColumnId,
+  type Direction,
+  type DirectionSymbol,
+  type Level,
+  type Score,
+  type Symbol,
+} from '../src/index';
 
-const base: Score = {
+const base: Omit<Score, 'symbols'> & { symbols: DirectionSymbol[] } = {
   version: 1,
   title: 'test',
   tempo: 60,
@@ -53,9 +61,9 @@ describe('validateScore', () => {
   it('reports unknown column, direction and level', () => {
     const r = validateScore(
       withSymbols([
-        { ...base.symbols[0]!, column: 'torso' as Symbol['column'] },
+        { ...base.symbols[0]!, column: 'torso' as ColumnId },
         { ...base.symbols[1]!, direction: 'up' as Direction },
-        { ...base.symbols[1]!, id: 'c', level: 'top' as Symbol['level'] },
+        { ...base.symbols[1]!, id: 'c', level: 'top' as Level },
       ]),
     );
     expect(r.ok).toBe(false);

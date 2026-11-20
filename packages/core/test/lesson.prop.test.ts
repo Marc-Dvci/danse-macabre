@@ -1,7 +1,14 @@
 // Property tests for the spoken lesson: Requirement 4.1 (round trip) and 4.2 (every word comes from a symbol).
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { describe as describeLesson, parseLesson, type ColumnId, type LessonLine, type Score } from '../src/index';
+import {
+  describe as describeLesson,
+  directionSymbols,
+  parseLesson,
+  type ColumnId,
+  type LessonLine,
+  type Score,
+} from '../src/index';
 import { DIRECTION_WORDS, LESSON_COLUMN_ORDER } from '../src/lesson-words';
 import { runOptions } from './generators';
 import { genScore } from './lesson-generators';
@@ -22,7 +29,7 @@ describe('Requirement 4.1: lesson round trip', () => {
     fc.assert(
       fc.property(genScore, (score) => {
         const parsed = parseLesson(describeLesson(score));
-        const expected = reading(score.symbols).map((s) => ({
+        const expected = reading(directionSymbols(score)).map((s) => ({
           column: s.column,
           start: s.start,
           duration: s.duration,
@@ -68,7 +75,7 @@ function allowedFor(score: Score, id: string): { tokens: Set<string>; numbers: S
     if (cell) addCell(column, cell.direction, cell.level);
     return { tokens, numbers };
   }
-  const s = score.symbols.find((x) => x.id === id);
+  const s = directionSymbols(score).find((x) => x.id === id);
   if (s) {
     addCell(s.column, s.direction, s.level);
     numbers.add(String(s.duration));

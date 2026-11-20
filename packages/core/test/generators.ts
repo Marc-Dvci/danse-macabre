@@ -1,5 +1,6 @@
 // Shared fast-check generators for the property tests. Not a test file (no ".test." in the name).
 import fc from 'fast-check';
+import { directionSymbols } from '../src/index';
 import {
   GESTURE_CELLS,
   WORLD_AXES,
@@ -192,5 +193,5 @@ export const genRandomFrames: fc.Arbitrary<Frame[]> = fc
 
 /** Symbol tuple used to compare notation output with the score it came from. */
 export function symbolTuples(score: Score): string[] {
-  return score.symbols.map((s) => `${s.column}|${s.start}|${s.duration}|${s.direction}|${s.level}`);
+  return directionSymbols(score).map((s) => `${s.column}|${s.start}|${s.duration}|${s.direction}|${s.level}`);
 }

@@ -1,4 +1,4 @@
-import type { Cell, ColumnId, Direction, Level, Symbol } from './types';
+import type { Cell, ColumnId, Direction, DirectionSymbol, Level } from './types';
 
 /** Words for each direction. `place` has no direction word; see `gesturePhrase` and `supportPhrase`. */
 export const DIRECTION_WORDS: Record<Exclude<Direction, 'place'>, string> = {
@@ -78,6 +78,6 @@ export function durationPhrase(beats: number): string {
  * Phrase for a symbol with its duration, for example `right arm moves forward, high, over 2 counts`.
  * @param symbol Symbol to describe.
  */
-export function symbolPhrase(symbol: Symbol): string {
+export function symbolPhrase(symbol: DirectionSymbol): string {
   return `${cellPhrase(symbol.column, { direction: symbol.direction, level: symbol.level })}, ${durationPhrase(symbol.duration)}`;
 }

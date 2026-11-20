@@ -1,13 +1,13 @@
 // Example tests for the staff layout (Requirement 3). Numbers below are staff units with the defaults: beatHeight 24,
 // columnWidth 16. The centre line is at x = 64 and the staff is 128 wide.
 import { describe, expect, it } from 'vitest';
-import { canonicalScore, layoutStaff, type Point, type Score, type Symbol } from '../src/index';
+import { canonicalScore, layoutStaff, type Point, type Score, type DirectionSymbol } from '../src/index';
 
-function score(symbols: Symbol[], startPosition: Score['startPosition'] = {}, beatsPerBar = 2): Score {
+function score(symbols: DirectionSymbol[], startPosition: Score['startPosition'] = {}, beatsPerBar = 2): Score {
   return canonicalScore({ version: 1, title: 'layout', tempo: 100, beatsPerBar, grid: 0.5, startPosition, symbols });
 }
 
-const one = (column: Symbol['column'], direction: Symbol['direction'], level: Symbol['level'], start = 0, duration = 2): Symbol => ({
+const one = (column: DirectionSymbol['column'], direction: DirectionSymbol['direction'], level: DirectionSymbol['level'], start = 0, duration = 2): DirectionSymbol => ({
   id: `${column}-0`,
   column,
   start,

@@ -1,6 +1,7 @@
 import { mirrorScore } from './mirror';
 import { COLUMN_ORDER } from './score';
-import type { ColumnId, Score, Symbol } from './types';
+import { directionSymbols } from './symbol';
+import type { ColumnId, DirectionSymbol, Score } from './types';
 
 /** One place where a phrase occurs. `beat` is the start of the phrase in the score. */
 export type PhraseMatch = { beat: number; mirrored: boolean };
@@ -20,11 +21,11 @@ function columnRank(column: ColumnId): number {
 
 /** Start beats where the phrase matches. The phrase is matched once, without mirroring. */
 function matchBeats(score: Score, phrase: Score, tolerance: number): number[] {
-  const phraseSymbols = phrase.symbols;
+  const phraseSymbols = directionSymbols(phrase);
   if (phraseSymbols.length === 0) return [];
   const origin = Math.min(...phraseSymbols.map((s) => s.start));
 
-  const phraseByColumn = new Map<ColumnId, Symbol[]>();
+  const phraseByColumn = new Map<ColumnId, DirectionSymbol[]>();
   for (const s of phraseSymbols) {
     const list = phraseByColumn.get(s.column) ?? [];
     list.push(s);
@@ -32,8 +33,8 @@ function matchBeats(score: Score, phrase: Score, tolerance: number): number[] {
   }
   for (const list of phraseByColumn.values()) list.sort((a, b) => a.start - b.start);
 
-  const scoreByColumn = new Map<ColumnId, Symbol[]>();
-  for (const s of score.symbols) {
+  const scoreByColumn = new Map<ColumnId, DirectionSymbol[]>();
+  for (const s of directionSymbols(score)) {
     const list = scoreByColumn.get(s.column) ?? [];
     list.push(s);
     scoreByColumn.set(s.column, list);

@@ -1,4 +1,5 @@
-import type { Cell, ColumnId, Direction, Frame, JointName, Score, Vec3 } from './types';
+import { isTurnSymbol } from './symbol';
+import type { Cell, ColumnId, Direction, Frame, JointName, Score, Symbol, Vec3 } from './types';
 
 /** Swaps `left` and `right` inside a name, for example `left-forward` to `right-forward`. */
 function swapSide(name: string): string {
@@ -37,14 +38,28 @@ export function mirrorScore(score: Score): Score {
     beatsPerBar: score.beatsPerBar,
     grid: score.grid,
     startPosition,
-    symbols: score.symbols.map((s) => ({
-      id: s.id.replace(/^(left|right)-/, (_m, side: string) => (side === 'left' ? 'right-' : 'left-')),
-      column: mirrorColumn(s.column),
-      start: s.start,
-      duration: s.duration,
-      direction: swapSide(s.direction) as Direction,
-      level: s.level,
-    })),
+    symbols: score.symbols.map((s): Symbol => {
+      const id = s.id.replace(/^(left|right)-/, (_m, side: string) => (side === 'left' ? 'right-' : 'left-'));
+      if (isTurnSymbol(s)) {
+        return {
+          id,
+          kind: 'turn',
+          column: mirrorColumn(s.column) as 'left-support' | 'right-support',
+          start: s.start,
+          duration: s.duration,
+          rotation: s.rotation === 'cw' ? 'ccw' : 'cw',
+          amount: s.amount,
+        };
+      }
+      return {
+        id,
+        column: mirrorColumn(s.column),
+        start: s.start,
+        duration: s.duration,
+        direction: swapSide(s.direction) as Direction,
+        level: s.level,
+      };
+    }),
   };
   if (score.source !== undefined) result.source = score.source;
   return result;

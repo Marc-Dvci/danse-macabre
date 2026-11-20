@@ -1,4 +1,5 @@
 import { glyphPolygon, type Point } from './layout-shapes';
+import { isTurnSymbol } from './symbol';
 import type { ColumnId, Direction, Level, Score } from './types';
 
 export type StaffOptions = {
@@ -107,6 +108,7 @@ export function layoutStaff(score: Score, options: StaffOptions = {}): StaffLayo
     glyphs.push(glyphFor(`start:${column}`, column, cell.direction, cell.level, 0, bh));
   }
   for (const s of score.symbols) {
+    if (isTurnSymbol(s)) continue; // Turn signs have no staff glyph yet (supports-and-turns D25).
     if (s.start < 0 || s.duration <= 0) throw new RangeError(`layoutStaff: symbol "${s.id}" has a bad start or duration`);
     glyphs.push(glyphFor(s.id, s.column, s.direction, s.level, y(s.start), s.duration * bh));
   }

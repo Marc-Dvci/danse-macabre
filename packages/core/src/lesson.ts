@@ -1,5 +1,6 @@
 import { cellPhrase, LESSON_COLUMN_ORDER, symbolPhrase } from './lesson-words';
-import type { Cell, ColumnId, Score, Symbol } from './types';
+import { directionSymbols } from './symbol';
+import type { Cell, ColumnId, DirectionSymbol, Score } from './types';
 
 /**
  * One line of the spoken lesson. Beat lines have `beat`, `count` and `bar`. The start and metre lines have them set to
@@ -64,10 +65,10 @@ export function describe(score: Score): LessonLine[] {
 
   const lines: LessonLine[] = [startLine(score), metreLine(score)];
 
-  const sorted = [...score.symbols].sort(
+  const sorted = directionSymbols(score).sort(
     (a, b) => a.start - b.start || columnRank(a.column) - columnRank(b.column) || (a.id < b.id ? -1 : 1),
   );
-  const groups: { beat: number; symbols: Symbol[] }[] = [];
+  const groups: { beat: number; symbols: DirectionSymbol[] }[] = [];
   for (const s of sorted) {
     if (!Number.isInteger(s.start * 2)) {
       throw new RangeError(`describe: symbol "${s.id}" starts at ${s.start}, which is not on a half beat`);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { notateGestures, performGestures, validateScore, type Frame, type Score } from '../src/index';
+import { directionSymbols, notateGestures, performGestures, validateScore, type Frame, type Score } from '../src/index';
 
 const options = { tempo: 60, beatsPerBar: 4, grid: 0.5, title: 'example' };
 
@@ -17,7 +17,7 @@ describe('notateGestures', () => {
     );
     const out = notateGestures(performGestures(input), options);
     expect(validateScore(out)).toEqual({ ok: true });
-    const arm = out.symbols.filter((s) => s.column === 'right-arm');
+    const arm = directionSymbols(out).filter((s) => s.column === 'right-arm');
     expect(arm.map((s) => [s.direction, s.level, s.start, s.duration])).toEqual([['right', 'middle', 1, 2]]);
     expect(out.startPosition['right-arm']).toEqual({ direction: 'place', level: 'low' });
   });
@@ -36,7 +36,7 @@ describe('notateGestures', () => {
       { 'left-leg': { direction: 'place', level: 'high' } },
     );
     const out = notateGestures(performGestures(input), options);
-    const legs = out.symbols.filter((s) => s.column === 'left-leg');
+    const legs = directionSymbols(out).filter((s) => s.column === 'left-leg');
     expect(legs.some((s) => s.direction === 'place' && s.level === 'low')).toBe(false);
   });
 
@@ -110,12 +110,12 @@ describe('notateGestures hysteresis (Requirement 4.8)', () => {
   it('keeps the held cell for a limb resting within the hysteresis width of a boundary', () => {
     const out = notateGestures(frames, { ...options, hysteresis: 4 });
     expect(validateScore(out)).toEqual({ ok: true });
-    expect(out.symbols.filter((s) => s.column === 'right-arm')).toEqual([]);
+    expect(directionSymbols(out).filter((s) => s.column === 'right-arm')).toEqual([]);
     expect(out.startPosition['right-arm']).toEqual({ direction: 'forward', level: 'middle' });
   });
 
   it('writes the changes when the hysteresis is 0, so the test above depends on the rule', () => {
     const out = notateGestures(frames, { ...options, hysteresis: 0 });
-    expect(out.symbols.filter((s) => s.column === 'right-arm').length).toBeGreaterThan(0);
+    expect(directionSymbols(out).filter((s) => s.column === 'right-arm').length).toBeGreaterThan(0);
   });
 });

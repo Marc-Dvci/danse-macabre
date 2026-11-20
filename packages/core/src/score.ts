@@ -1,3 +1,4 @@
+import { isTurnSymbol } from './symbol';
 import type { ColumnId, Direction, Level, Cell, Score, Symbol, ValidationResult } from './types';
 
 /** Gesture columns, in the order the notator writes them. */
@@ -27,6 +28,9 @@ export const DIRECTIONS: readonly Direction[] = [
 
 export const LEVELS: readonly Level[] = ['high', 'middle', 'low'];
 
+/** Amounts a turn sign can carry, as fractions of a full turn. */
+export const TURN_AMOUNTS: readonly number[] = [0.25, 0.5, 0.75, 1];
+
 const TOLERANCE = 1e-6;
 
 function isMultiple(x: number, grid: number): boolean {
@@ -43,8 +47,17 @@ function checkCell(cell: Cell, column: ColumnId | null, where: string, errors: s
   }
 }
 
+function checkTurn(s: Symbol & { kind: 'turn' }, where: string, errors: string[]): void {
+  if (s.column !== 'left-support' && s.column !== 'right-support') {
+    errors.push(`${where}: a turn sign must be in a support column, not "${s.column}"`);
+  }
+  if (s.rotation !== 'cw' && s.rotation !== 'ccw') errors.push(`${where}: unknown rotation "${s.rotation}"`);
+  if (!TURN_AMOUNTS.includes(s.amount)) errors.push(`${where}: amount ${s.amount} is not 0.25, 0.5, 0.75 or 1`);
+}
+
 /**
- * Checks a score against Requirement 1.3. Returns one error string per violation.
+ * Checks a score against Requirement 1.3 and the turn rules of supports-and-turns. Returns one error string per
+ * violation.
  * @param score Any object of the Score shape.
  * @returns `{ ok: true }` when no violation exists, otherwise `{ ok: false, errors }`.
  */
@@ -71,7 +84,11 @@ export function validateScore(score: Score): ValidationResult {
 
     const knownColumn = COLUMN_ORDER.includes(s.column);
     if (!knownColumn) errors.push(`${where}: unknown column "${s.column}"`);
-    checkCell({ direction: s.direction, level: s.level }, knownColumn ? s.column : null, where, errors);
+    if (isTurnSymbol(s)) {
+      checkTurn(s, where, errors);
+    } else {
+      checkCell({ direction: s.direction, level: s.level }, knownColumn ? s.column : null, where, errors);
+    }
 
     if (!isMultiple(s.start, score.grid)) errors.push(`${where}: start ${s.start} is not a multiple of grid`);
     if (!isMultiple(s.duration, score.grid)) errors.push(`${where}: duration ${s.duration} is not a multiple of grid`);
@@ -104,6 +121,29 @@ function columnRank(column: string): number {
   return i === -1 ? COLUMN_ORDER.length : i;
 }
 
+/** Writes one symbol with its keys in a fixed order. Direction symbols never get a `kind` key. */
+function canonicalSymbol(s: Symbol): Symbol {
+  if (isTurnSymbol(s)) {
+    return {
+      id: s.id,
+      kind: 'turn',
+      column: s.column,
+      start: s.start,
+      duration: s.duration,
+      rotation: s.rotation,
+      amount: s.amount,
+    };
+  }
+  return {
+    id: s.id,
+    column: s.column,
+    start: s.start,
+    duration: s.duration,
+    direction: s.direction,
+    level: s.level,
+  };
+}
+
 /**
  * Returns the score with symbols sorted by column (see COLUMN_ORDER), then start, then duration. Object keys are
  * built in a fixed order, so equal scores serialise to the same JSON.
@@ -115,14 +155,7 @@ export function canonicalScore(score: Score): Score {
       (a, b) =>
         columnRank(a.column) - columnRank(b.column) || a.start - b.start || a.duration - b.duration,
     )
-    .map((s) => ({
-      id: s.id,
-      column: s.column,
-      start: s.start,
-      duration: s.duration,
-      direction: s.direction,
-      level: s.level,
-    }));
+    .map(canonicalSymbol);
 
   const startPosition: Partial<Record<ColumnId, Cell>> = {};
   for (const column of COLUMN_ORDER) {

@@ -1,6 +1,8 @@
 import { bodyFrame } from './body-frame';
+import { footContacts } from './contact';
 import { heldCells, hysteresisCells } from './held-cells';
 import { limbBaseJoint, limbEndJoint } from './rig';
+import { notateSupports, type SupportOptions } from './notate-supports';
 import { canonicalScore, GESTURE_COLUMNS } from './score';
 import { angularSpeeds, holdFrames, moveEdges, restFrames, smooth } from './segment';
 import type { BodyAxes, Cell, ColumnId, Frame, Score, Symbol, Vec3 } from './types';
@@ -136,4 +138,38 @@ export function notateGestures(frames: Frame[], options: NotateOptions): Score {
     startPosition,
     symbols,
   });
+}
+
+/** Options for `notate`: gesture options plus the support thresholds. */
+export type NotateAllOptions = NotateOptions & SupportOptions;
+
+/**
+ * Writes one score from frames: gesture symbols for the arms and legs (`notateGestures`) and support and turn symbols
+ * for the feet (`notateSupports`). A leg gesture is kept only when its foot is off the floor on every frame of the
+ * symbol's time window (supports-and-turns Requirement 1.5). The window is half open, `[start, start + duration)`.
+ * @param frames Frames in time order, with all joints. At least one frame.
+ * @param options Gesture and support options. Tempo and grid are used by both parts.
+ * @returns A canonical score that passes `validateScore`.
+ * @throws RangeError when `frames` is empty.
+ */
+export function notate(frames: Frame[], options: NotateAllOptions): Score {
+  const gestures = notateGestures(frames, options);
+  const supports = notateSupports(frames, options);
+  const contacts = footContacts(frames, options);
+  const t0 = frames[0]!.t;
+  const secondsPerBeat = 60 / options.tempo;
+
+  const kept = gestures.symbols.filter((s) => {
+    if (s.column !== 'left-leg' && s.column !== 'right-leg') return true;
+    const onFloor = s.column === 'left-leg' ? contacts.left : contacts.right;
+    const from = s.start * secondsPerBeat;
+    const to = (s.start + s.duration) * secondsPerBeat;
+    for (let k = 0; k < frames.length; k++) {
+      const rel = frames[k]!.t - t0;
+      if (rel >= from && rel < to && onFloor[k]) return false;
+    }
+    return true;
+  });
+
+  return canonicalScore({ ...gestures, symbols: [...kept, ...supports] });
 }

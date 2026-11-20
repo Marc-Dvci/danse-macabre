@@ -48,15 +48,33 @@ export type Level = 'high' | 'middle' | 'low';
 /** A direction and a level. Gesture cells are the 24 sector cells plus `place high` and `place low`. */
 export type Cell = { direction: Direction; level: Level };
 
-/** One written symbol. `start` and `duration` are in beats. */
-export type Symbol = {
+/**
+ * A direction symbol: a gesture in a gesture column, or a step in a support column. `start` and `duration` are in beats.
+ * `kind` may be left out; a symbol without `kind` is a direction symbol.
+ */
+export type DirectionSymbol = {
   id: string;
+  kind?: 'direction';
   column: ColumnId;
   start: number;
   duration: number;
   direction: Direction;
   level: Level;
 };
+
+/** A turn sign in a support column. `rotation` is seen from above. `amount` is a fraction of a full turn. */
+export type TurnSymbol = {
+  id: string;
+  kind: 'turn';
+  column: 'left-support' | 'right-support';
+  start: number;
+  duration: number;
+  rotation: 'cw' | 'ccw';
+  amount: 0.25 | 0.5 | 0.75 | 1;
+};
+
+/** One written symbol. */
+export type Symbol = DirectionSymbol | TurnSymbol;
 
 export type Score = {
   version: 1;

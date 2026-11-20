@@ -2,7 +2,15 @@
 // ("Macarena Dance"). Format of data/clips/macarena.json: { fps, joints, frames: number[frame][joint][xyz] }, metres.
 import { describe, expect, it } from 'vitest';
 import clip from '../../../data/clips/macarena.json';
-import { bodyFrame, notateGestures, quantizeGesture, type Frame, type JointName, type Vec3 } from '../src/index';
+import {
+  bodyFrame,
+  directionSymbols,
+  notateGestures,
+  quantizeGesture,
+  type Frame,
+  type JointName,
+  type Vec3,
+} from '../src/index';
 import { hysteresisCells, heldCells } from '../src/held-cells';
 import { angularSpeeds, holdFrames, moveEdges, restFrames, smooth } from '../src/segment';
 import { sub } from '../src/vec';
@@ -85,7 +93,7 @@ describe('Requirement 8.2: notation of the Macarena at 100 bpm', () => {
     }
 
     const score = notateGestures(frames, { tempo: 100, beatsPerBar: 4, grid: 0.5, title: 'Macarena' });
-    const arms = score.symbols
+    const arms = directionSymbols(score)
       .filter((s) => s.column === 'left-arm' || s.column === 'right-arm')
       .sort((a, b) => a.start - b.start || (a.column < b.column ? -1 : 1));
     const first = arms.slice(0, 8);
